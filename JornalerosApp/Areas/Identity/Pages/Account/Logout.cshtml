@@ -1,5 +1,6 @@
 ﻿@page
 @model LogoutModel
+@attribute [IgnoreAntiforgeryToken]
 @inject Microsoft.Extensions.Localization.IStringLocalizer<JornalerosApp.Properties.Resources> L
 @{
     ViewData["Title"] = "Salir";

@@ -8,57 +8,55 @@ using JornalerosApp.Shared.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace JornalerosApp.Services
 {
-
     public class PersonaServices : IPersonaServices
     {
-        private ApplicationDbContext _applicationDbContext;
+        private readonly ISqlDataAccess _dataAccess;
 
-        public PersonaServices(ApplicationDbContext applicationDbContext)
+        public PersonaServices(ISqlDataAccess dataAccess)
         {
-            _applicationDbContext = applicationDbContext;
+            _dataAccess = dataAccess;
         }
 
-        public async Task<IEnumerable<Persona>> AllPersonas()
+        public Task<List<Persona>> AllPersonas()
         {
-            return await _applicationDbContext.Persona.ToListAsync();
+            string sql = "select * from dbo.Persona";
+            return _dataAccess.LoadData<Persona, dynamic>(sql, new { });
         }
 
-
-        public Persona GetPersonaById(int id)
+        public Task AddPersona(Persona persona)
         {
-            return _applicationDbContext.Persona.Where(p => p.IdPersona == id).FirstOrDefault();
+            string sql = "INSERT INTO dbo.Persona (Nombre,PrimerApellido,DNI,FechaNacimiento,CorreoElectronico,CochePropio,Imagen,Sexo,LugarResidencia,ProvinciaResidencia]) " +
+              "VALUES (@Nombre, @PrimerApellido, @DNI, @FechaNacimiento, @CorreoElectronico, @CochePropio, @Imagen, @Sexo, @LugarResidencia, @ProvinciaResidencia";
+
+            return _dataAccess.SaveData<Persona>(sql, persona);
+            
         }
-
-
-        public void AddPersona(Persona persona)
-        {
-            if (_applicationDbContext.Persona.FindAsync(persona).IsFaulted)
-            {
-                _applicationDbContext.Persona.AddAsync(persona);
-            }
-        }
-
-
-        public void UpdatePersona(int id, Persona persona)
-        {
-            if (_applicationDbContext.Persona.Any(p => p.IdPersona == id))
-            {
-                _applicationDbContext.Persona.Update(persona);
-            }
-        }
-
 
         public void DeletePersona(int id)
         {
-            if (_applicationDbContext.Persona.Any(p => p.IdPersona == id))
-            {
+            throw new NotImplementedException();
+        }
 
-                _applicationDbContext.Persona.Remove(_applicationDbContext.Persona.Where(p => p.IdPersona == id).FirstOrDefault());
-            }
+        public Task<List<Persona>> GetPersonaById(int id)
+        {
+            var sql = "SELECT Nombre, PrimerApellido, DNI, FechaNacimiento, CorreoElectronico, CochePropio, Imagen, Sexo, LugarResidencia, ProvinciaResidencia  FROM dbo.Persona WHERE IdPersona = " + id;
+
+            return _dataAccess.LoadData<Persona, dynamic>(sql, new { });
+            
+
+        }
+
+        public void UpdatePersona(int id, Persona persona)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
         }
     }
 }

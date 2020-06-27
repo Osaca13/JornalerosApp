@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using JornalerosApp.Shared.Models;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace JornalerosApp.Shared.Data
 {
@@ -14,7 +12,6 @@ namespace JornalerosApp.Shared.Data
         private IConfiguration configuration { get; }
         public ApplicationDbContext()
         {
-            
         }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -37,8 +34,7 @@ namespace JornalerosApp.Shared.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                
-                optionsBuilder.UseSqlServer(configuration.GetConnectionString("DataConnection"));
+                optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             }
         }
 

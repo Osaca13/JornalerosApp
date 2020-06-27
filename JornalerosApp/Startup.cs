@@ -39,6 +39,7 @@ namespace JornalerosApp
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+           
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -63,8 +64,12 @@ namespace JornalerosApp
                 options.Password.RequireLowercase = false;
                 //options.Password.RequiredUniqueChars = 6;
             });
-                services.AddScoped<IWeatherForecastService, WeatherForecastService>();
-                services.AddScoped<IPersonaServices, PersonaServices>();
+            services.AddScoped<IWeatherForecastService, WeatherForecastService>();
+            services.AddTransient<ISqlDataAccess, SqlDataAccess>();
+            services.AddTransient<IPersonaServices, PersonaServices>();
+            services.AddTransient<IPersonaDbServices, PersonaDbServices>();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

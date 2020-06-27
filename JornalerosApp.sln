@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30128.74
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JornalerosApp", "JornalerosApp\JornalerosApp.csproj", "{A3B58D97-BA7F-412E-9391-108CEAEE0B35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JornalerosApp.Shared", "JornalerosApp.Shared\JornalerosApp.Shared.csproj", "{2AD5A8BF-571D-4848-A41E-22D144248D41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JornalerosApp.Shared", "JornalerosApp.Shared\JornalerosApp.Shared.csproj", "{2AD5A8BF-571D-4848-A41E-22D144248D41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

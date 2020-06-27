@@ -1,9 +1,32 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Identity
+@using JornalerosApp.Pages.Candidatos
+@inject UserManager<IdentityUser> UserManager
 
-    <div class="jumbotron" style="background-color:transparent">
-        <h1>Hello, world!</h1>
+<AuthorizeView Roles="Candidato, Admin">
+    <NotAuthorized>
+        <div class="jumbotron" style="background-color:transparent">
+            <h1>Hello, world!</h1>
 
-        Welcome to your new app.
+            Welcome to your new app.
 
-        <SurveyPrompt Title="How is Blazor working for you?" />
-    </div>
+            <SurveyPrompt Title="How is Blazor working for you?" />
+        </div>
+    </NotAuthorized>
+    <Authorized>
+        <h1>Aqui va la pantalla inicial del usuario: @context.User.Identity.Name</h1>
+        <DatosPersona UserName="@context.User.Identity.Name" Id="@UserManager.GetUserId(context.User)"></DatosPersona>
+    </Authorized>
+</AuthorizeView>
+
+@code{   
+    public AuthenticationState authentication { get; set; }
+
+    void MyFuncion()
+    {
+        if (authentication.User.Identity.IsAuthenticated)
+        {
+
+        }
+    }
+}
