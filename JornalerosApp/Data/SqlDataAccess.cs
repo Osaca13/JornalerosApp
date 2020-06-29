@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JornalerosApp.Shared.Data
+namespace JornalerosApp.Data
 {
     public class SqlDataAccess : ISqlDataAccess
     {
@@ -20,7 +20,7 @@ namespace JornalerosApp.Shared.Data
 
         public async Task<List<T>> LoadData<T, U>(string sql, U parameters)
         {
-            string getStringConnection = _configuration.GetConnectionString("DataConnection");
+            string getStringConnection = _configuration.GetConnectionString("DefaultConnection");
             using (IDbConnection dbConnection = new SqlConnection(getStringConnection))
             {
                 var tiempoDeEspera = dbConnection.ConnectionTimeout;

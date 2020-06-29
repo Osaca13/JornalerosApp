@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace JornalerosApp.Shared.Models
 {
@@ -10,10 +11,11 @@ namespace JornalerosApp.Shared.Models
             RelacionOfertaPersona = new HashSet<RelacionOfertaPersona>();
         }
 
-        public int IdOferta { get; set; }
+        [Key]
+        public string IdOferta { get; set; }
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
-        public int IdEmpresa { get; set; }
+        public string IdEmpresa { get; set; }
         public DateTime? FechaPublicacion { get; set; }
         public DateTime? FechaCaducidad { get; set; }
         public string Alojamiento { get; set; }

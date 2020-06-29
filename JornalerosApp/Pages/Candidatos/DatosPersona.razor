@@ -2,11 +2,13 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Authentication
 @using JornalerosApp.Pages.Candidatos
+@using JornalerosApp.Shared.Services
+
 @inject NavigationManager Navigation
 
-<h3>Datos Personales</h3>
-<h4>@UserName</h4>
-<p>aqui va el Id: @Id</p>
+<h4>Datos Personales: @UserName</h4>
+
+
 <button class="btn btn-info" @onclick="IraCV">Curriculum Vitae</button>
 
 
@@ -15,17 +17,12 @@
     [Parameter] public string UserName { get; set; }
     [Parameter] public string Id { get; set; }
 
-
-    protected override Task OnParametersSetAsync()
-    {
-
-
-        return base.OnParametersSetAsync();
-    }
+   
 
     private void IraCV()
     {
-        string direccion = "/Candidato/EditarCV";
+        string direccion = "/Candidato/EditarCV/"+ Id;
+
         Navigation.NavigateTo(direccion);
     }
 

@@ -20,6 +20,7 @@ using System.Globalization;
 using System.Reflection;
 using Microsoft.Extensions.Options;
 using JornalerosApp.Shared.Services;
+using JornalerosApp.Data;
 
 namespace JornalerosApp
 {
@@ -37,15 +38,20 @@ namespace JornalerosApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+               {
+                   options.UseSqlServer(
+                      Configuration.GetConnectionString("DefaultConnection"));
+                 
+               });
            
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddTransient<ApplicationDbContext>();
+            services.AddScoped<ApplicationDbContext>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddMvc();
+            services.AddHttpClient();
             services.AddLocalization();
             var supportedCultures = new List<CultureInfo> { new CultureInfo("es"), new CultureInfo("ca") };
             services.Configure<RequestLocalizationOptions>(opt =>
@@ -67,7 +73,7 @@ namespace JornalerosApp
             services.AddScoped<IWeatherForecastService, WeatherForecastService>();
             services.AddTransient<ISqlDataAccess, SqlDataAccess>();
             services.AddTransient<IPersonaServices, PersonaServices>();
-            services.AddTransient<IPersonaDbServices, PersonaDbServices>();
+            services.AddScoped<IPersonaDbServices, PersonaDbServices>();
 
 
         }
@@ -91,7 +97,7 @@ namespace JornalerosApp
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            
             var localizationOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value;
             app.UseRequestLocalization(localizationOptions);
            
@@ -99,7 +105,7 @@ namespace JornalerosApp
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
-            {
+            { 
                 endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");

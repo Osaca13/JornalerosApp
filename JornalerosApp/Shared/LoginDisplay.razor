@@ -1,18 +1,21 @@
 ﻿@using Microsoft.AspNetCore.Components.Routing;
+@using Microsoft.AspNetCore.Mvc.TagHelpers;
 @inject NavigationManager Navigation;
 
-<AuthorizeView>
+
+<AuthorizeView  >
     <Authorized>
         <a href="Identity/Account/Manage">@context.User.Identity.Name</a>
+       
         <form method="post" action="Identity/Account/Logout" >
-            <button type="submit" class="nav-link btn btn-link" >Salir</button>
+            <button type="submit" class="nav-link btn btn-link">Salir</button>
         </form>
     </Authorized>
     <NotAuthorized>
-        <a href="Identity/Account/Candidato/Register">Register</a>
-        <a href="Identity/Account/Candidato/Register">Register</a>
+        <a href="Identity/Account/Candidato/Register">Candidato</a>
+        <a href="Identity/Account/Empresa/Register">Empresa</a>
 
-        <a href="Identity/Account/Login">Log in</a>
+        <a href="Identity/Account/Login">Entrar</a>
     </NotAuthorized>
 </AuthorizeView>
 

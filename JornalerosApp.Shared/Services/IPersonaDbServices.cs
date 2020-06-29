@@ -9,9 +9,9 @@ namespace JornalerosApp.Shared.Services
     {
         Task<EntityEntry<Persona>> AddPersona(Persona persona);
         Task<List<Persona>> AllPersonas();
-        void DeletePersona(int id);
-        Task<Persona> GetPersonaById(int id);
+        Task<EntityEntry<Persona>> DeletePersona(string id);
+        Task<Persona> GetPersonaById(string id);
         void Save();
-        void UpdatePersona(int id, Persona persona);
+        EntityEntry<Persona> UpdatePersona(string id, Persona persona);
     }
 }

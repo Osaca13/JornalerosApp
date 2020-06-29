@@ -2,10 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using JornalerosApp.Shared.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-namespace JornalerosApp.Shared.Data
+namespace JornalerosApp.Data
 {
     public partial class ApplicationDbContext : IdentityDbContext
     {
@@ -34,7 +34,8 @@ namespace JornalerosApp.Shared.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer(configuration.GetConnectionString("DafaultConnection"));
             }
         }
 
@@ -48,6 +49,10 @@ namespace JornalerosApp.Shared.Data
                 entity.Property(e => e.AlojamientoPropio)
                     .HasMaxLength(10)
                     .IsFixedLength();
+
+                entity.Property(e => e.IdPersona)
+                    .IsRequired()
+                    .HasMaxLength(450);
 
                 entity.Property(e => e.Movilidad)
                     .HasMaxLength(10)
@@ -91,6 +96,10 @@ namespace JornalerosApp.Shared.Data
 
                 entity.Property(e => e.FechaInicio).HasColumnType("date");
 
+                entity.Property(e => e.IdCurriculum)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
                 entity.Property(e => e.Puesto).HasMaxLength(50);
 
                 entity.HasOne(d => d.IdCurriculumNavigation)
@@ -110,6 +119,10 @@ namespace JornalerosApp.Shared.Data
 
                 entity.Property(e => e.FechaInicio).HasColumnType("date");
 
+                entity.Property(e => e.IdCurriculum)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
                 entity.Property(e => e.Titulo)
                     .IsRequired()
                     .HasMaxLength(50);
@@ -124,6 +137,10 @@ namespace JornalerosApp.Shared.Data
             modelBuilder.Entity<Idioma>(entity =>
             {
                 entity.HasKey(e => e.IdIdioma);
+
+                entity.Property(e => e.IdCurriculum)
+                    .IsRequired()
+                    .HasMaxLength(450);
 
                 entity.Property(e => e.Idioma1)
                     .IsRequired()
@@ -142,6 +159,10 @@ namespace JornalerosApp.Shared.Data
             modelBuilder.Entity<Nacionalidad>(entity =>
             {
                 entity.HasKey(e => e.IdNacionalidad);
+
+                entity.Property(e => e.IdPersona)
+                    .IsRequired()
+                    .HasMaxLength(450);
 
                 entity.Property(e => e.Tipo)
                     .IsRequired()
@@ -174,6 +195,10 @@ namespace JornalerosApp.Shared.Data
 
                 entity.Property(e => e.FechaPublicacion).HasColumnType("date");
 
+                entity.Property(e => e.IdEmpresa)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
                 entity.Property(e => e.JornadaReal).HasMaxLength(50);
 
                 entity.Property(e => e.LugarTrabajo).HasMaxLength(50);
@@ -198,6 +223,10 @@ namespace JornalerosApp.Shared.Data
             modelBuilder.Entity<Permiso>(entity =>
             {
                 entity.HasKey(e => e.IdPermisos);
+
+                entity.Property(e => e.IdPersona)
+                    .IsRequired()
+                    .HasMaxLength(450);
 
                 entity.Property(e => e.Tipo)
                     .IsRequired()
@@ -245,6 +274,14 @@ namespace JornalerosApp.Shared.Data
             modelBuilder.Entity<RelacionOfertaPersona>(entity =>
             {
                 entity.HasKey(e => e.IdRelOfePer);
+
+                entity.Property(e => e.IdOferta)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.Property(e => e.IdPersona)
+                    .IsRequired()
+                    .HasMaxLength(450);
 
                 entity.HasOne(d => d.IdOfertaNavigation)
                     .WithMany(p => p.RelacionOfertaPersona)

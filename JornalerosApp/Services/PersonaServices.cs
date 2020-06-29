@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using JornalerosApp.Data;
 using JornalerosApp.Shared.Data;
 using JornalerosApp.Shared.Models;
 using JornalerosApp.Shared.Services;

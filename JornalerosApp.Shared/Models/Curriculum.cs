@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace JornalerosApp.Shared.Models
 {
@@ -12,8 +13,9 @@ namespace JornalerosApp.Shared.Models
             Idioma = new HashSet<Idioma>();
         }
 
-        public int IdCurriculum { get; set; }
-        public int IdPersona { get; set; }
+        [Key]
+        public string IdCurriculum { get; set; }
+        public string IdPersona { get; set; }
         public string TramitarPermisoTrabajo { get; set; }
         public string Movilidad { get; set; }
         public string AlojamientoPropio { get; set; }

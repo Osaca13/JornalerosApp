@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace JornalerosApp.Shared.Models
 {
     public partial class Formacion
     {
-        public int IdFormacion { get; set; }
-        public int IdCurriculum { get; set; }
+        [Key]
+        public string IdFormacion { get; set; }
+        public string IdCurriculum { get; set; }
         public string Titulo { get; set; }
         public DateTime? FechaInicio { get; set; }
         public DateTime? FechaFin { get; set; }

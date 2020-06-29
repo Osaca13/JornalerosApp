@@ -1,39 +1,36 @@
-﻿@page "/Candidato/EditarCV"
+﻿@page "/Candidato/EditarCV/{Id}"
 @using JornalerosApp.Shared.Services
+@using Microsoft.AspNetCore.Identity
+@inject AuthenticationStateProvider Provider
 @inject IPersonaDbServices personaDbServices
+@inject UserManager<IdentityUser> UserManager
+@inject NavigationManager Navigation
 
 <h3>Editar Curriculum Vitae</h3>
 
-<EditForm Model="@persona">
-    @*<DataAnnotationsValidator />  OnValidSubmit="CrearDatosUsuario"*@
-    @*<div asp-validation-summary="All" class="text-danger"></div>*@
+<EditForm Model="@persona" OnValidSubmit="@CrearDatosUsuario">
+    <DataAnnotationsValidator />  
+    <div asp-validation-summary="All" class="text-danger"></div>
     <div class="form-group row mb-1">
         <label class="col-sm-3 col-form-label" for="CorreoElectronico">Email</label>
 
         <div class="col-sm-9">
-            <input value="@persona.CorreoElectronico" placeholder="CorreoElectronico" />
-
-            @*<InputText Class="form-control" bind-Value="@persona.CorreoElectronico" />*@
-            @*<ValidationMessage For="@(() => persona.CorreoElectronico)" />*@
+            <InputText Class="form-control" @bind-Value="@persona.CorreoElectronico" />
+            <ValidationMessage For="@(() => persona.CorreoElectronico)" />
         </div>
     </div>
     <div class="form-group row mb-1">
         <label class="col-sm-3 col-form-label" for="Nombre">Nombre</label>
-
         <div class="col-sm-9">
-            <input value="@persona.Nombre" placeholder="Nombre" />
-
-            @*<InputText Class="form-control" bind-Value="@persona.Nombre" />*@
-            @*<ValidationMessage For="@(() => persona.Nombre)" />*@
+            <InputText Class="form-control" @bind-Value="@persona.Nombre" />
+            <ValidationMessage For="@(() => persona.Nombre)" />
         </div>
     </div>
     <div class="form-group row mb-1">
         <label class="col-sm-3 col-form-label" for="PrimerApellido">Primer Apellido</label>
 
         <div class="col-sm-9">
-            <input value="@persona.PrimerApellido" placeholder="PrimerApellido" />
-
-            @*<InputText Class="form-control" bind-Value="@persona.PrimerApellido" />*@
+            <InputText Class="form-control" @bind-Value="@persona.PrimerApellido" />
             <ValidationMessage For="@(() => persona.PrimerApellido)" />
         </div>
     </div>
@@ -41,46 +38,50 @@
         <label class="col-sm-3 col-form-label" for="Sexo">Sexo</label>
 
         <div class="col-sm-9">
-            <input value="@persona.Sexo" placeholder="Sexo"/>
-            @*<InputText Class="form-control" bind-Value="@persona.Sexo" ValueExpression="@ValueExpression"/>*@
-            @*<ValidationMessage For="@(() => persona.Sexo)" />*@
+            <InputSelect Class="form-control" @bind-Value="@persona.Sexo">             
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+            </InputSelect>
+            <ValidationMessage For="@(() => persona.Sexo)" />
         </div>
     </div>
     <div class="form-group text-center mb-0">
-        <button type="submit" ref="createButton" id="BtnRegister" @onclick="CrearDatosUsuario" class="btn btn-primary">Guardar</button>
+        <button type="submit" ref="createButton" id="BtnRegister" class="btn btn-primary">Guardar</button>
 
     </div>
 
 </EditForm>
 
 @code {
-    [Parameter] public string Id { get; set; } = "1";
-    [Parameter] public System.Linq.Expressions.Expression<Func<string>> ValueExpression { get; set; } 
+    [Parameter] public string Id { get; set; }
+    private Persona persona { get; set; } = new Persona();
+    [Parameter] public System.Linq.Expressions.Expression<Func<string>> ValueExpression { get; set; }
 
-    private Persona persona;
 
-    protected override Task OnParametersSetAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        Persona data = personaDbServices.AllPersonas().Result.FirstOrDefault();
-        if(data != null)
+        var authState = await Provider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+
+        persona = await personaDbServices.GetPersonaById(Id);
+        if (persona == null)
         {
-            persona = data;
+
+            persona.IdPersona = Id;
+            persona.Nombre = string.Empty;
+            persona.PrimerApellido = string.Empty;
+            persona.Sexo = string.Empty;
+            persona.CorreoElectronico = authState.User.Identity.Name;
+
+            await personaDbServices.AddPersona(persona);            
         }
-        else
-        {
-            persona = new Persona { IdPersona = int.Parse(Id),
-                Nombre = "Mami",
-                PrimerApellido = string.Empty,
-                Sexo = "F",
-                CorreoElectronico = string.Empty,
-                Dni = string.Empty
-            };
-        }
-        return base.OnParametersSetAsync();
     }
 
     private void CrearDatosUsuario()
     {
+        var estado = personaDbServices.UpdatePersona(Id, persona);
 
+        Navigation.NavigateTo("/");
     }
 }

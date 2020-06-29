@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace JornalerosApp.Shared.Models
 {
     public partial class Permiso
     {
-        public int IdPermisos { get; set; }
-        public int IdPersona { get; set; }
+        [Key]
+        public string IdPermisos { get; set; }
+        public string IdPersona { get; set; }
         public string Tipo { get; set; }
 
         public virtual Persona IdPersonaNavigation { get; set; }

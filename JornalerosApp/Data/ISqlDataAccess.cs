@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace JornalerosApp.Shared.Data
+namespace JornalerosApp.Data
 {
     public interface ISqlDataAccess
     {

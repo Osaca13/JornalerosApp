@@ -1,0 +1,9 @@
+﻿@inject NavigationManager Navigation
+@using Microsoft.AspNetCore.Authentication;
+@code {
+    protected override void OnInitialized()
+    {
+        //Navigation.NavigateTo($"/Identity/Account/Logout?returnUrl={Uri.EscapeDataString(Navigation.Uri)}");
+    }
+}
+
