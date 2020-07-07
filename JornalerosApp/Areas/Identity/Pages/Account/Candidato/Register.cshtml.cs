@@ -44,7 +44,6 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Candidato
 
         public string ReturnUrl { get; set; }
 
-        public string Rol { get; set; }
 
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
@@ -73,7 +72,7 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Candidato
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null, string rol = null)
+        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             var roleOfRegisteredUser = this.RouteData.Values.Where(p => p.Key == "page").First().Value.ToString().Split("/")[2];
             returnUrl = returnUrl ?? Url.Content("~/");

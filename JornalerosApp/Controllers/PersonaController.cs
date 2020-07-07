@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using JornalerosApp.Shared.Models;
 using JornalerosApp.Shared.Services;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Logging;
 
 namespace JornalerosApp.Controllers
 {
@@ -14,42 +13,50 @@ namespace JornalerosApp.Controllers
     [ApiController]
     public class PersonaController : ControllerBase
     {
-        private IPersonaDbServices _personaDbServices;
-        public PersonaController(IPersonaDbServices personaDbServices)
+        private IDbServices<Persona> _personaDbServices;
+        //private ILogger _logger;
+        public PersonaController(IDbServices<Persona> personaDbServices)
         {
             _personaDbServices = personaDbServices;
+            //_logger = logger;
         }
         // GET: api/<PersonaController>
         [HttpGet]
         public Task<List<Persona>> Get()
         {
-            return _personaDbServices.AllPersonas();
+            return _personaDbServices.AllItem();
         }
 
         // GET api/<PersonaController>/5
         [HttpGet("{id}")]
         public Task<Persona> Get(string id)
         {
-            return _personaDbServices.GetPersonaById(id);
+           return _personaDbServices.GetItemById(id);            
         }
 
         // POST api/<PersonaController>
         [HttpPost]
-        public void Post([FromBody] Persona persona)
+        public Task<EntityEntry<Persona>> Post([FromBody] Persona persona)
         {
-            _personaDbServices.AddPersona(persona);
+           return _personaDbServices.AddItem(persona);            
         }
 
         // PUT api/<PersonaController>/5
         [HttpPut("{id}")]
-        public void Put(string id, [FromBody] Persona value)
-        {
+        
+        public void Put(string id, [FromBody] Persona persona)
+        {           
+           _personaDbServices.UpdateItem(id, persona);
+           Debug.WriteLine("persona actualizada");
         }
 
         // DELETE api/<PersonaController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+       
+        public void Delete(string id)
         {
+            _personaDbServices.DeleteItem(id);
+          
         }
     }
 }

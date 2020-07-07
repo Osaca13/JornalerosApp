@@ -3,7 +3,8 @@
 @using JornalerosApp.Pages.Candidatos
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject UserManager<IdentityUser> UserManager
-<AuthorizeView>
+
+<AuthorizeView Roles="Candidato, Admin, Empresa">
     <NotAuthorized>
         <div class="jumbotron" style="background-color:transparent">
             <h1>Hello, world!</h1>
@@ -13,12 +14,42 @@
             <SurveyPrompt Title="How is Blazor working for you?" />
         </div>
     </NotAuthorized>
-    <Authorized>
-        <DatosPersona UserName="@context.User.Identity.Name" Id="@UserManager.GetUserId(context.User)"></DatosPersona>
+    <Authorized>        
+        @if (Tipo == "candidato")
+        {
+            <h1>Candidato</h1>
+            <DatosPersona UserName="@Name" Id="@Id"></DatosPersona>
+        }
+        @if (Tipo == "empresa")
+        {
+            <h1>Empresa</h1>
+            <DatosEmpresa UserName="@Name" Id="@Id"></DatosEmpresa>
+        }      
+
     </Authorized>
 </AuthorizeView>
 
 @code{
+    [CascadingParameter]
+    private Task<AuthenticationState> state { get; set; }
+    private AuthenticationState userAuthenticated { get; set; }
+    private string Id;
+    private string Name;
+    private string Tipo;
 
-
+    protected override async Task OnParametersSetAsync()
+    {
+        var userAuthenticated = await state;
+        Id = UserManager.GetUserId(userAuthenticated.User);
+        Name = userAuthenticated.User.Identity.Name;
+        StateHasChanged();
+        if (userAuthenticated.User.IsInRole("Candidato"))
+        {
+            Tipo = "candidato";
+        }
+        if (userAuthenticated.User.IsInRole("Empresa"))
+        {
+            Tipo = "empresa";
+        }
+    }
 }

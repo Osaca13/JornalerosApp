@@ -1,0 +1,29 @@
+﻿@page "/Empresa"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Authentication
+@using JornalerosApp.Pages.Candidatos
+@using JornalerosApp.Shared.Services
+
+@inject NavigationManager Navigation
+
+<h4>Datos de Empresa: @UserName</h4>
+
+
+<button class="btn btn-info" @onclick="IraCV">Informacion de Empresa</button>
+
+
+
+@code {
+    [Parameter] public string UserName { get; set; }
+    [Parameter] public string Id { get; set; }
+
+   
+
+    private void IraCV()
+    {
+        string direccion = "/Candidato/EditarCV/"+ Id;
+
+        Navigation.NavigateTo(direccion);
+    }
+
+}

@@ -20,11 +20,13 @@ namespace JornalerosApp
 
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
-            return Host.CreateDefaultBuilder(args)
+            var hostCreated = Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
             {
                webBuilder.UseStartup<Startup>();
             });
+           
+            return hostCreated;
         }
     }
 }

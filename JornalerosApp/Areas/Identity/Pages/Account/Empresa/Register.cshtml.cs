@@ -20,6 +20,7 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
@@ -27,11 +28,13 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
+            RoleManager<IdentityRole> roleManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _logger = logger;
             _emailSender = emailSender;
         }
@@ -41,7 +44,6 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
 
         public string ReturnUrl { get; set; }
 
-        public string Rol { get; set; }
 
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
@@ -70,7 +72,7 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null, string rol = null)
+        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             string route = this.RouteData.Values.Where(p => p.Key == "page").First().Value.ToString().Split("/")[2];
 
@@ -94,7 +96,16 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
 
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
+                    if(await _roleManager.FindByNameAsync(route) == null)
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Name = route,
+                            NormalizedName = route.ToUpper(),
+                            ConcurrencyStamp = Guid.NewGuid().ToString()
+                        });                        
+                    }
                     IdentityResult roleResult = await _userManager.AddToRoleAsync(user, route);
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)

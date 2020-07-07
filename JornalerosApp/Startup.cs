@@ -21,6 +21,10 @@ using System.Reflection;
 using Microsoft.Extensions.Options;
 using JornalerosApp.Shared.Services;
 using JornalerosApp.Data;
+using System.Net.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using AutoMapper;
+using JornalerosApp.Shared.Models;
 
 namespace JornalerosApp
 {
@@ -51,7 +55,6 @@ namespace JornalerosApp
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddMvc();
-            services.AddHttpClient();
             services.AddLocalization();
             var supportedCultures = new List<CultureInfo> { new CultureInfo("es"), new CultureInfo("ca") };
             services.Configure<RequestLocalizationOptions>(opt =>
@@ -70,15 +73,18 @@ namespace JornalerosApp
                 options.Password.RequireLowercase = false;
                 //options.Password.RequiredUniqueChars = 6;
             });
+            
             services.AddScoped<IWeatherForecastService, WeatherForecastService>();
             services.AddTransient<ISqlDataAccess, SqlDataAccess>();
-            services.AddTransient<IPersonaServices, PersonaServices>();
-            services.AddScoped<IPersonaDbServices, PersonaDbServices>();
-
-
+            services.AddLogging();
+            //services.AddTransient<IPersonaServices, PersonaServices>();
+            services.AddScoped<IDbServices<Persona>, PersonaDbServices>();
+            services.AddHttpClient();
+            services.AddApiClient();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+           
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
