@@ -181,9 +181,11 @@ app {
         display: block;
     }
 
-    #principal{
-        background-image:url("../images/campoSembrado.jpg");
+    #principal {
+        /* background-image:url("../images/campoSembrado.jpg");
         background-repeat:no-repeat;
-        background-size:cover;
+        background-size:cover;*/
+        background-color: #173B0B;
+/*        #105026;*/
     }
 }

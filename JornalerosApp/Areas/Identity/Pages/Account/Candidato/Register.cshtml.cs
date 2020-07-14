@@ -75,7 +75,7 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Candidato
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             var roleOfRegisteredUser = this.RouteData.Values.Where(p => p.Key == "page").First().Value.ToString().Split("/")[2];
-            returnUrl = returnUrl ?? Url.Content("~/");
+            returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
@@ -90,7 +90,7 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Candidato
                     string callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
                         pageHandler: null,
-                        values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
+                        values: new { area = "Identity", userId = user.Id, code, returnUrl },
                         protocol: Request.Scheme);
 
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
@@ -105,7 +105,7 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Candidato
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
                     }
                     else
                     {

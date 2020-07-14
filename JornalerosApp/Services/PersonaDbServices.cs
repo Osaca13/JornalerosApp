@@ -18,7 +18,7 @@ namespace JornalerosApp.Services
 {
     public class PersonaDbServices: IDbServices<Persona>  
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
         //private readonly ILogger _logger;
 
         public PersonaDbServices(ApplicationDbContext context)

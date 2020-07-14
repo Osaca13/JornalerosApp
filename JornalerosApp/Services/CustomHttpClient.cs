@@ -11,7 +11,7 @@ namespace JornalerosApp.Services
 {
     public class CustomHttpClient : ICustomHttpClient
     {
-        private HttpClient _httpClient;
+        private readonly HttpClient _httpClient;
         public CustomHttpClient(HttpClient httpClient)
         {
             _httpClient = httpClient;

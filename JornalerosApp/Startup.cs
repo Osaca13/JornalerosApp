@@ -25,6 +25,7 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using AutoMapper;
 using JornalerosApp.Shared.Models;
+using BlazorStrap;
 
 namespace JornalerosApp
 {
@@ -73,7 +74,7 @@ namespace JornalerosApp
                 options.Password.RequireLowercase = false;
                 //options.Password.RequiredUniqueChars = 6;
             });
-            
+            services.AddBootstrapCss();
             services.AddScoped<IWeatherForecastService, WeatherForecastService>();
             services.AddTransient<ISqlDataAccess, SqlDataAccess>();
             services.AddLogging();
@@ -106,7 +107,7 @@ namespace JornalerosApp
             
             var localizationOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value;
             app.UseRequestLocalization(localizationOptions);
-           
+            
             app.UseAuthentication();
             app.UseAuthorization();
 

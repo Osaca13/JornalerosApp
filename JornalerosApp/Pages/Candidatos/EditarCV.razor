@@ -3,7 +3,6 @@
 @using Microsoft.AspNetCore.Identity
 @using Newtonsoft.Json;
 @inject AuthenticationStateProvider Provider
-@*@inject ICustomHttpClient CustomHttpClient;*@
 @inject IHttpClientFactory Factory;
 @inject UserManager<IdentityUser> UserManager
 @inject NavigationManager Navigation
@@ -14,83 +13,78 @@
     <DataAnnotationsValidator />
     <div asp-validation-summary="All" class="text-danger"></div>
     <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="CorreoElectronico">Email</label>
-
-        <div class="col-sm-9">
-            <InputText Class="form-control" @bind-Value="@persona.CorreoElectronico" />
-            <ValidationMessage For="@(() => persona.CorreoElectronico)" />
-        </div>
+        <BSLabel For="CVCorreo" Class="mr-sm-6">Correo Electrónico: @persona.CorreoElectronico</BSLabel>
+        @*<BSBasicInput InputType="InputType.Text" Name="Correo" Id="CVCorreo" PlaceHolder="Correo Electrónico" @bind-Value="" />
+        <ValidationMessage For="@(() => persona.CorreoElectronico)" />*@
     </div>
     <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="Nombre">Nombre</label>
-        <div class="col-sm-9">
-            <InputText Class="form-control" @bind-Value="@persona.Nombre" />
+       
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVNombre" Class="mr-sm-6">Nombre</BSLabel>
+            <BSBasicInput InputType="InputType.Text" Name="Nombre" Id="CVNombre" PlaceHolder="Nombre" @bind-Value="@persona.Nombre" />
             <ValidationMessage For="@(() => persona.Nombre)" />
-        </div>
-    </div>
-    <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="PrimerApellido">Primer Apellido</label>
 
-        <div class="col-sm-9">
-            <InputText Class="form-control" @bind-Value="@persona.PrimerApellido" />
+        </BSFormGroup>
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVApellido" Class="mr-sm-6">Apellido</BSLabel>
+            <BSBasicInput InputType="InputType.Text" Name="Apellido" Id="CVApellido" PlaceHolder="Apellido" @bind-Value="@persona.PrimerApellido" />
             <ValidationMessage For="@(() => persona.PrimerApellido)" />
-        </div>
+
+        </BSFormGroup>
+        
     </div>
     <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="DNI">DNI/NIE</label>
-        <div class="col-sm-9">
-            <InputText Class="form-control" @bind-Value="@persona.Dni" />
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVDNI" Class="mr-sm-6">DNI/NIE</BSLabel>
+            <BSBasicInput InputType="InputType.Text" Name="DNI" Id="CVDNI" PlaceHolder="DNI/NIE" @bind-Value="@persona.Dni" />
             <ValidationMessage For="@(() => persona.Dni)" />
-        </div>
-    </div>
-    <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="FechaNacimiento">Fecha de Nacimiento</label>
 
-        <div class="col-sm-9">
-            <InputDate Class="form-control" @bind-Value="@persona.FechaNacimiento" />
+        </BSFormGroup>
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVFechaNacimiento" Class="mr-sm-6">Fecha de nacimiento</BSLabel>
+            <BSBasicInput InputType="InputType.Date" Name="FechaNacimiento" Id="CVFechaNacimiento" PlaceHolder="Fecha de Nacimiento" @bind-Value="@persona.FechaNacimiento" />
             <ValidationMessage For="@(() => persona.FechaNacimiento)" />
-        </div>
-    </div>
-    <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="Sexo">Sexo</label>
 
-        <div class="col-sm-9">
-            <InputSelect Class="form-control" @bind-Value="@persona.Sexo">
+        </BSFormGroup>
+      
+    </div>
+   
+    <div class="form-group row mb-1">
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVSexo" Class="mr-sm-6">Sexo</BSLabel>
+            <BSBasicInput Id="CVSexo" InputType="InputType.Select" @bind-Value="@persona.Sexo" >
                 <option value="" selected></option>
                 <option value="Masculino">Masculino</option>
                 <option value="Femenino">Femenino</option>
-            </InputSelect>
+            </BSBasicInput>
             <ValidationMessage For="@(() => persona.Sexo)" />
-        </div>
-    </div>
-    <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="LugarResidencia">Localidad de Residencia</label>
-
-        <div class="col-sm-9">
-            <InputText Class="form-control" @bind-Value="@persona.LugarResidencia" />
-            <ValidationMessage For="@(() => persona.LugarResidencia)" />
-        </div>
-    </div>
-    <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="ProvinciaResidencia">Provincia</label>
-
-        <div class="col-sm-9">
-            <InputText Class="form-control" @bind-Value="@persona.ProvinciaResidencia" />
-            <ValidationMessage For="@(() => persona.ProvinciaResidencia)" />
-        </div>
-    </div>
-    <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="CochePropio">¿Coche Propio?</label>
-
-        <div class="col-sm-9">
-            <InputSelect Class="form-control" @bind-Value="@persona.CochePropio">
+        </BSFormGroup>
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVCoche" Class="mr-sm-6">¿Coche propio?</BSLabel>
+            <BSBasicInput Id="CVCoche" InputType="InputType.Select" @bind-Value="@persona.CochePropio">
                 <option value="" selected></option>
-                <option value="No">No</option>
                 <option value="Si">Si</option>
-            </InputSelect>
+                <option value="No">No</option>
+            </BSBasicInput>
             <ValidationMessage For="@(() => persona.CochePropio)" />
-        </div>
+        </BSFormGroup>
+
     </div>
+    <div class="form-group row mb-1">
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVLocalidad" Class="mr-sm-6">Municipio Residencia</BSLabel>
+            <BSBasicInput InputType="InputType.Text" Name="Localidad" Id="CVLocalidad" PlaceHolder="Localidad" @bind-Value="@persona.LugarResidencia" />
+            <ValidationMessage For="@(() => persona.LugarResidencia)" />
+
+        </BSFormGroup>
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVProvincia" Class="mr-sm-6">Provincia</BSLabel>
+            <BSBasicInput InputType="InputType.Text" Name="Provincia" Id="CVProvincia" PlaceHolder="Provincia" @bind-Value="@persona.ProvinciaResidencia" />
+            <ValidationMessage For="@(() => persona.ProvinciaResidencia)" />
+        </BSFormGroup>
+        
+    </div>   
+    
     <div class="form-group text-center mb-0">
         <button type="submit" ref="createButton" id="BtnRegister" class="btn btn-primary">Guardar</button>
 

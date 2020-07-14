@@ -13,7 +13,7 @@ namespace JornalerosApp.Controllers
     [ApiController]
     public class PersonaController : ControllerBase
     {
-        private IDbServices<Persona> _personaDbServices;
+        private readonly IDbServices<Persona> _personaDbServices;
         //private ILogger _logger;
         public PersonaController(IDbServices<Persona> personaDbServices)
         {
