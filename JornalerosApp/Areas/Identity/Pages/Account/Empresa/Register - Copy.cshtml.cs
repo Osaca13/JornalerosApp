@@ -13,37 +13,30 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using JornalerosApp.Shared.Models;
-using JornalerosApp.Shared.Data.Migrations;
-using JornalerosApp.Data;
-using JornalerosApp.Shared.Services;
 
 namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
 {
     [AllowAnonymous]
-    public class RegisterModel : PageModel
+    public class RegisterModel2 : PageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly IDbServices<JornalerosApp.Shared.Models.Empresa> _empresaServices;
 
-        public RegisterModel(
+        public RegisterModel2(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             RoleManager<IdentityRole> roleManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender,
-            IDbServices<JornalerosApp.Shared.Models.Empresa> empresaServices)
+            IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _logger = logger;
             _emailSender = emailSender;
-            _empresaServices = empresaServices;
         }
 
         [BindProperty]
@@ -51,8 +44,8 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
 
         public string ReturnUrl { get; set; }
 
-        private Shared.Models.Empresa Empresa { get; set; } = new Shared.Models.Empresa();
-        public IList<AuthenticationScheme> ExternalLogins { get; set; }        
+
+        public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
         public class InputModel
         {
@@ -60,11 +53,6 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
-
-            [Required]
-            [DataType(DataType.Text)]
-            [Display(Name = "Nombre")]
-            public string Nombre { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
@@ -88,7 +76,7 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
         {
             string route = this.RouteData.Values.Where(p => p.Key == "page").First().Value.ToString().Split("/")[2];
 
-            returnUrl ??= Url.Content("~/");
+            returnUrl = returnUrl ?? Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
@@ -120,14 +108,9 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
                     }
                     IdentityResult roleResult = await _userManager.AddToRoleAsync(user, route);
 
-                    Empresa.CorreoElectronico = user.Email;
-                    Empresa.Nombre = this.Input.Nombre;
-
-                    await _empresaServices.AddItem(Empresa);                    
-
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                     }
                     else
                     {

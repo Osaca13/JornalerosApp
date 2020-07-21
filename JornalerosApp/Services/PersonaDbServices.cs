@@ -23,29 +23,69 @@ namespace JornalerosApp.Services
 
         public PersonaDbServices(ApplicationDbContext context)
         {
-            _context = context;
-            //_logger = logger;            
-        } 
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+                   
+        }
 
-        public EntityEntry<Persona> UpdateItem(string id, Persona item)
+        public async Task<IEnumerable<Persona>> AllItems()
+        {
+            return await _context
+                .Persona
+                .Include(p => p.Curriculum)
+                 .Include(p => p.Nacionalidad)
+                 .Include(p => p.Permiso)
+                 .Include(p => p.RelacionOfertaPersona)
+                .ToListAsync();
+        }
+
+        public async Task<Persona> GetItemById(string id)
+        {
+            return await _context.Persona.Where(p => p.IdPersona == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<Persona> GetItemByname(string name)
+        {
+             return await _context.Persona.Where(p => p.Nombre == name).FirstOrDefaultAsync();
+        }
+        
+        public async Task<bool> AddItem(Persona item)
+        {
+            var result = await _context.Persona.AddAsync(item);
+            await Save();
+            return result.State == EntityState.Added;         
+        }
+
+        public async Task<bool> UpdateItem(Persona item)
         {
             try
             {
                 var result = _context.Entry<Persona>(item);
                 result.State = EntityState.Modified;
-                Save();
-                return result;
+                await Save();
+                return true;
             }
             catch (Exception exc)
             {
                 Debug.WriteLine("Error updating" + exc.Message);
                 throw;
-            }
+            }           
         }
 
-        public void Save()
+        public async Task<bool> DeleteItem(string id)
         {
-            _context.SaveChanges();
+            var result = await _context.Persona.FindAsync(id);
+            if(result == null)
+            {
+                return false;
+            }
+
+            var entry = _context.Persona.Remove(result);
+            await Save();
+            return entry.State == EntityState.Deleted;
+        }
+        public async Task Save()
+        {
+            await _context.SaveChangesAsync();
         }
 
         private bool disposed = false;
@@ -66,36 +106,8 @@ namespace JornalerosApp.Services
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
+        }        
 
-        public async Task<EntityEntry<Persona>> AddItem(Persona item)
-        {
-            var c = await _context.Persona.AddAsync(item).AsTask();
-            this.Save();
-            return c;
-        }
-
-        public async Task<List<Persona>> AllItem()
-        {
-            return await _context.Persona
-                 .Include(p => p.Curriculum)
-                 .Include(p => p.Nacionalidad)
-                 .Include(p => p.Permiso)
-                 .Include(p => p.RelacionOfertaPersona)
-                 .ToListAsync();
-        }
-
-        public async Task<EntityEntry<Persona>> DeleteItem(string id)
-        {
-            Persona persona = await _context.Persona.FindAsync(id).AsTask();
-            var entry = _context.Persona.Remove(persona);
-            this.Save();
-            return entry;
-        }
-
-        public async Task<Persona> GetItemById(string id)
-        {
-            return await _context.Persona.FindAsync(id).AsTask();
-        }
+        
     }
 }

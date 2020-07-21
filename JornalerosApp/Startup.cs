@@ -42,11 +42,12 @@ namespace JornalerosApp
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.Configure<ISQLDatabaseSettings>(Configuration.GetSection(nameof(SQLDatabaseSettings)));
+            //services.AddSingleton<ISQLDatabaseSettings>(sp => sp.GetRequiredService<IOptions<SQLDatabaseSettings>>().Value);
             services.AddDbContext<ApplicationDbContext>(options =>
                {
                    options.UseSqlServer(
-                      Configuration.GetConnectionString("DefaultConnection"));
-                 
+                      Configuration.GetConnectionString("DefaultConnection"));    
                });
            
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
@@ -78,8 +79,8 @@ namespace JornalerosApp
             services.AddScoped<IWeatherForecastService, WeatherForecastService>();
             services.AddTransient<ISqlDataAccess, SqlDataAccess>();
             services.AddLogging();
-            //services.AddTransient<IPersonaServices, PersonaServices>();
             services.AddScoped<IDbServices<Persona>, PersonaDbServices>();
+            services.AddScoped<IDbServices<Empresa>, EmpresaDbServices>();
             services.AddHttpClient();
             services.AddApiClient();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

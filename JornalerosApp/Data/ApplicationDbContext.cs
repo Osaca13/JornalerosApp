@@ -1,15 +1,13 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using JornalerosApp.Shared.Data;
 using JornalerosApp.Shared.Models;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace JornalerosApp.Data
 {
-    public partial class ApplicationDbContext : IdentityDbContext
+    public partial class ApplicationDbContext : DbContext
     {
-        private IConfiguration configuration { get; }
         public ApplicationDbContext()
         {
         }
@@ -28,20 +26,19 @@ namespace JornalerosApp.Data
         public virtual DbSet<Oferta> Oferta { get; set; }
         public virtual DbSet<Permiso> Permiso { get; set; }
         public virtual DbSet<Persona> Persona { get; set; }
+        public virtual DbSet<RelacionMunicipioProvincia> RelacionMunicipioProvincia { get; set; }
         public virtual DbSet<RelacionOfertaPersona> RelacionOfertaPersona { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer(configuration.GetConnectionString("DafaultConnection"));
+                optionsBuilder.UseSqlServer("DefaultConnection");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Curriculum>(entity =>
             {
                 entity.HasKey(e => e.IdCurriculum);
@@ -72,6 +69,10 @@ namespace JornalerosApp.Data
             modelBuilder.Entity<Empresa>(entity =>
             {
                 entity.HasKey(e => e.IdEmpresa);
+
+                entity.Property(e => e.CorreoElectronico)
+                    .IsRequired()
+                    .HasMaxLength(150);
 
                 entity.Property(e => e.Nombre)
                     .IsRequired()
@@ -269,6 +270,31 @@ namespace JornalerosApp.Data
                 entity.Property(e => e.ProvinciaResidencia).HasMaxLength(50);
 
                 entity.Property(e => e.Sexo).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<RelacionMunicipioProvincia>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.Property(e => e.Cmun)
+                    .HasColumnName("CMUN")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.Cpro)
+                    .HasColumnName("CPRO")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.Dc)
+                    .HasColumnName("DC")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.Nombre)
+                    .HasColumnName("NOMBRE")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.Provincia)
+                    .HasColumnName("PROVINCIA")
+                    .HasMaxLength(255);
             });
 
             modelBuilder.Entity<RelacionOfertaPersona>(entity =>

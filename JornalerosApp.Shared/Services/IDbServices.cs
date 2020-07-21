@@ -8,11 +8,12 @@ namespace JornalerosApp.Shared.Services
 {
     public interface IDbServices<T> : IDisposable where T: class
     {
-        Task<EntityEntry<T>> AddItem(T item);
-        Task<List<T>> AllItem();
-        Task<EntityEntry<T>> DeleteItem(string id);
+        Task<bool> AddItem(T item);
+        Task<IEnumerable<T>> AllItems();
+        Task<T> GetItemByname(string name);
+        Task<bool> DeleteItem(string id);
         Task<T> GetItemById(string id);
-        void Save();
-        EntityEntry<T> UpdateItem(string id, T item);
+        Task<bool> UpdateItem(T item);
+        Task Save();        
     }
 }

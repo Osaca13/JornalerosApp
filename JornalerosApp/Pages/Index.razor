@@ -41,7 +41,7 @@
         var userAuthenticated = await state;
         Id = UserManager.GetUserId(userAuthenticated.User);
         Name = userAuthenticated.User.Identity.Name;
-        StateHasChanged();
+
         if (userAuthenticated.User.IsInRole("Candidato"))
         {
             Tipo = "candidato";
@@ -50,5 +50,6 @@
         {
             Tipo = "empresa";
         }
+        //StateHasChanged();
     }
 }

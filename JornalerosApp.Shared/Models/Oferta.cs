@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace JornalerosApp.Shared.Models
 {
-    public partial class Oferta
+    public class Oferta
     {
         public Oferta()
         {
             RelacionOfertaPersona = new HashSet<RelacionOfertaPersona>();
         }
 
-        [Key]
         public string IdOferta { get; set; }
         public string Titulo { get; set; }
         public string Descripcion { get; set; }

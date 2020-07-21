@@ -1,5 +1,5 @@
 ﻿@page "/Empresa/EditarFichaEmpresa/{Id}"
-@using JornalerosApp.Shared.Services
+@using JornalerosApp.Shared
 @using Microsoft.AspNetCore.Identity
 @using Newtonsoft.Json;
 @inject AuthenticationStateProvider Provider
@@ -10,87 +10,49 @@
 
 <h3>Editar Ficha de Empresa</h3>
 
-<EditForm Model="@persona" OnValidSubmit="@CrearDatosUsuario">
+<EditForm Model="@empresa" OnValidSubmit="@CrearDatosEmpresa">
     <DataAnnotationsValidator />
     <div asp-validation-summary="All" class="text-danger"></div>
     <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="CorreoElectronico">Email</label>
+        <label class="col-sm-3 col-form-label" for="CorreoElectronico">Correo</label>
 
         <div class="col-sm-9">
-            <InputText Class="form-control" @bind-Value="@persona.CorreoElectronico" />
-            <ValidationMessage For="@(() => persona.CorreoElectronico)" />
+            @*<InputText Class="form-control" @bind-Value="@empresa.CorreoElectronico" />
+            <ValidationMessage For="@(() => empresa.CorreoElectronico)" />*@
         </div>
     </div>
     <div class="form-group row mb-1">
         <label class="col-sm-3 col-form-label" for="Nombre">Nombre</label>
         <div class="col-sm-9">
-            <InputText Class="form-control" @bind-Value="@persona.Nombre" />
-            <ValidationMessage For="@(() => persona.Nombre)" />
+            <InputText Class="form-control" @bind-Value="@empresa.Nombre" />
+            <ValidationMessage For="@(() => empresa.Nombre)" />
         </div>
     </div>
     <div class="form-group row mb-1">
         <label class="col-sm-3 col-form-label" for="PrimerApellido">Primer Apellido</label>
 
         <div class="col-sm-9">
-            <InputText Class="form-control" @bind-Value="@persona.PrimerApellido" />
-            <ValidationMessage For="@(() => persona.PrimerApellido)" />
+            <InputText Class="form-control" @bind-Value="@empresa.RazonSocial" />
+            <ValidationMessage For="@(() => empresa.RazonSocial)" />
         </div>
     </div>
     <div class="form-group row mb-1">
         <label class="col-sm-3 col-form-label" for="DNI">DNI/NIE</label>
         <div class="col-sm-9">
-            <InputText Class="form-control" @bind-Value="@persona.Dni" />
-            <ValidationMessage For="@(() => persona.Dni)" />
+            <InputText Class="form-control" @bind-Value="@empresa.Provincia" />
+            <ValidationMessage For="@(() => empresa.Provincia)" />
         </div>
     </div>
     <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="FechaNacimiento">Fecha de Nacimiento</label>
+        <label class="col-sm-3 col-form-label" for="Telefono">Telefono</label>
 
         <div class="col-sm-9">
-            <InputDate Class="form-control" @bind-Value="@persona.FechaNacimiento" />
-            <ValidationMessage For="@(() => persona.FechaNacimiento)" />
+            <InputDate Class="form-control" @bind-Value="@empresa.Telefono" />
+            <ValidationMessage For="@(() => empresa.Telefono)" />
         </div>
     </div>
-    <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="Sexo">Sexo</label>
-
-        <div class="col-sm-9">
-            <InputSelect Class="form-control" @bind-Value="@persona.Sexo">
-                <option value="" selected></option>
-                <option value="Masculino">Masculino</option>
-                <option value="Femenino">Femenino</option>
-            </InputSelect>
-            <ValidationMessage For="@(() => persona.Sexo)" />
-        </div>
-    </div>
-    <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="LugarResidencia">Localidad de Residencia</label>
-
-        <div class="col-sm-9">
-            <InputText Class="form-control" @bind-Value="@persona.LugarResidencia" />
-            <ValidationMessage For="@(() => persona.LugarResidencia)" />
-        </div>
-    </div>
-    <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="ProvinciaResidencia">Provincia</label>
-
-        <div class="col-sm-9">
-            <InputText Class="form-control" @bind-Value="@persona.ProvinciaResidencia" />
-            <ValidationMessage For="@(() => persona.ProvinciaResidencia)" />
-        </div>
-    </div>
-    <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="CochePropio">¿Coche Propio?</label>
-
-        <div class="col-sm-9">
-            <InputSelect Class="form-control" @bind-Value="@persona.CochePropio">
-                <option value="" selected></option>
-                <option value="No">No</option>
-                <option value="Si">Si</option>
-            </InputSelect>
-            <ValidationMessage For="@(() => persona.CochePropio)" />
-        </div>
-    </div>
+    
+    
     <div class="form-group text-center mb-0">
         <button type="submit" ref="createButton" id="BtnRegister" class="btn btn-primary">Guardar</button>
 
@@ -101,7 +63,7 @@
 
 @code {
     [Parameter] public string Id { get; set; }
-    private Persona persona { get; set; } = new Persona();
+    private Empresa empresa { get; set; } = new Empresa();
     private HttpClient client;
     [Parameter] public System.Linq.Expressions.Expression<Func<string>> ValueExpression { get; set; }
 
@@ -113,19 +75,19 @@
         client = Factory.CreateClient("clientFirst");
         try
         {
-            persona = await client.GetFromJsonAsync<Persona>("Personas/" + Id);
-            if (persona.CorreoElectronico == null)
+            empresa = await client.GetFromJsonAsync<Empresa>("Empresa/" + Id);
+            if (empresa == null)
             {
-                persona = new Persona
+                empresa = new Empresa
                 {
-                    IdPersona = Id,
+                    IdEmpresa = Id,
                     Nombre = string.Empty,
-                    PrimerApellido = string.Empty,
-                    Sexo = string.Empty,
-                    CorreoElectronico = authState.User.Identity.Name
+                    RazonSocial = string.Empty,
+                    Provincia = string.Empty,
+                    Telefono = default
                 };
 
-                var respsta = await client.PostAsJsonAsync<Persona>("Personas/" + Id, persona);
+                var respsta = await client.PostAsJsonAsync<Empresa>("Empresas/" + Id, empresa);
             }
 
         }catch(Exception exc)
@@ -135,13 +97,13 @@
 
     }
 
-    private async void CrearDatosUsuario()
+    private async void CrearDatosEmpresa()
     {
         StateHasChanged();
         try
         {
-            var estado = await client.PutAsJsonAsync<Persona>("Personas/" + Id, persona);
-            
+            var estado = await client.PutAsJsonAsync<Empresa>("Empresas/" + Id, empresa);
+
         }catch(Exception exc)
         {
             System.Diagnostics.Debug.WriteLine(exc.Message);

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace JornalerosApp.Shared.Models
 {
-    public partial class Curriculum
+    public class Curriculum
     {
         public Curriculum()
         {
@@ -13,7 +12,6 @@ namespace JornalerosApp.Shared.Models
             Idioma = new HashSet<Idioma>();
         }
 
-        [Key]
         public string IdCurriculum { get; set; }
         public string IdPersona { get; set; }
         public string TramitarPermisoTrabajo { get; set; }

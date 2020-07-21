@@ -9,10 +9,7 @@ services:
     image: ${DOCKER_REGISTRY-}jornalerosapp
     build:
       context: .
-      dockerfile: JornalerosApp/Dockerfile
-
-      depends_on:
-      - sqldata      
+      dockerfile: JornalerosApp/Dockerfile        
      
 
  

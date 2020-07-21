@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace JornalerosApp.Shared.Models
 {
-    public partial class Idioma
+    public class Idioma
     {
-        [Key]
         public string IdIdioma { get; set; }
         public string Idioma1 { get; set; }
         public string IdCurriculum { get; set; }

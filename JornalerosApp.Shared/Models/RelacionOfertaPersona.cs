@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace JornalerosApp.Shared.Models
 {
-    public partial class RelacionOfertaPersona
+    public class RelacionOfertaPersona
     {
-        [Key]
         public string IdRelOfePer { get; set; }
         public string IdPersona { get; set; }
         public string IdOferta { get; set; }
