@@ -76,7 +76,7 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
         {
             string route = this.RouteData.Values.Where(p => p.Key == "page").First().Value.ToString().Split("/")[2];
 
-            returnUrl = returnUrl ?? Url.Content("~/");
+            returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
@@ -110,7 +110,7 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
                     }
                     else
                     {

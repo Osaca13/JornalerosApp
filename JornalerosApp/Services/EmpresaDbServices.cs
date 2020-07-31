@@ -20,9 +20,9 @@ namespace JornalerosApp.Services
 
         public async Task<bool> AddItem(Empresa item)
         {
-            var result = await _applicationDbContext.Empresa.AddAsync(item);
+            await _applicationDbContext.Empresa.AddAsync(item);
             await Save();
-            return result.State == EntityState.Added;
+            return true;
             
         }
 
@@ -36,9 +36,24 @@ namespace JornalerosApp.Services
             throw new NotImplementedException();
         }
 
+        private bool disposed = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    _applicationDbContext.Dispose();
+                }
+            }
+            this.disposed = true;
+        }
+
         public void Dispose()
         {
-            throw new NotImplementedException();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         public async Task<Empresa> GetItemById(string id)

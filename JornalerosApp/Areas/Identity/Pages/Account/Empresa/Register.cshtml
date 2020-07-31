@@ -7,66 +7,86 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<div class="row">
-    <div class="col-md-6">
-        <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h4>Crear nueva cuenta de empresa.</h4>
-            <hr />
-            <div asp-validation-summary="All" class="text-danger"></div>
+<form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+
+    <h4 style="text-align:center">Crear nueva cuenta de empresa.</h4>
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="row justify-content-center align-items-center">
+        <div class="col col-md-5">
             <div class="form-group">
                 <label asp-for="Input.Email"></label>
-                <input asp-for="Input.Email" class="form-control" />
+                <input asp-for="Input.Email" class="form-control" placeholder="No visible a candidatos" />
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Input.Nombre"></label>
-                <input asp-for="Input.Nombre" class="form-control" />
-                <span asp-validation-for="Input.Nombre" class="text-danger"></span>
+                <label asp-for="Input.NombreEmpresa"></label>
+                <input asp-for="Input.NombreEmpresa" class="form-control" placeholder="" />
+                <span asp-validation-for="Input.NombreEmpresa" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.NombreContacto"></label>
+                <input asp-for="Input.NombreContacto" class="form-control" placeholder="Persona de contacto" />
+                <span asp-validation-for="Input.NombreContacto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Cargo"></label>
+                <input asp-for="Input.Cargo" class="form-control" placeholder="" />
+                <span asp-validation-for="Input.Cargo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Telefono"></label>
+                <input asp-for="Input.Telefono" class="form-control" placeholder="No visible a candidatos"/>
+                <span asp-validation-for="Input.Telefono" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Input.Password"></label>
-                <input asp-for="Input.Password" class="form-control" />
+                <input asp-for="Input.Password" class="form-control" placeholder="contraseña" />
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col col-md-5">
+            <div class="form-group">
+                <label asp-for="Input.CIF"></label>
+                <input asp-for="Input.CIF" class="form-control" placeholder="" />
+                <span asp-validation-for="Input.CIF" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Actividad"></label>
+                <input asp-for="Input.Actividad" class="form-control" placeholder="" />
+                <span asp-validation-for="Input.Actividad" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Dirección"></label>
+                <input asp-for="Input.Dirección " class="form-control" />
+                <span asp-validation-for="Input.Dirección" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.CodigoPostal"></label>
+                <input asp-for="Input.CodigoPostal" class="form-control" />
+                <span asp-validation-for="Input.CodigoPostal" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Provincia"></label>
+                <input asp-for="Input.Provincia" class="form-control" />
+                <span asp-validation-for="Input.Provincia" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Input.ConfirmPassword"></label>
-                <input asp-for="Input.ConfirmPassword" class="form-control" />
+                <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="" />
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn btn-primary">Registro</button>
-        </form>
+        </div>
     </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h4>Usar otro servicio para registrarse</h4>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
-                            for details on setting up this ASP.NET application to support logging in via external services.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
-        </section>
+    
+    <div class="row justify-content-center align-items-center">       
+        
+        <button type="submit" style="text-align:center" class="btn btn-primary btn-lg">Registro</button>
+
     </div>
-</div>
+
+</form>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace JornalerosApp.Shared.Models
 {
-    public class Persona
+    public partial class Persona
     {
         public Persona()
         {

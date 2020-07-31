@@ -1,24 +1,28 @@
 version: '3.4'
 
 services:
-    sqldata:
-        container_name: sqldata
-        ports:
-            - "11433:1433"
-        environment:
-            SA_PASSWORD: "odynJRiC12"
-            ACCEPT_EULA: "Y"
+    blazor:
+     container_name: blazor
+     restart: always
+     volumes:
+     - ${WEBAPP_STORAGE_HOME}/site:/data/db
+     ports:
+     - "1433:1433"
+     environment:
+      SA_PASSWORD: "odynJRiC12"
+      ACCEPT_EULA: "Y"
 
     jornalerosapp:
-         environment:
-          - ASPNETCORE_ENVIRONMENT=Development
-          - ASPNETCORE_URLS=https://+:443;http://+:80
-         ports:
-          - "80:80"
-          - "44339:443"
-         volumes:
-          - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-          - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-
-         depends_on:
-                - sqldata
+     container_name: jornalerosapp
+     environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - "ConnectionStrings:ContainerConnection=Server=blazor;Database=Blazor;Persist Security Info=True;User ID=sa;Password=odynJRiC12"
+     ports:
+      - "8000:80"
+      - "44339:443"
+     volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+     depends_on:
+     - blazor

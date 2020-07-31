@@ -18,29 +18,36 @@
 
         <div class="col-sm-9">
             @*<InputText Class="form-control" @bind-Value="@empresa.CorreoElectronico" />
-            <ValidationMessage For="@(() => empresa.CorreoElectronico)" />*@
+                <ValidationMessage For="@(() => empresa.CorreoElectronico)" />*@
         </div>
     </div>
     <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="Nombre">Nombre</label>
+        <label class="col-sm-3 col-form-label" for="Nombre">Nombre de Empresa</label>
         <div class="col-sm-9">
-            <InputText Class="form-control" @bind-Value="@empresa.Nombre" />
-            <ValidationMessage For="@(() => empresa.Nombre)" />
+            <InputText Class="form-control" @bind-Value="@empresa.NombreEmpresa" />
+            <ValidationMessage For="@(() => empresa.NombreEmpresa)" />
         </div>
     </div>
     <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="PrimerApellido">Primer Apellido</label>
+        <label class="col-sm-3 col-form-label" for="Nombre">Persona de Contacto</label>
+        <div class="col-sm-9">
+            <InputText Class="form-control" @bind-Value="@empresa.NombreContacto" />
+            <ValidationMessage For="@(() => empresa.NombreContacto)" />
+        </div>
+    </div>
+    <div class="form-group row mb-1">
+        <label class="col-sm-3 col-form-label" for="PrimerApellido">Actividad</label>
 
         <div class="col-sm-9">
-            <InputText Class="form-control" @bind-Value="@empresa.RazonSocial" />
-            <ValidationMessage For="@(() => empresa.RazonSocial)" />
+            <InputText Class="form-control" @bind-Value="@empresa.Actividad" />
+            <ValidationMessage For="@(() => empresa.Actividad)" />
         </div>
     </div>
     <div class="form-group row mb-1">
-        <label class="col-sm-3 col-form-label" for="DNI">DNI/NIE</label>
+        <label class="col-sm-3 col-form-label" for="DNI">NIF/CIF</label>
         <div class="col-sm-9">
-            <InputText Class="form-control" @bind-Value="@empresa.Provincia" />
-            <ValidationMessage For="@(() => empresa.Provincia)" />
+            <InputText Class="form-control" @bind-Value="@empresa.Nifcif" />
+            <ValidationMessage For="@(() => empresa.Nifcif)" />
         </div>
     </div>
     <div class="form-group row mb-1">
@@ -51,8 +58,8 @@
             <ValidationMessage For="@(() => empresa.Telefono)" />
         </div>
     </div>
-    
-    
+
+
     <div class="form-group text-center mb-0">
         <button type="submit" ref="createButton" id="BtnRegister" class="btn btn-primary">Guardar</button>
 
@@ -81,8 +88,11 @@
                 empresa = new Empresa
                 {
                     IdEmpresa = Id,
-                    Nombre = string.Empty,
-                    RazonSocial = string.Empty,
+                    NombreEmpresa = string.Empty,
+                    NombreContacto = string.Empty,
+                    Cargo = string.Empty,
+                    Nifcif = string.Empty,
+                    Actividad = string.Empty,
                     Provincia = string.Empty,
                     Telefono = default
                 };

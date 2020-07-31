@@ -1,12 +1,12 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using JornalerosApp.Shared.Data;
 using JornalerosApp.Shared.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace JornalerosApp.Data
 {
-    public partial class ApplicationDbContext : DbContext
+    public partial class ApplicationDbContext : IdentityDbContext
     {
         public ApplicationDbContext()
         {
@@ -33,12 +33,14 @@ namespace JornalerosApp.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("DefaultConnection");
+                optionsBuilder.UseSqlServer("ContainerConnection");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Curriculum>(entity =>
             {
                 entity.HasKey(e => e.IdCurriculum);
@@ -70,13 +72,27 @@ namespace JornalerosApp.Data
             {
                 entity.HasKey(e => e.IdEmpresa);
 
+                entity.Property(e => e.Cargo).HasMaxLength(50);
+
+                entity.Property(e => e.CodigoPostal).HasMaxLength(50);
+
                 entity.Property(e => e.CorreoElectronico)
                     .IsRequired()
-                    .HasMaxLength(150);
+                    .HasMaxLength(450);
 
-                entity.Property(e => e.Nombre)
-                    .IsRequired()
+                entity.Property(e => e.Dirección).HasMaxLength(150);
+
+                entity.Property(e => e.Nifcif)
+                    .HasColumnName("NIFCIF")
                     .HasMaxLength(50);
+
+                entity.Property(e => e.NombreContacto)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.Property(e => e.NombreEmpresa)
+                    .IsRequired()
+                    .HasMaxLength(450);
 
                 entity.Property(e => e.Provincia).HasMaxLength(50);
 

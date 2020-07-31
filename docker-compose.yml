@@ -1,15 +1,11 @@
 version: '3.4'
 
 services:
+ blazor:
+  image: mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04
 
-  sqldata:
-      image: mcr.microsoft.com/mssql/server:2017-latest
-
-  jornalerosapp:
-    image: ${DOCKER_REGISTRY-}jornalerosapp
-    build:
-      context: .
-      dockerfile: JornalerosApp/Dockerfile        
-     
-
- 
+ jornalerosapp:
+  image: ${DOCKER_REGISTRY-}jornalerosapp
+  build:
+   context: .
+   dockerfile: JornalerosApp/Dockerfile

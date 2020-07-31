@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace JornalerosApp.Shared.Models
 {
-    public class RelacionMunicipioProvincia
+    public partial class RelacionMunicipioProvincia
     {
         public string Cpro { get; set; }
         public string Cmun { get; set; }

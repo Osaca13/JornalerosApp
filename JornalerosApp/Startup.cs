@@ -47,7 +47,7 @@ namespace JornalerosApp
             services.AddDbContext<ApplicationDbContext>(options =>
                {
                    options.UseSqlServer(
-                      Configuration.GetConnectionString("DefaultConnection"));    
+                      Configuration.GetConnectionString("ContainerConnection"));    
                });
            
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)

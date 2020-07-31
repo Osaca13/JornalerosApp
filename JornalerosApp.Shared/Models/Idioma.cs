@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace JornalerosApp.Shared.Models
 {
-    public class Idioma
+    public partial class Idioma
     {
         public string IdIdioma { get; set; }
         public string Idioma1 { get; set; }

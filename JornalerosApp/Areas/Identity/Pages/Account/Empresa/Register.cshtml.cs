@@ -58,22 +58,62 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
         {
             [Required]
             [EmailAddress]
-            [Display(Name = "Email")]
+            [Display(Name = "Correo Electrónico")]
             public string Email { get; set; }
 
             [Required]
             [DataType(DataType.Text)]
-            [Display(Name = "Nombre")]
-            public string Nombre { get; set; }
+            [Display(Name = "Nombre de Empresa")]
+            public string NombreEmpresa { get; set; }
+
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "Persona de Contacto")]
+            public string NombreContacto { get; set; }
+
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "Cargo")]
+            public string Cargo { get; set; }
+
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "Actividad")]
+            public string Actividad { get; set; }
+
+            [Required]
+            [DataType(DataType.PhoneNumber)]
+            [Display(Name = "Telefono")]
+            public decimal? Telefono { get; set; }
+
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "Dirección")]
+            public string Dirección { get; set; }
+
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "Código Postal")]
+            public string CodigoPostal { get; set; }
+
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "Provincia")]
+            public string Provincia { get; set; }
+
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "CIF/NIF")]
+            public string CIF { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
+            [Display(Name = "Contraseña")]
             public string Password { get; set; }
 
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
+            [Display(Name = "Confirmar contraseña")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
         }
@@ -108,7 +148,7 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
 
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-                    if(await _roleManager.FindByNameAsync(route) == null)
+                    if (await _roleManager.FindByNameAsync(route) == null)
                     {
                         await _roleManager.CreateAsync(new IdentityRole
                         {
@@ -116,14 +156,10 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
                             Name = route,
                             NormalizedName = route.ToUpper(),
                             ConcurrencyStamp = Guid.NewGuid().ToString()
-                        });                        
+                        });
                     }
                     IdentityResult roleResult = await _userManager.AddToRoleAsync(user, route);
-
-                    Empresa.CorreoElectronico = user.Email;
-                    Empresa.Nombre = this.Input.Nombre;
-
-                    await _empresaServices.AddItem(Empresa);                    
+                    await CrearEmpresa(user);
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -143,6 +179,22 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        private async Task CrearEmpresa(IdentityUser user)
+        {
+            Empresa.CorreoElectronico = user.Email;
+            Empresa.NombreEmpresa = this.Input.NombreEmpresa;
+            Empresa.NombreContacto = this.Input.NombreContacto;
+            Empresa.Nifcif = this.Input.CIF;
+            Empresa.Cargo = this.Input.Cargo;
+            Empresa.IdEmpresa = user.Id;
+            Empresa.Actividad = Input.Actividad;
+            Empresa.Provincia = Input.Provincia;
+            Empresa.Telefono = Input.Telefono;
+            Empresa.Dirección = Input.Dirección;
+            Empresa.CodigoPostal = Input.CodigoPostal;
+            await _empresaServices.AddItem(Empresa);
         }
     }
 }

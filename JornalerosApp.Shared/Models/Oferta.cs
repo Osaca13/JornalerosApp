@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace JornalerosApp.Shared.Models
 {
-    public class Oferta
+    public partial class Oferta
     {
         public Oferta()
         {

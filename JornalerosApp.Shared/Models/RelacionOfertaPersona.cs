@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace JornalerosApp.Shared.Models
 {
-    public class RelacionOfertaPersona
+    public partial class RelacionOfertaPersona
     {
         public string IdRelOfePer { get; set; }
         public string IdPersona { get; set; }
