@@ -47,7 +47,7 @@ namespace JornalerosApp
             services.AddDbContext<ApplicationDbContext>(options =>
                {
                    options.UseSqlServer(
-                      Configuration.GetConnectionString("ContainerConnection"));    
+                      Configuration.GetConnectionString("DefaultConnection"));    
                });
            
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
@@ -79,6 +79,7 @@ namespace JornalerosApp
             services.AddScoped<IWeatherForecastService, WeatherForecastService>();
             services.AddTransient<ISqlDataAccess, SqlDataAccess>();
             services.AddLogging();
+            services.AddScoped<IGetDbServices<RelacionMunicipioProvincia>, MunicipiosDbServices>();
             services.AddScoped<IDbServices<Persona>, PersonaDbServices>();
             services.AddScoped<IDbServices<Empresa>, EmpresaDbServices>();
             services.AddHttpClient();

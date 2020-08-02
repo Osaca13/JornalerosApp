@@ -33,7 +33,7 @@ namespace JornalerosApp.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("ContainerConnection");
+                optionsBuilder.UseSqlServer("DefaultConnection");
             }
         }
 
