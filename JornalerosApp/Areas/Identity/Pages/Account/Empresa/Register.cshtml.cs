@@ -17,6 +17,7 @@ using JornalerosApp.Shared.Models;
 using JornalerosApp.Shared.Data.Migrations;
 using JornalerosApp.Data;
 using JornalerosApp.Shared.Services;
+using JornalerosApp.Services;
 
 namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
 {
@@ -102,6 +103,8 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
             public string Provincia { get; set; }
 
             [Required]
+            [ValidacionNIF]
+            [StringLength(9, MinimumLength = 9)]
             [DataType(DataType.Text)]
             [Display(Name = "CIF/NIF")]
             public string CIF { get; set; }
@@ -195,6 +198,11 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
             Empresa.Dirección = Input.Dirección;
             Empresa.CodigoPostal = Input.CodigoPostal;
             await _empresaServices.AddItem(Empresa);
+        }
+
+        private void ComprobarNIF()
+        {
+
         }
     }
 }

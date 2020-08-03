@@ -1,25 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace JornalerosApp.Services
 {
-    public static class CalculoLetraNIEDNI
+    public class ValidacionNIF : ValidationAttribute
     {
+        private static string Tipo = string.Empty;
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            return NumeroDNI(Convert.ToString(value)) ? ValidationResult.Success : new ValidationResult(Tipo + "Incorrecto");
+        }
 
-        public static void NumeroDNI(string numero)
+        public static bool NumeroDNI(string numero)
         {
             char[] array = numero.ToCharArray();
             string resulDNI = string.Empty;
-            for (int i = 0; i < array.Length; i++)
-            {
-               if (Char.IsNumber(array[0]))
+            if (char.IsNumber(array[0]))
                {
-                  resulDNI = string.Concat(array[i]);
+                  resulDNI = string.Concat(array[0]);
+                  Tipo = "NIF"; 
                }
                else
                {
+                Tipo = "NIE";
                  if (array[0].Equals("X"))
                  {
                     resulDNI = string.Concat("0");
@@ -32,14 +38,14 @@ namespace JornalerosApp.Services
                  {
                     resulDNI = string.Concat("2");
                  }
-               }             
-               
-                
-            }
+               }
+            for (int j = 1; j < array.Length-1; j++)
+            {
+               resulDNI = string.Concat(resulDNI, array[j].ToString());
+            }    
             
+            return Modulo23(int.Parse(resulDNI)).Equals(array[array.Length - 1].ToString());            
         }
-
-
 
         public static string Modulo23(int numeroDNI)
         {
@@ -165,10 +171,5 @@ namespace JornalerosApp.Services
             }
             return letra;
         }
-    }
-
-
-    
-        
-
+    }     
 }

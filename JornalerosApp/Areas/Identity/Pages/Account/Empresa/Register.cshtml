@@ -48,8 +48,8 @@
         <div class="col col-md-5">
             <div class="form-group">
                 <label asp-for="Input.CIF"></label>
-                <input asp-for="Input.CIF" class="form-control" placeholder="" />
-                <span asp-validation-for="Input.CIF" class="text-danger"></span>
+                <input asp-for="Input.CIF" class="form-control" placeholder="" onchange="ComprobarNIF" />
+                <span asp-validation-for="Input.CIF" onchange="ComprobarNIF()" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Input.Actividad"></label>
