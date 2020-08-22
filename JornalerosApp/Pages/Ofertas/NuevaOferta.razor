@@ -1,0 +1,38 @@
+﻿@page "/NuevaOferta/{id}"
+@inject IHttpClientFactory Factory
+@inject NavigationManager UriHelper
+@attribute [Authorize]
+@using JornalerosApp.Pages.Ofertas
+@using Microsoft.AspNetCore.Authorization;
+
+<h3>Crear Oferta</h3>
+
+<FormularioOferta TextoBoton="Crear Oferta" OnValidSubmit="@CrearOferta" Oferta="@oferta" ></FormularioOferta>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    Oferta oferta = new Oferta();
+    Empresa empresa = new Empresa();
+    HttpClient client;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        client = Factory.CreateClient("clientFirst");
+        oferta.IdEmpresa = Id;
+        empresa = await client.GetFromJsonAsync<Empresa>("Empresas/" + Id);
+    }
+
+    async Task CrearOferta()
+    {
+
+        var ofertaNueva = await client.PostAsJsonAsync<Oferta>("Oferta/", oferta);
+        if(ofertaNueva.IsSuccessStatusCode)
+        {
+            empresa.Oferta.Add(oferta);
+            await client.PutAsJsonAsync<Empresa>("Empresas/" + Id, empresa);
+            UriHelper.NavigateTo("/BuscarOferta/"+Id);
+        }
+
+    }
+}

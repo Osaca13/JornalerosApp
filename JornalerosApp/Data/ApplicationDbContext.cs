@@ -261,14 +261,14 @@ namespace JornalerosApp.Data
                 entity.HasKey(e => e.IdPersona);
 
                 entity.Property(e => e.CochePropio)
-                    .HasMaxLength(10)
+                    .HasMaxLength(2)
                     .IsFixedLength();
 
                 entity.Property(e => e.CorreoElectronico).HasMaxLength(50);
 
                 entity.Property(e => e.Dni)
                     .HasColumnName("DNI")
-                    .HasMaxLength(10)
+                    .HasMaxLength(9)
                     .IsFixedLength();
 
                 entity.Property(e => e.FechaNacimiento).HasColumnType("date");

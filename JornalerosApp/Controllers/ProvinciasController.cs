@@ -12,10 +12,10 @@ namespace JornalerosApp.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class RelacionMunicipiosProvinciasController : Controller
+    public class ProvinciasController : Controller
     {
         public readonly IGetDbServices<RelacionMunicipioProvincia> _context;
-        public RelacionMunicipiosProvinciasController(IGetDbServices<RelacionMunicipioProvincia> context)
+        public ProvinciasController(IGetDbServices<RelacionMunicipioProvincia> context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
@@ -32,13 +32,13 @@ namespace JornalerosApp.Controllers
         }
 
         // GET api/<RelacionMunicipiosProvinciasController>/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<string>>> GetMunicipios(string id)
+        [HttpGet("{provincia}")]
+        public async Task<ActionResult<IEnumerable<string>>> GetMunicipios(string provincia)
         {
             var result = await _context.AllItems();
             if (result != null)
             {
-                return Ok(result.Where(p => p.Cpro == id).Select(p => p.Nombre).Distinct().ToList());
+                return Ok(result.Where(p => p.Provincia.Equals(provincia)).Select(p => p.Nombre).Distinct().ToList());
             }
             return NoContent();
         }       

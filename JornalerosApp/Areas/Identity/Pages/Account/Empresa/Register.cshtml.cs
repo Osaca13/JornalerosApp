@@ -200,9 +200,5 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
             await _empresaServices.AddItem(Empresa);
         }
 
-        private void ComprobarNIF()
-        {
-
-        }
     }
 }

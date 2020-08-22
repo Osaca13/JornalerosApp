@@ -1,4 +1,4 @@
-﻿@page "/Candidato/EditarCV/{Id}"
+﻿@page "/Candidato/EditarDP/{Id}"
 @using JornalerosApp.Shared.Services
 @using Microsoft.AspNetCore.Components.Forms
 @using Newtonsoft.Json;
@@ -7,9 +7,9 @@
 @inject UserManager<IdentityUser> UserManager
 @inject NavigationManager Navigation
 
-<h3>Curriculum Vitae</h3>
+<h3>Editar Datos Personales</h3>
 
-<EditForm Model="@persona" OnValidSubmit="@CrearCurriculum">
+<EditForm Model="@persona" OnValidSubmit="@CrearDatosUsuario">
     <DataAnnotationsValidator />
     <div asp-validation-summary="All" class="text-danger"></div>
     <div class="form-group row mb-1">
@@ -188,7 +188,7 @@
         }
     }
 
-    private async void CrearCurriculum()
+    private async void CrearDatosUsuario()
     {
         await InvokeAsync(() => StateHasChanged());
         try

@@ -1,0 +1,158 @@
+﻿@using JornalerosApp.Pages.Shared
+@inject IHttpClientFactory Factory
+
+
+
+<EditForm Model="@Oferta" OnValidSubmit="@OnValidSubmit">
+    <div class="form-group row">
+        <div class="col">
+            <label>Nombre:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@Oferta.Titulo" />
+                <ValidationMessage For="@(() => Oferta.Titulo)" />
+            </div>
+        </div>
+        <div class="col">
+            <label>Fecha Publicacion:</label>
+            <div>
+                <InputDate  class="form-control" style="width:100%" @bind-Value="@Oferta.FechaPublicacion" @bind-Value:format="dd-mm-yy" placeholder="@temp"/>
+                <ValidationMessage For="@(() => Oferta.FechaPublicacion)" />
+            </div>
+            </div>
+        </div>
+    <div class="form-group">         
+            <label>Descripción:</label>
+            <InputTextArea  style="width:100%"  @bind-Value="@Oferta.Descripcion" placeholder="Describa brevemente..."></InputTextArea>    
+    </div>  
+    <div class="form-group row">
+        <div class="col">
+            <label>¿Tiene continuidad?:</label>
+            <div>
+                <InputCheckbox class="form-control" @bind-Value="@ContinuidadIgualLabor" @onselect="(e => ContinuidadIgual(e, ContinuidadIgualLabor))" />
+                <ValidationMessage For="@(() => Oferta.ContinuidadIgualLabor)" />
+            </div>
+        </div>
+        <div class="col">
+            <label>¿Hay continuidad en otra labor?</label>
+            <div>
+                <InputCheckbox class="form-control" style="width:100%" @bind-Value="@ContinuidadOtraLabor" @onselect="(e => ContinuidadOtra(e, ContinuidadOtraLabor))" />
+                <ValidationMessage For="@(() => Oferta.ContinuidadOtraLabor)" />
+            </div>
+        </div>
+        <div class="col">
+            <label>¿Hay alojamiento?</label>
+            <div>
+                <InputCheckbox class="form-control" style="width:100%" @bind-Value="@Alojamiento"  @onselect="(e => ContinuidadOtra(e, Alojamiento))" />
+                <ValidationMessage For="@(() => Oferta.Alojamiento)" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+                <label>Lugar:</label>
+                <div>
+                    <InputSelectNumber class="form-control"
+                                       ValueChanged="@((string value) => ValorPaisCambiado(value))"
+                                       ValueExpression="@(() => Oferta.LugarTrabajo)"
+                                       Value="Oferta.LugarTrabajo">
+                        <option value="0">--Seleccione un país--</option>
+                        @foreach (var item in Lugar)
+                        {
+                            @if (Oferta.LugarTrabajo == item)
+                            {
+                                <option selected value="@item">@item</option>
+                            }
+                            else
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        }
+                    </InputSelectNumber>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Provincia:</label>
+                <div>
+                    <InputSelectNumber class="form-control" @bind-Value="@Oferta.Provincia">
+                        <option value="0">--Seleccione un estado--</option>
+                        @foreach (var item in Provincias)
+                        {
+                            @if (Oferta.Provincia == item)
+                            {
+                                <option selected value="@item">@item</option>
+                            }
+                            else
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        }
+                    </InputSelectNumber>
+                    <ValidationMessage For="@(() => Oferta.Provincia)" />
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success">@TextoBoton</button>
+            <DataAnnotationsValidator />
+</EditForm>
+
+@code {
+    [Parameter] public Oferta Oferta { get; set; } = new Oferta();
+    [Parameter] public String TextoBoton { get; set; } = "Salvar cambios";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+    private DateTime temp { get; set; } = DateTime.Now;
+    private string titulo { get; set; }
+    List<string> Provincias = new List<string>();
+    List<string> Lugar = new List<string>();
+    private HttpClient client;
+    bool ContinuidadIgualLabor { get; set; }
+    bool ContinuidadOtraLabor { get; set; }
+    bool Alojamiento { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        if (Oferta.Provincia != null)
+        {
+            client = Factory.CreateClient("clientFirst");
+            Provincias = await client.GetFromJsonAsync<List<string>>("Provincias");
+
+        }
+    }
+
+    private async Task ValorPaisCambiado(string value)
+    {
+        await InvokeAsync(StateHasChanged);
+
+        if (value == string.Empty)
+        {
+
+        }
+        else
+        {
+            Lugar = await client.GetFromJsonAsync<List<string>>("Provincias/" + value);
+            //await CargarEstados(value);
+        }
+    }
+
+    private void ContinuidadIgual(EventArgs e, bool continuidad)
+    {
+        Oferta.ContinuidadIgualLabor = Oferta.ContinuidadIgualLabor == null ? "si":"no";
+        ContinuidadIgualLabor = Oferta.ContinuidadIgualLabor == "si";
+    }
+
+    private void ContinuidadOtra(EventArgs e, bool continuidad)
+    {
+
+        Oferta.ContinuidadOtraLabor = Oferta.ContinuidadOtraLabor == null ? "si" : "no";
+        ContinuidadOtraLabor = Oferta.ContinuidadOtraLabor == "si";
+    }
+
+    private async Task CargarEstados(string paisId)
+    {
+        //Estados = await http.GetJsonAsync<List<Estado>>($"api/paises/{paisId}/estados");
+    }
+}
+
+
+

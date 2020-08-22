@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,22 +21,33 @@ namespace JornalerosApp.Data
 
         public async Task<List<T>> LoadData<T, U>(string sql, U parameters)
         {
-            string getStringConnection = _configuration.GetConnectionString("DefaultConnection");
-            using (IDbConnection dbConnection = new SqlConnection(getStringConnection))
+            try
             {
-                var tiempoDeEspera = dbConnection.ConnectionTimeout;
-                var data = await dbConnection.QueryAsync<T>(sql, parameters);
-                return data.ToList();
-            }
+                IEnumerable<T> data = new List<T>();
+                string getStringConnection = _configuration.GetConnectionString("DefaultConnection");
+                using IDbConnection dbConnection = new SqlConnection(getStringConnection);
+                data = await dbConnection.QueryAsync<T>(sql, parameters);
+                return data.Count() > 0 ? data.ToList() : null;
+            }catch(Exception exc)
+            {
+                Debug.WriteLine(exc.Message);
+                throw;
+            }            
         }
 
         public async Task SaveData<T>(string sql, T parameters)
         {
-            string getStringConnection = _configuration.GetConnectionString("DataConnection");
-            using (IDbConnection dbConnection = new SqlConnection(getStringConnection))
+            try
             {
-                await dbConnection.ExecuteAsync(sql, parameters);                
+                string getStringConnection = _configuration.GetConnectionString("DataConnection");
+                using IDbConnection dbConnection = new SqlConnection(getStringConnection);
+                await dbConnection.ExecuteAsync(sql, parameters);
+            }catch(Exception exc)
+            {
+                Debug.WriteLine(exc.Message);
+                throw;
             }
+           
         }
 
         

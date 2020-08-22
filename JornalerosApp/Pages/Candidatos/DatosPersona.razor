@@ -8,22 +8,42 @@
 
 <h4>Datos Personales: @UserName</h4>
 
+<BSContainer Class="jumbotron row">
+    <BSContainer Class="col-4">
+        <button class="btn btn-info" @onclick="IraDP">Datos personales</button>
+    </BSContainer>
+    <BSContainer Class="col-4">
+        <button class="btn btn-info" @onclick="IraCV">Curriculum Vitae</button>
+    </BSContainer>
+    <BSContainer Class="col-4">
+        <button class="btn btn-info" @onclick="IraOfertas">Buscar ofertas</button>
+    </BSContainer>
 
-<button class="btn btn-info" @onclick="IraCV">Curriculum Vitae</button>
+        </BSContainer>
+        @code {
+            [Parameter] public string UserName { get; set; }
+            [Parameter] public string Id { get; set; }
 
 
 
-@code {
-    [Parameter] public string UserName { get; set; }
-    [Parameter] public string Id { get; set; }
+            private void IraDP()
+            {
+                string direccion = "/Candidato/EditarDP/" + Id;
 
-   
+                Navigation.NavigateTo(direccion);
+            }
 
-    private void IraCV()
-    {
-        string direccion = "/Candidato/EditarCV/"+ Id;
+            private void IraCV()
+            {
+                string direccion = "/Candidato/EditarCV/" + Id;
 
-        Navigation.NavigateTo(direccion);
-    }
+                Navigation.NavigateTo(direccion);
+            }
 
-}
+            private void IraOfertas()
+            {
+
+                Navigation.NavigateTo("/BuscarOfertas/" + "NO");
+            }
+
+        }

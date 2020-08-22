@@ -26,6 +26,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using AutoMapper;
 using JornalerosApp.Shared.Models;
 using BlazorStrap;
+using JornalerosApp.Shared.Entities;
 
 namespace JornalerosApp
 {
@@ -54,6 +55,9 @@ namespace JornalerosApp
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddScoped<ApplicationDbContext>();
+            services.AddControllers().AddNewtonsoftJson();
+            //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddMvc();
@@ -76,16 +80,18 @@ namespace JornalerosApp
                 //options.Password.RequiredUniqueChars = 6;
             });
             services.AddBootstrapCss();
+            services.AddAutoMapper(typeof(ModelMapper));
             services.AddScoped<IWeatherForecastService, WeatherForecastService>();
             services.AddTransient<ISqlDataAccess, SqlDataAccess>();
+            services.AddTransient<ISQLDatabaseServices, SQLDatabaseServices>();
             services.AddLogging();
+            services.AddTransient<ValidacionNIF>();
             services.AddScoped<IGetDbServices<RelacionMunicipioProvincia>, MunicipiosDbServices>();
             services.AddScoped<IDbServices<Persona>, PersonaDbServices>();
             services.AddScoped<IDbServices<Empresa>, EmpresaDbServices>();
+            services.AddScoped<IDbServices<Oferta>, OfertaDbServices>();
             services.AddHttpClient();
             services.AddApiClient();
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-           
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

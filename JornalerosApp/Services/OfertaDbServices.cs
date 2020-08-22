@@ -10,39 +10,31 @@ using System.Threading.Tasks;
 
 namespace JornalerosApp.Services
 {
-    public class EmpresaDbServices : IDbServices<Empresa>
+    public class OfertaDbServices : IDbServices<Oferta>
     {
         private readonly ApplicationDbContext _applicationDbContext;
 
-        public EmpresaDbServices(ApplicationDbContext applicationDbContext)
+        public OfertaDbServices(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
         }
 
-        public async Task<bool> AddItem(Empresa item)
+        public async Task<bool> AddItem(Oferta item)
         {
-            await _applicationDbContext.Empresa.AddAsync(item);
+            await _applicationDbContext.Oferta.AddAsync(item);
             await Save();
             return true;
             
         }
 
-        public async Task<IEnumerable<Empresa>> AllItems()
+        public async Task<IEnumerable<Oferta>> AllItems()
         {
-            return await _applicationDbContext.Empresa.ToListAsync();
+            return await _applicationDbContext.Oferta.ToListAsync();
         }
 
-        public async Task<bool> DeleteItem(string id)
+        public Task<bool> DeleteItem(string id)
         {
-            var result = await _applicationDbContext.Empresa.FindAsync(id);
-            if (result == null)
-            {
-                return false;
-            }
-
-            var entry = _applicationDbContext.Empresa.Remove(result);
-            await Save();
-            return entry.State == EntityState.Deleted;
+            throw new NotImplementedException();
         }
 
         private bool disposed = false;
@@ -65,14 +57,14 @@ namespace JornalerosApp.Services
             GC.SuppressFinalize(this);
         }
 
-        public async Task<Empresa> GetItemById(string id)
+        public async Task<Oferta> GetItemById(string id)
         {
-            return await _applicationDbContext.Empresa.Where(p => p.IdEmpresa == id).Include(p => p.Oferta).FirstOrDefaultAsync();
+            return await _applicationDbContext.Oferta.Where(p => p.IdEmpresa == id).FirstOrDefaultAsync();
         }
 
-        public async Task<Empresa> GetItemByname(string name)
+        public async Task<Oferta> GetItemByname(string name)
         {
-            return await _applicationDbContext.Empresa.Where(p => p.NombreEmpresa == name).FirstOrDefaultAsync();
+            return await _applicationDbContext.Oferta.Where(p => p.Titulo == name).FirstOrDefaultAsync();
         }
 
         public async Task Save()
@@ -80,18 +72,18 @@ namespace JornalerosApp.Services
             await _applicationDbContext.SaveChangesAsync();
         }
 
-        public async Task<bool> UpdateItem(Empresa item)
+        public async Task<bool> UpdateItem(Oferta item)
         {
             try
             {
-                var result = _applicationDbContext.Entry<Empresa>(item);
+                var result = _applicationDbContext.Entry<Oferta>(item);
                 result.State = EntityState.Modified;
                 await Save();
                 return true;
             }
             catch (Exception exc)
             {
-                Debug.WriteLine("Error updating Empresa: " + exc.Message);
+                Debug.WriteLine("Error updating" + exc.Message);
                 throw;
             }
         }

@@ -10,6 +10,8 @@
 
 
 <button class="btn btn-info" @onclick="IraCV">Informacion de Empresa</button>
+<button class="btn btn-info" @onclick="IraOfertas">Ver mis ofertas</button>
+
 
 
 
@@ -17,11 +19,17 @@
     [Parameter] public string UserName { get; set; }
     [Parameter] public string Id { get; set; }
 
-   
+
 
     private void IraCV()
     {
-        string direccion = "/Empresa/EditarFichaEmpresa/"+ Id;
+        string direccion = "/Empresa/EditarFichaEmpresa/" + Id;
+
+        Navigation.NavigateTo(direccion);
+    }
+    private void IraOfertas()
+    {
+        string direccion = "/BuscarOfertas/"+Id;
 
         Navigation.NavigateTo(direccion);
     }

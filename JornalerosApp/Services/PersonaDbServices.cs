@@ -40,7 +40,11 @@ namespace JornalerosApp.Services
 
         public async Task<Persona> GetItemById(string id)
         {
-            return await _context.Persona.Where(p => p.IdPersona == id).FirstOrDefaultAsync();
+            var data = await _context.Persona.Where(p => p.IdPersona == id).Include(p => p.Curriculum)
+                 .Include(p => p.Nacionalidad)
+                 .Include(p => p.Permiso)
+                 .Include(p => p.RelacionOfertaPersona).FirstOrDefaultAsync();
+            return data;
         }
 
         public async Task<Persona> GetItemByname(string name)

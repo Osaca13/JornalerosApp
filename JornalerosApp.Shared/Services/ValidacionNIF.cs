@@ -4,11 +4,16 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace JornalerosApp.Services
+namespace JornalerosApp.Shared.Services
 {
     public class ValidacionNIF : ValidationAttribute
     {
         private static string Tipo = string.Empty;
+
+        public ValidacionNIF()
+        {
+        }
+
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             return NumeroDNI(Convert.ToString(value)) ? ValidationResult.Success : new ValidationResult(Tipo + "Incorrecto");
@@ -39,12 +44,12 @@ namespace JornalerosApp.Services
                     resulDNI = string.Concat("2");
                  }
                }
-            for (int j = 1; j < array.Length-1; j++)
+            for (int j = 1; j < 8; j++)
             {
                resulDNI = string.Concat(resulDNI, array[j].ToString());
-            }    
-            
-            return Modulo23(int.Parse(resulDNI)).Equals(array[array.Length - 1].ToString());            
+            }
+            var ultimaletra = array[8].ToString();
+            return Modulo23(int.Parse(resulDNI)).Equals(ultimaletra);
         }
 
         public static string Modulo23(int numeroDNI)

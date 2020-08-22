@@ -1,0 +1,166 @@
+﻿@page "/BuscarOfertas/{id}"
+@using JornalerosApp.Shared.Models
+@using Microsoft.AspNetCore.Identity
+@using Newtonsoft.Json;
+@inject JornalerosApp.Shared.Services.ISQLDatabaseServices SqlDbServices
+@inject AuthenticationStateProvider Provider
+@inject IHttpClientFactory Factory
+@inject UserManager<IdentityUser> UserManager
+@inject NavigationManager Navigation
+
+<AuthorizeView Roles="Candidato, Admin">
+    <Authorized Context="authState">
+        <h3>Buscar Oferta </h3>
+        <BSForm Model="searchParameters">
+            <BSFormGroup IsRow="true">
+                <BSLabel For="Actividad" SM="2">Actividad</BSLabel>
+                <BSCol SM="4">
+                    <BSBasicInput InputType="InputType.Text" Id="Actividad" @bind-Value="@searchParameters.Actividad" />
+                </BSCol>
+                <BSLabel For="Lugar" SM="2">Lugar</BSLabel>
+                <BSCol SM="4">
+                    <BSBasicInput InputType="InputType.Text" Id="Lugar" @bind-Value="@searchParameters.Lugar" />
+                </BSCol>
+            </BSFormGroup>
+            <BSFormGroup IsRow="true">
+                <BSLabel For="fecha" SM="2">Fecha de publicación</BSLabel>
+                <BSCol SM="4">
+                    <BSBasicInput InputType="InputType.Date" Id="fecha" @bind-Value="@searchParameters.FechaDePublicacion" />
+                </BSCol>
+                <BSLabel For="Caducidad" SM="2">Fecha de Cierre</BSLabel>
+                <BSCol SM="4">
+                    <BSBasicInput InputType="InputType.Text" Id="Caducidad" @bind-Value="@searchParameters.FechaDeCaducidad" />
+                </BSCol>
+            </BSFormGroup>
+            <BSFormGroup IsRow="true">
+                <BSCol SM="6" SMOffset="2">
+                    <BSButton Size="Size.Medium" IsBlock="true" ButtonType="ButtonType.Submit" @onclick="@(() =>Busqueda())">Filtrar</BSButton>
+                </BSCol>
+            </BSFormGroup>
+        </BSForm>
+    </Authorized>
+</AuthorizeView>
+
+
+<ListadoGenerico Listado=@ListaOfertas Titulo=@titulo>
+    <ListadoConElementos>
+        @if (Id != "NO")
+        {
+            <BSButton class="btn btn-dark" OnClick="CrearOferta">Crear nueva oferta</BSButton>
+        }
+        <BSTable class="table">
+            <thead>
+                <tr>
+                    <th>Titulo</th>
+                    <th>Descripcion</th>
+                    <th>Nombre de Empresa</th>
+                    <th>Jornada</th>
+                    <th></th>
+                    <th></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var oferta in ListaOfertas)
+                {
+                    <tr>
+                        <td>@oferta.Titulo</td>
+                        <td>@oferta.Descripcion</td>
+                        <td>@oferta.NombreEmpresa</td>
+                        <td>@oferta.JornadaReal</td>
+                        @if (Id == "NO")
+                        {
+                            <td><BSButton class="btn btn-info" OnClick="VerOferta">Ver detalles</BSButton></td>
+                            <td><BSButton class="btn btn-info" OnClick="IncribirmeOferta">Inscribirme</BSButton></td>
+
+                        }
+                        @if (Id != "NO")
+                        {
+                            <td><BSButton class="btn btn-info" OnClick="EditarOferta">Editar</BSButton></td>
+                            <td><BSButton class="btn btn-danger" OnClick="EliminarOferta">Eliminar</BSButton></td>
+                        }
+
+                    </tr>
+                }
+            </tbody>
+
+        </BSTable>
+    </ListadoConElementos>
+</ListadoGenerico>
+
+@code {
+
+    [Parameter]
+    public string Id { get; set; }
+
+    private List<ListaOferta> ListaOfertas { get; set; } = new List<ListaOferta>();
+    private EmpresaModel empresa { get; set; } = new EmpresaModel();
+    private Oferta oferta { get; set; } = new Oferta();
+    private Search searchParameters { get; set; } = new Search();
+    private HttpClient client;
+    private System.Security.Claims.ClaimsPrincipal user { get; set; }
+    private AuthenticationState authState { get; set; }
+    private string titulo { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        authState = await Provider.GetAuthenticationStateAsync();
+        user = authState.User;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        client = Factory.CreateClient("clientFirst");
+
+
+        if (Id != "NO")
+        {
+            ListaOfertas = await SqlDbServices.OfertasPorEmpresa(Id);
+            titulo = "Mis ofertas";
+        }
+        else
+        {
+            titulo = "Listado de Ofertas";
+        }
+
+        StateHasChanged();
+
+    }
+
+    async Task Busqueda()
+    {
+        try
+        {
+            ListaOfertas = await SqlDbServices.OfertasPorParametros(searchParameters.Actividad, searchParameters.Lugar);
+
+            StateHasChanged();
+        }
+        catch (Exception exc)
+        {
+            Console.WriteLine(exc.Message);
+            throw;
+        }
+    }
+
+    void CrearOferta()
+    {
+        Navigation.NavigateTo("/NuevaOferta/"+Id);
+    }
+    void EditarOferta()
+    {
+
+    }
+    void EliminarOferta()
+    {
+
+    }
+    void IncribirmeOferta()
+    {
+
+    }
+    void VerOferta()
+    {
+
+    }
+
+}
