@@ -1,155 +1,274 @@
-﻿@page "/Candidato/EditarCV/{Id}"
-@using JornalerosApp.Shared.Services
-@using Microsoft.AspNetCore.Components.Forms
-@using Newtonsoft.Json;
+﻿@page "/Candidato/CV/"
+@using JornalerosApp.Shared.Models
+@using JornalerosApp.Pages.Curriculum
+@using BlazorDateRangePicker
 @inject AuthenticationStateProvider Provider
 @inject IHttpClientFactory Factory;
 @inject UserManager<IdentityUser> UserManager
 @inject NavigationManager Navigation
+@inject JornalerosApp.Shared.Services.ISQLDatabaseServices SQLDBServices
 
-<h3>Curriculum Vitae</h3>
-
-<EditForm Model="@persona" OnValidSubmit="@CrearCurriculum">
-    <DataAnnotationsValidator />
-    <div asp-validation-summary="All" class="text-danger"></div>
-    <div class="form-group row mb-1">
-        <BSLabel For="CVCorreo" Class="mr-sm-6">Correo Electrónico: @persona.CorreoElectronico</BSLabel>
-        @*<BSBasicInput InputType="InputType.Text" Name="Correo" Id="CVCorreo" PlaceHolder="Correo Electrónico" @bind-Value="" />
-        <BSFormFeedback For="@(() => persona.CorreoElectronico)" />*@
-    </div>
-    <div class="form-group row mb-1">       
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVNombre" Class="mr-sm-6">Nombre</BSLabel>
-            <BSBasicInput InputType="InputType.Text" Name="Nombre" Id="CVNombre" PlaceHolder="Nombre" @bind-Value="@persona.Nombre" />
-            <BSFormFeedback For="@(() => persona.Nombre)" />
-        </BSFormGroup>
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVApellido" Class="mr-sm-6">Apellido</BSLabel>
-            <BSBasicInput InputType="InputType.Text" Name="Apellido" Id="CVApellido" PlaceHolder="Apellido" @bind-Value="@persona.PrimerApellido" />
-            <BSFormFeedback For="@(() => persona.PrimerApellido)" />
-        </BSFormGroup>        
-    </div>
-
-    <div class="form-group row mb-1">
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVDNI" Class="mr-sm-6">DNI/NIE</BSLabel>
-            <BSBasicInput InputType="InputType.Text" Name="DNI" Id="CVDNI" PlaceHolder="DNI/NIE" @bind-Value="@persona.Dni" />
-            <BSFormFeedback For="@(() => persona.Dni)" />
-
-        </BSFormGroup>
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVSexo" Class="mr-sm-6">Sexo</BSLabel>
-            <BSBasicInput Id="CVSexo" InputType="InputType.Select" @bind-Value="@persona.Sexo">
-                @if (persona.Sexo != null)
-                {
-                    @foreach (var item2 in Sexos)
-                    {
-                        @if (persona.Sexo.ToString() == item2)
-                        {
-                            <option selected value="@item2">@item2</option>
-                        }
-                        else
-                        {
-                            <option value="@item2">@item2</option>
-                        }
-                    }
-                }
-            </BSBasicInput>
-            <BSFormFeedback For="@(() => persona.Sexo)" />
-        </BSFormGroup>        
-    </div>
+@if (panel)
+{
    
-    <div class="form-group row mb-1">
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVFechaNacimiento" Class="mr-sm-6">Fecha de nacimiento</BSLabel>
-            <BSBasicInput InputType="InputType.Date" Name="FechaNacimiento" Id="CVFechaNacimiento" PlaceHolder="Fecha de Nacimiento" @bind-Value="@persona.FechaNacimiento" />
-            <BSFormFeedback For="@(() => persona.FechaNacimiento)" />
-        </BSFormGroup>
-        
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVCoche" Class="mr-sm-6">Coche propio</BSLabel>
-            <BSBasicInput Id="CVCoche" InputType="InputType.Select" @bind-Value="@persona.CochePropio">
-                @if (persona.CochePropio != null)
-                {
-                    @foreach (var item in CochePropismo)
-                    {
-                        @if (persona.CochePropio.TrimEnd().ToString().Equals(item))
-                        {
-                            <option selected value="@item">@item</option>
-                        }
-                        else
-                        {
-                            <option value="@item">@item</option>
-                        }
-                    }
-                }
-            </BSBasicInput>
-            <BSFormFeedback For="@(() => persona.CochePropio)" />
-        </BSFormGroup>
-    </div>
-    <div class="form-group row mb-1">
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVLocalidad" Class="mr-sm-6">Municipio Residencia</BSLabel>
-            <BSBasicInput InputType="InputType.Select" Name="Localidad" Id="CVLocalidad" PlaceHolder="Localidad" @bind-Value="@persona.LugarResidencia">
-                @if (municipios != null && municipios.Count() > 0)
-                 {
-                   @foreach (var cnt in municipios)
-                    {
-                      @if (persona.LugarResidencia == cnt)
-                       {
-                          <option selected value="@cnt">@cnt</option>
-                       }
-                       else
-                       {
-                          <option value="@cnt">@cnt</option>
-                       }                         
-                    }
-                 }
-            </BSBasicInput>
-            <BSFormFeedback For="@(() => persona.LugarResidencia)" />
-        </BSFormGroup>
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVProvincia" Class="mr-sm-6">Provincia</BSLabel>
-            <BSBasicInput InputType="InputType.Select" Name="Provincia" Id="CVProvincia" PlaceHolder="Provincia" @bind-Value="@persona.ProvinciaResidencia">
-                @if (provincias != null)
-                {
-                    @if (provincias.Count() > 0)
-                    {
-                        @foreach (var cnt in provincias)
-                        {
-                            @if (persona.ProvinciaResidencia == cnt)
+    <BSContainer IsFluid="true">
+        <BSRow>
+           
+            <BSCol Class="float-right">
+                X
+                @*<BSButton ButtonType="ButtonType.Button" Class="close" OnClick="@OnClickCallBack" aria-label="Close">Cerrar</BSButton>*@
+            </BSCol>
+        </BSRow>
+        <hr/>
+        <BSTabGroup ShowEvent="@Shown">
+            <BSTabList IsList="true" IsFill="true" Class="nav-justified" Alignment="Alignment.Center">
+                <BSTab Id="DatosPersonales" @ref="refDatosPersonales" Name="DatosPersonalesName">
+                    <BSTabLabel>Datos Personales</BSTabLabel>
+
+                    <BSTabContent>
+                        <hr />
+                        <EditarDP Persona="@Persona" Id="@Id" Municipios="@Municipios" Provincias="@Provincias" OnProvinciaSelection="@MunicipioSegunProvincia" OnValidSubmit="@GuardarDatos"></EditarDP>
+                        <ButonesFondo Inicio="@NavigacionAInicio"></ButonesFondo>
+                    </BSTabContent>
+                </BSTab>
+                <BSTab @ref="refExperiencia" Id="Experiencia" Name="ExperienciaName">
+                    <BSTabLabel>Experiencia Laboral</BSTabLabel>
+                    <BSTabContent>
+                        <hr />
+                        <EditForm Model="@Persona">
+                            <BSFormGroup IsCheck="true" IsRow="true">
+                                <BSCol SM="6">
+                                    <BSLabel For="experienciaCampo">¿Tienes experiencia en labores de campo?</BSLabel>
+                                    <BSBasicInput Class="ml-3" InputType="InputType.Checkbox" Id="experienciaCampo" Value="@VisibleExperiencia" ValueChanged="@((bool e) => NuevaExperiencia(e))"></BSBasicInput>
+                                </BSCol>
+                            </BSFormGroup>
+                            @if (VisibleExperiencia)
                             {
-                                <option selected value="@cnt">@cnt</option>
-                            }
-                            else
-                            {
-                                <option value="@cnt">@cnt</option>
+                                <CVComponent></CVComponent>
+
                             }
 
-                        }
-                    }
-                }
-            </BSBasicInput>
-            <BSFormFeedback For="@(() => persona.ProvinciaResidencia)"  />
-        </BSFormGroup>        
-    </div>       
-    <div class="form-group text-center mb-0">
-        <button type="submit" ref="createButton" id="BtnRegister" class="btn btn-primary">Guardar</button>
-    </div>
-</EditForm>
+                        </EditForm>
+                        <ButonesFondo Inicio="@NavigacionAInicio"></ButonesFondo>
+                    </BSTabContent>
+                </BSTab>
+                <BSTab  Id="Maquinaria" Name="MaquinariaName">
+                    <BSTabLabel>Carnés de Maquinarias</BSTabLabel>
+                    <BSTabContent>
+                        <hr />                        
+                        <ButonesFondo Inicio="@NavigacionAInicio"></ButonesFondo>
+                    </BSTabContent>
+                </BSTab>
+
+                <BSTab Id="Formacion" @ref="refFormacion" Name="FormacionName">
+                    <BSTabLabel>Nivel Formativo</BSTabLabel>
+                    <BSTabContent>
+                        <hr />
+                        Aqui va la formacion
+                        <ButonesFondo Inicio="@NavigacionAInicio"></ButonesFondo>
+                    </BSTabContent>
+                </BSTab>
+                <BSTab Id="Otros" InitialSelection="@refOtros" Name="OtrosName">
+                    <BSTabLabel>Otros datos</BSTabLabel>
+                    <BSTabContent>
+                        <br />
+                        <br />
+                        <EditForm Model="@curriculum">
+                            <BSRow>
+                                <BSCol>
+                                    <BSLabel For="Movilidad">Movilidad</BSLabel>
+                                    <BSInput InputType="InputType.Text" Id="Movilidad" @bind-Value="@curriculum.Movilidad"></BSInput>
+                                </BSCol>
+                                <BSCol>
+                                    <BSLabel For="AlojamientoPropio">¿Tienes alojamiento propio?</BSLabel>
+                                    <BSInput InputType="InputType.Text" Id="Alojamiento" @bind-Value="@curriculum.AlojamientoPropio"></BSInput>
+                                </BSCol>
+                                <BSCol>
+                                    <BSLabel For="Disponibilidad">¿Qué disponibilidad tienes?</BSLabel>
+                                    <BSInput InputType="InputType.Select" Id="Disponibilidad" @bind-Value="@curriculum.TramitarPermisoTrabajo">
+                                        <option value=""></option>
+                                        <option value="Inmediata">Inmediata</option>
+                                        <option value="15">En 15 días</option>
+                                        <option value="@EntreFechas" @onclick="@((MouseEventArgs e) => SeleccioneIntervalo(e))">Seleccione un intervalo</option>
+                                    </BSInput>
+
+                                </BSCol>
+                            </BSRow>
+                            <BSRow>
+                                <BSCol SMOffset="6"><DateRangePicker class="form-control form-control-sm" placeholder="Seleccione fechas..." @bind-StartDate="StartDate" @bind-EndDate="EndDate" OnRangeSelect="OnRangeSelect"></DateRangePicker></BSCol>
+
+                            </BSRow>
+                            <br />
+                            <br />
+
+                        </EditForm>
+                        <ButonesFondo Inicio="@NavigacionAInicio"></ButonesFondo>
+                    </BSTabContent>
+                </BSTab>
+                <BSTab Id="Permisos" InitialSelection="@refOtros" Name="PermisosName">
+                    <BSTabLabel>Permisos de Conducir</BSTabLabel>
+                    <BSTabContent>
+                        <br />
+                        <br />
+
+                        <ButonesFondo Inicio="@NavigacionAInicio"></ButonesFondo>
+                    </BSTabContent>
+                </BSTab>
+
+            </BSTabList>
+            <BSTabSelectedContent />
+        </BSTabGroup>
+    </BSContainer>
+}
+@if (VisibleFormacion)
+{
+    <FormularioFormacion FormacionData="@FormacionData" OnClickGuardar="@GuardarFormacion" OnClickCerrar="@Cerrar" OnClickBorrar="@BorrarFormacion"></FormularioFormacion>
+}
+
+@*@if (VisibleExperiencia)
+{
+    <FormularioExperiencia ExperienciaData="@ExperienciaData" OnClickGuardar="@GuardarExperiencia"></FormularioExperiencia>
+}*@
+
 
 @code {
     [Parameter] public string Id { get; set; }
+    [Parameter] public Persona Persona { get; set; }
+    [Parameter] public EventCallback OnClickCallBack { get; set; }
+    private Formacion FormacionData { get; set; }
+    private Experiencia ExperienciaData { get; set; }
     [System.Diagnostics.CodeAnalysis.MaybeNull]
-    private PersonaModel persona { get; set; } = new PersonaModel();
+    private Curriculum curriculum { get; set; } = new Curriculum();
     private HttpClient client;
-    private bool nuevo { get; set; }
-    private IEnumerable<string> provincias { get; set; } = new List<string>();
-    private IEnumerable<string> municipios { get; set; } = new List<string>();
-    string[] Sexos = { "", "Masculino", "Femenino" };
-    string[] CochePropismo = { "", "si", "no" };
-    [Parameter] public System.Linq.Expressions.Expression<Func<string>> ValueExpression { get; set; }
+    List<Formacion> ListaFormacion { get; set; }
+    List<Experiencia> ListaExperiencia { get; set; }
+    //[Parameter] public EventCallback OnValidSubmit { get; set; }
+    BSTab refExperiencia;
+    BSTab refDatosPersonales;
+    BSTab refFormacion;
+    bool refOtros { get; set; }
 
+    bool panel { get; set; } = true;
+    bool VisibleFormacion { get; set; } = false;
+    bool VisibleExperiencia { get; set; } = false;
+    [Parameter] public IEnumerable<string> Provincias { get; set; } = new List<string>();
+    [Parameter] public IEnumerable<string> Municipios { get; set; } = new List<string>();
+    [Parameter]
+    public EventCallback<string> OnProvinciaSelection { get; set; }
+    DateTimeOffset? StartDate { get; set; } = DateTime.Today.AddMonths(-1);
+    DateTimeOffset? EndDate { get; set; } = DateTime.Today.AddDays(1).AddTicks(-1);
+    TimeSpan? EntreFechas { get; set; }
+    bool isSelected { get; set; }
+
+    protected async Task MunicipioSegunProvincia(string e)
+    {
+        await OnProvinciaSelection.InvokeAsync(e);
+
+    }
+
+    async void GuardarDatos()
+    {
+        var result = await client.PutAsJsonAsync<Persona>("Personas/", Persona);
+        if (result.IsSuccessStatusCode)
+        {
+
+        }
+    }
+
+    void NavigacionAInicio()
+    {
+
+        refOtros = true;
+
+        //Navigation.Uri.Contains("/Candidato");
+    }
+
+    public void OnRangeSelect(DateRange range)
+    {
+        StartDate = range.Start;
+        EndDate = range.End;
+        EntreFechas = EndDate - StartDate;
+    }
+    void SeleccioneIntervalo(MouseEventArgs e)
+    {
+        isSelected = true;
+
+    }
+
+    private void Shown(BSTabEvent e)
+    {
+        var data = e.Activated;
+        //?.Id.ToString();
+
+        var data2 = e.Deactivated?.Id.ToString();
+    }
+
+    void EditarFormacion(Formacion groupItem)
+    {
+        VisibleFormacion = true;
+        VisibleExperiencia = false;
+        panel = false;
+        FormacionData = groupItem;
+    }
+
+    async void NuevaFormacion()
+    {
+        try
+        {
+            VisibleFormacion = true;
+            VisibleExperiencia = false;
+            panel = false;
+
+            FormacionData = new Formacion { IdFormacion = Guid.NewGuid().ToString(), IdCurriculum = curriculum.IdCurriculum, Titulo = string.Empty };
+            var result = await SQLDBServices.AddFormacion(FormacionData);
+        }
+        catch (Exception exc)
+        {
+            System.Diagnostics.Debug.WriteLine(exc);
+            throw;
+        }
+    }
+
+    void TabActivo(EventArgs e)
+    {
+
+        var data = e;
+    }
+
+    void NuevaExperiencia(bool e)
+    {
+        try
+        {
+            //VisibleFormacion = !e;
+            VisibleExperiencia = e;
+            //panel = false;
+            //ExperienciaData = new Experiencia { IdExperiencia = Guid.NewGuid().ToString(), IdCurriculum = curriculum.IdCurriculum, Empresa = string.Empty };
+            //var result = await SQLDBServices.AddExperiencia(ExperienciaData);
+
+        }
+        catch (Exception exc)
+        {
+            System.Diagnostics.Debug.WriteLine(exc);
+            throw;
+        }
+    }
+
+    void EditarExperiencia(Experiencia experiencia)
+    {
+        try
+        {
+            VisibleFormacion = false;
+            VisibleExperiencia = true;
+            panel = false;
+            ExperienciaData = experiencia;
+
+        }
+        catch (Exception exc)
+        {
+            System.Diagnostics.Debug.WriteLine(exc);
+            throw;
+        }
+    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -158,61 +277,80 @@
         client = Factory.CreateClient("clientFirst");
         try
         {
-            provincias = await client.GetFromJsonAsync<IEnumerable<string>>("Provincias");
+            curriculum = await SQLDBServices.GetCurriculumPorIdPersona(Id);
+            ListaFormacion = await SQLDBServices.FormacionPorIdPersona(Id);
+            ListaExperiencia = await SQLDBServices.ExperienciaPorIdPersona(Id);
+            ListaFormacion = ListaFormacion ?? new List<Formacion>();
+            ListaExperiencia = ListaExperiencia ?? new List<Experiencia>();
 
-            persona = await client.GetFromJsonAsync<PersonaModel>("Personas/" + Id);
-            if(persona.ProvinciaResidencia != null)
-            {
-                municipios = await client.GetFromJsonAsync<IEnumerable<string>>("Provincias/" + persona.ProvinciaResidencia);
-            }
-
-            if (persona.CorreoElectronico == null)
-            {
-                nuevo = true;
-                persona = new PersonaModel
-                {
-                    IdPersona = Id,
-                    Nombre = string.Empty,
-                    PrimerApellido = string.Empty,
-                    Sexo = string.Empty,
-                    CorreoElectronico = authState.User.Identity.Name
-                };
-
-            }
             await InvokeAsync(() => StateHasChanged());
 
         }
-        catch(Exception exc)
+        catch (Exception exc)
         {
             System.Diagnostics.Debug.WriteLine(exc);
+            throw;
         }
     }
 
-    private async void CrearCurriculum()
+    async void GuardarFormacion()
     {
-        await InvokeAsync(() => StateHasChanged());
         try
         {
-            if (nuevo)
-            {
-                var respsta = await client.PostAsJsonAsync<PersonaModel>("Personas", persona);
-                if (respsta.IsSuccessStatusCode)
-                {
-                    Navigation.NavigateTo("/");
-                }
-            }
-            else
-            {
-                var estado = await client.PutAsJsonAsync<PersonaModel>("Personas/" + Id, persona);
-                if (estado.IsSuccessStatusCode)
-                {
-                    Navigation.NavigateTo("/");
-                }
-            }
+            var result = await SQLDBServices.UpdateFormacion(FormacionData);
+            VisibleFormacion = false;
+            VisibleExperiencia = false;
+            panel = true;
+            await InvokeAsync(() => StateHasChanged());
+
         }
-        catch(Exception exc)
+        catch (Exception exc)
         {
             System.Diagnostics.Debug.WriteLine(exc.Message);
+            throw;
         }
+    }
+
+    async void GuardarExperiencia()
+    {
+        try
+        {
+            var result = await SQLDBServices.UpdateExperiencia(ExperienciaData);
+            VisibleFormacion = false;
+            VisibleExperiencia = false;
+            panel = true;
+            await InvokeAsync(() => StateHasChanged());
+
+        }
+        catch (Exception exc)
+        {
+            System.Diagnostics.Debug.WriteLine(exc.Message);
+            throw;
+        }
+    }
+
+    async void BorrarFormacion()
+    {
+        try
+        {
+            await SQLDBServices.DeleteFormacion(FormacionData);
+            await InvokeAsync(() => StateHasChanged());
+            VisibleFormacion = false;
+            panel = true;
+
+
+        }
+        catch (Exception exc)
+        {
+            System.Diagnostics.Debug.WriteLine(exc.Message);
+            throw;
+        }
+    }
+
+    async void Cerrar()
+    {
+        await InvokeAsync(() => StateHasChanged());
+        VisibleFormacion = false;
+        panel = true;
     }
 }

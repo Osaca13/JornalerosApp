@@ -1,5 +1,7 @@
-﻿using System;
+﻿using JornalerosApp.Shared.Services;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace JornalerosApp.Shared.Models
 {
@@ -16,6 +18,9 @@ namespace JornalerosApp.Shared.Models
         public string IdPersona { get; set; }
         public string Nombre { get; set; }
         public string PrimerApellido { get; set; }
+
+        [ValidacionNIF]
+        [StringLength(9)]
         public string Dni { get; set; }
         public DateTime? FechaNacimiento { get; set; }
         public string CorreoElectronico { get; set; }

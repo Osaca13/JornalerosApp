@@ -2,58 +2,55 @@
 @inject IHttpClientFactory Factory
 
 
-
-<EditForm Model="@Oferta" OnValidSubmit="@OnValidSubmit">
-    <div class="form-group row">
-        <div class="col">
-            <label>Nombre:</label>
-            <div>
-                <InputText class="form-control" @bind-Value="@Oferta.Titulo" />
-                <ValidationMessage For="@(() => Oferta.Titulo)" />
+    <BSJumbotron>
+        <EditForm Model="@Oferta" OnValidSubmit="@OnValidSubmit">
+            <div class="form-group row">
+                <div class="col">
+                    <label>Nombre:</label>
+                    <div>
+                        <InputText class="form-control" @bind-Value="@Oferta.Titulo" />
+                        <ValidationMessage For="@(() => Oferta.Titulo)" />
+                    </div>
+                </div>
+                <div class="col">
+                    <label>Fecha Publicacion:</label>
+                    <div>
+                        <InputDate class="form-control" style="width:100%" @bind-Value="@Oferta.FechaPublicacion" @bind-Value:format="dd-mm-yy" placeholder="@temp" />
+                        <ValidationMessage For="@(() => Oferta.FechaPublicacion)" />
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="col">
-            <label>Fecha Publicacion:</label>
-            <div>
-                <InputDate  class="form-control" style="width:100%" @bind-Value="@Oferta.FechaPublicacion" @bind-Value:format="dd-mm-yy" placeholder="@temp"/>
-                <ValidationMessage For="@(() => Oferta.FechaPublicacion)" />
+            <div class="form-group">
+                <label>Descripción:</label>
+                <InputTextArea style="width:100%" @bind-Value="@Oferta.Descripcion" placeholder="Describa brevemente..."></InputTextArea>
             </div>
+            <div class="form-group row">
+                <div class="col">
+                    <label>¿Tiene continuidad?:</label>                   
+                    <InputCheckbox class="form-control" style="width:100%" Value="@ContinuidadIgualLabor" ValueChanged="@((bool e)=>ContinuidadIgual(e))" ValueExpression="@(() => ContinuidadIgualLabor)" />
+                    <ValidationMessage For="@(() => Oferta.ContinuidadIgualLabor)" />                    
+                </div>
+                <div class="col">
+                    <label>¿Hay continuidad en otra labor?</label>                    
+                        <InputCheckbox class="form-control" style="width:100%" Value="@ContinuidadOtraLabor" ValueChanged="((bool e) => ContinuidadOtra(e))" ValueExpression="@(()=> ContinuidadIgualLabor)" />
+                        <ValidationMessage For="@(() => Oferta.ContinuidadOtraLabor)" />
+                    
+                </div>
+                <div class="col">
+                    <label>¿Hay alojamiento?</label>
+                    <div>
+                        <InputCheckbox class="form-control" style="width:100%" Value="@Alojamiento" ValueChanged="@((bool e) => AlojamientoDisponible(e))" ValueExpression="@(() => Alojamiento)" />
+                        <ValidationMessage For="@(() => Oferta.Alojamiento)" />
+                    </div>
+                </div>
             </div>
-        </div>
-    <div class="form-group">         
-            <label>Descripción:</label>
-            <InputTextArea  style="width:100%"  @bind-Value="@Oferta.Descripcion" placeholder="Describa brevemente..."></InputTextArea>    
-    </div>  
-    <div class="form-group row">
-        <div class="col">
-            <label>¿Tiene continuidad?:</label>
-            <div>
-                <InputCheckbox class="form-control" @bind-Value="@ContinuidadIgualLabor" @onselect="(e => ContinuidadIgual(e, ContinuidadIgualLabor))" />
-                <ValidationMessage For="@(() => Oferta.ContinuidadIgualLabor)" />
-            </div>
-        </div>
-        <div class="col">
-            <label>¿Hay continuidad en otra labor?</label>
-            <div>
-                <InputCheckbox class="form-control" style="width:100%" @bind-Value="@ContinuidadOtraLabor" @onselect="(e => ContinuidadOtra(e, ContinuidadOtraLabor))" />
-                <ValidationMessage For="@(() => Oferta.ContinuidadOtraLabor)" />
-            </div>
-        </div>
-        <div class="col">
-            <label>¿Hay alojamiento?</label>
-            <div>
-                <InputCheckbox class="form-control" style="width:100%" @bind-Value="@Alojamiento"  @onselect="(e => ContinuidadOtra(e, Alojamiento))" />
-                <ValidationMessage For="@(() => Oferta.Alojamiento)" />
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
+            <div class="form-group">
                 <label>Lugar:</label>
                 <div>
                     <InputSelectNumber class="form-control"
                                        ValueChanged="@((string value) => ValorPaisCambiado(value))"
                                        ValueExpression="@(() => Oferta.LugarTrabajo)"
-                                       Value="Oferta.LugarTrabajo">
+                                       Value="@Oferta.LugarTrabajo">
                         <option value="0">--Seleccione un país--</option>
                         @foreach (var item in Lugar)
                         {
@@ -90,10 +87,17 @@
                     <ValidationMessage For="@(() => Oferta.Provincia)" />
                 </div>
             </div>
-
-            <button type="submit" class="btn btn-success">@TextoBoton</button>
+            <BSButtonGroup IsToolbar="true">
+                <BSButtonGroup Class="mr-sm-4">
+                    <BSButton Value="Submit" Color="Color.Success" Size="Size.Large">Guardar</BSButton>
+                </BSButtonGroup>
+                <BSButtonGroup Class="mr-sm-4">
+                    <BSButton Value="Reset" Color="Color.Warning" Size="Size.Large">Cancelar</BSButton>
+                </BSButtonGroup>
+            </BSButtonGroup>
             <DataAnnotationsValidator />
-</EditForm>
+        </EditForm>
+    </BSJumbotron>
 
 @code {
     [Parameter] public Oferta Oferta { get; set; } = new Oferta();
@@ -116,7 +120,6 @@
         {
             client = Factory.CreateClient("clientFirst");
             Provincias = await client.GetFromJsonAsync<List<string>>("Provincias");
-
         }
     }
 
@@ -135,17 +138,24 @@
         }
     }
 
-    private void ContinuidadIgual(EventArgs e, bool continuidad)
+    private void ContinuidadIgual(bool e)
     {
-        Oferta.ContinuidadIgualLabor = Oferta.ContinuidadIgualLabor == null ? "si":"no";
-        ContinuidadIgualLabor = Oferta.ContinuidadIgualLabor == "si";
+        ContinuidadIgualLabor = e;
+        Oferta.ContinuidadIgualLabor = (ContinuidadIgualLabor ==  true)? "si" : "no";   
+
     }
 
-    private void ContinuidadOtra(EventArgs e, bool continuidad)
+    private void ContinuidadOtra(bool e)
     {
 
-        Oferta.ContinuidadOtraLabor = Oferta.ContinuidadOtraLabor == null ? "si" : "no";
-        ContinuidadOtraLabor = Oferta.ContinuidadOtraLabor == "si";
+        ContinuidadOtraLabor = e;
+        Oferta.ContinuidadOtraLabor = (ContinuidadOtraLabor == true) ? "si" : "no";
+    }
+
+    private void AlojamientoDisponible(bool e)
+    {
+        Alojamiento = e;
+        Oferta.Alojamiento = (Alojamiento == true) ? "si" : "no";
     }
 
     private async Task CargarEstados(string paisId)

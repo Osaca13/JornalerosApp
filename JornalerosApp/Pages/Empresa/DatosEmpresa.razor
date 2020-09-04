@@ -6,11 +6,19 @@
 
 @inject NavigationManager Navigation
 
-<h4>Datos de Empresa: @UserName</h4>
+
+    <BSJumbotron Class="row" IsFluid="true">
+        <h4>Perfil de Empresa: </h4>
+        <BSRow>
+            <BSCol SMOffset="4">
+                <BSButton Class="m-4" Size="Size.ExtraLarge" ButtonType="ButtonType.Link" @onclick="IraCV">Informacion de Empresa</BSButton>
+                <BSButton Class="m-4" Size="Size.ExtraLarge" ButtonType="ButtonType.Link" @onclick="IraOfertas">Ver mis ofertas</BSButton>
+
+            </BSCol>
+        </BSRow>
+    </BSJumbotron>
 
 
-<button class="btn btn-info" @onclick="IraCV">Informacion de Empresa</button>
-<button class="btn btn-info" @onclick="IraOfertas">Ver mis ofertas</button>
 
 
 

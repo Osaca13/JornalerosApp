@@ -35,13 +35,13 @@ namespace JornalerosApp.Data
             }            
         }
 
-        public async Task SaveData<T>(string sql, T parameters)
+        public async Task<int> SaveData<T>(string sql, T parameters)
         {
             try
             {
-                string getStringConnection = _configuration.GetConnectionString("DataConnection");
+                string getStringConnection = _configuration.GetConnectionString("DefaultConnection");
                 using IDbConnection dbConnection = new SqlConnection(getStringConnection);
-                await dbConnection.ExecuteAsync(sql, parameters);
+                return await dbConnection.ExecuteAsync(sql, parameters);
             }catch(Exception exc)
             {
                 Debug.WriteLine(exc.Message);

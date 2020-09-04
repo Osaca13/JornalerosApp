@@ -16,7 +16,8 @@ namespace JornalerosApp.Shared.Services
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            return NumeroDNI(Convert.ToString(value)) ? ValidationResult.Success : new ValidationResult(Tipo + "Incorrecto");
+            var data = NumeroDNI(Convert.ToString(value)) ? ValidationResult.Success : new ValidationResult(Tipo + " Incorrecto");
+            return data;
         }
 
         public static bool NumeroDNI(string numero)

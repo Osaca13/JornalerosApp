@@ -8,7 +8,7 @@ namespace JornalerosApp.Shared.Entities
     {
       public string Actividad { get; set; }
       public string Lugar { get; set; }
-      public DateTime FechaDePublicacion { get; set; }
+      public string Sector { get; set; }
       public DateTime FechaDeCaducidad { get; set; }
 
         

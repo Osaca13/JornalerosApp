@@ -2,12 +2,13 @@
 @inject IHttpClientFactory Factory
 @inject NavigationManager UriHelper
 @attribute [Authorize]
-@using JornalerosApp.Pages.Ofertas
 @using Microsoft.AspNetCore.Authorization;
+@using JornalerosApp.Pages.Ofertas;
 
 <h3>Crear Oferta</h3>
 
-<FormularioOferta TextoBoton="Crear Oferta" OnValidSubmit="@CrearOferta" Oferta="@oferta" ></FormularioOferta>
+<FormularioOferta TextoBoton="Crear Oferta" OnValidSubmit="@CrearOferta" Oferta="@oferta" />
+
 
 @code {
     [Parameter]

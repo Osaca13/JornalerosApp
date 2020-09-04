@@ -31,20 +31,29 @@ namespace JornalerosApp.Services
         {
             return await _context
                 .Persona
-                .Include(p => p.Curriculum)
-                 .Include(p => p.Nacionalidad)
-                 .Include(p => p.Permiso)
-                 .Include(p => p.RelacionOfertaPersona)
+                //.Include(p => p.Curriculum)
+                // .Include(p => p.Nacionalidad)
+                // .Include(p => p.Permiso)
+                // .Include(p => p.RelacionOfertaPersona)
                 .ToListAsync();
         }
 
         public async Task<Persona> GetItemById(string id)
         {
-            var data = await _context.Persona.Where(p => p.IdPersona == id).Include(p => p.Curriculum)
-                 .Include(p => p.Nacionalidad)
-                 .Include(p => p.Permiso)
-                 .Include(p => p.RelacionOfertaPersona).FirstOrDefaultAsync();
-            return data;
+            try
+            {
+                var data = await _context.Persona.Where(p => p.IdPersona == id)
+                //.Include(p => p.Curriculum)
+                // .Include(p => p.Nacionalidad)
+                // .Include(p => p.Permiso)
+                // .Include(p => p.RelacionOfertaPersona)
+                 .FirstOrDefaultAsync();
+                return data;
+            }catch(Exception exc)
+            {
+                Debug.WriteLine(exc.Message);
+                throw;
+            }
         }
 
         public async Task<Persona> GetItemByname(string name)

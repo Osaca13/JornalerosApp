@@ -17,12 +17,12 @@
     <Authorized>        
         @if (Tipo == "candidato")
         {
-            <h1>Candidato</h1>
+          
             <DatosPersona UserName="@Name" Id="@Id"></DatosPersona>
         }
         @if (Tipo == "empresa")
         {
-            <h1>Empresa</h1>
+           
             <DatosEmpresa UserName="@Name" Id="@Id"></DatosEmpresa>
         }    
     </Authorized>

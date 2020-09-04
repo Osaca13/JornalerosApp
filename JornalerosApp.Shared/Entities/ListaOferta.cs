@@ -13,8 +13,8 @@ namespace JornalerosApp.Shared.Entities
 
             public string NombreEmpresa { get; set; }
 
-            public string JornadaReal { get; set; }
+            public string SectorEmpresa { get; set; }
 
+            public string JornadaReal { get; set; }
         }
-    
 }

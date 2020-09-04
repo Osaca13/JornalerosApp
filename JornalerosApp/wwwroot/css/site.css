@@ -47,7 +47,7 @@ app {
 }
 
 .sidebar {
-    background-image: linear-gradient(180deg, #173B0B 0%, #035E22 70%);
+    background-image: linear-gradient(180deg, #C3DCCC 0%, #035E22 70%);
 }
 
     .sidebar .top-row {
@@ -181,11 +181,11 @@ app {
         display: block;
     }
 
-    #principal {
-        /* background-image:url("../images/campoSembrado.jpg");
+    #InicioPersona {
+       /* background-image:url("../images/campoSembrado.jpg");
         background-repeat:no-repeat;
         background-size:cover;*/
-        background-color: #173B0B;
-/*        #105026;*/
+/*        background-color: #C3DCCC;
+*/        /*        #105026;*/
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using JornalerosApp.Data;
@@ -19,7 +20,7 @@ namespace JornalerosApp.Services
 
         public SQLDatabaseServices(ISqlDataAccess dataAccess)
         {
-            _dataAccess = dataAccess;
+            _dataAccess = dataAccess ?? throw new ArgumentNullException(nameof(dataAccess)) ;
         }
 
         public async Task<List<ListaOferta>> OfertasPorEmpresa(string id)
@@ -29,10 +30,24 @@ namespace JornalerosApp.Services
             return await _dataAccess.LoadData<ListaOferta, dynamic>(sql, new { });
         }
 
-        public async Task<List<ListaOferta>> OfertasPorParametros(string actividad, string lugar)
+        public async Task<List<Formacion>> FormacionPorIdPersona(string id)
+        {          
+            string sql = "SELECT Persona.IdPersona, Curriculum.IdCurriculum, Formacion.IdFormacion, Formacion.Titulo, Formacion.FechaInicio, Formacion.FechaFin, Formacion.Centro, Formacion.Descripcion from dbo.Persona INNER JOIN dbo.Curriculum on Persona.IdPersona = Curriculum.IdPersona INNER JOIN dbo.Formacion on Curriculum.IdCurriculum = Formacion.IdCurriculum Where Persona.IdPersona =  '" + id + "'";
+            var lista = await _dataAccess.LoadData<Formacion, dynamic>(sql, new { });
+            return lista ?? null;
+        }
+
+        public async Task<Formacion> FormacionPorId(string id)
+        {
+            string sql = "SELECT * From dbo.Formacion Where Formacion.IdFormacion = '"+ id + "'";
+            var lista = await _dataAccess.LoadData<Formacion, dynamic>(sql, new { });
+            return lista != null ? (lista.Count > 0 ? lista.FirstOrDefault() : null) : null;
+        }
+
+        public async Task<List<ListaOferta>> OfertasPorParametros(string actividad, string lugar, string sector)
         {
             //string sql = "select * from dbo.Persona";
-            string sql = "SELECT Oferta.Titulo, Oferta.Descripcion,Empresa.NombreEmpresa,Oferta.JornadaReal FROM dbo.Oferta INNER JOIN dbo.Empresa ON Oferta.IdEmpresa = Empresa.IdEmpresa Where Oferta.LugarTrabajo = '"+ lugar +"' AND Oferta.Titulo = '"+actividad+" '";
+            string sql = "SELECT Oferta.Titulo, Oferta.Descripcion,Empresa.NombreEmpresa, Empresa.Actividad, Oferta.JornadaReal FROM dbo.Oferta INNER JOIN dbo.Empresa ON Oferta.IdEmpresa = Empresa.IdEmpresa Where Oferta.LugarTrabajo = '" + lugar + "' AND Oferta.Titulo = '" + actividad + " ' AND Empresa.Actividad = '" + sector + "'";
 
             return await _dataAccess.LoadData<ListaOferta, dynamic>(sql, new { });
         }
@@ -46,28 +61,140 @@ namespace JornalerosApp.Services
             
         }
 
-        public void DeletePersona(int id)
+        public async Task<bool> DeleteFormacion(Formacion formacion)
+        {
+            string sql = "DELETE FROM dbo.Formacion WHERE Formacion.IdFormacion = '"+ formacion.IdFormacion+"'";
+
+            var result = await _dataAccess.SaveData<Formacion>(sql, formacion);
+            return result == 1;
+
+        }
+
+        public async Task<bool> AddFormacion(Formacion formacion)
+        {            
+            string sql = "INSERT INTO dbo.Formacion (IdFormacion,"
+                         + " IdCurriculum, Titulo)"
+                         + " VALUES ('"
+                         + formacion.IdFormacion
+                         + "', '"
+                         + formacion.IdCurriculum
+                         + "', '"
+                         + formacion.Titulo                         
+                         +"')";
+
+            var result = await _dataAccess.SaveData<Formacion>(sql, formacion);
+            return result == 1;
+        }
+
+        public async Task<bool> UpdateFormacion(Formacion formacion)
+        {
+            string sql = "UPDATE dbo.Formacion SET IdCurriculum = '" + formacion.IdCurriculum + "', Titulo = '" + formacion.Titulo + "', FechaInicio = '" + formacion.FechaInicio + "', FechaFin = '" + formacion.FechaFin + "', Centro = '" + formacion.Centro + "', Descripcion = '" + formacion.Descripcion + "' "+
+                           "WHERE IdFormacion = '"+formacion.IdFormacion+"'";              
+            var result = await _dataAccess.SaveData<Formacion>(sql, formacion);
+            return result == 1;
+        }
+
+        public async Task<Curriculum> GetCurriculumPorIdPersona(string Id)
+        {           
+            string sql = "SELECT Curriculum.* from dbo.Persona INNER JOIN dbo.Curriculum on Persona.IdPersona = Curriculum.IdPersona Where Persona.IdPersona = '"+ Id +"'";
+            var result = await _dataAccess.LoadData<Curriculum, dynamic>(sql, new { });
+            Curriculum curriculum;
+            if (result != null)
+            {
+                curriculum = result.FirstOrDefault();
+            }
+            else
+            {
+                curriculum = new Curriculum { IdCurriculum = Guid.NewGuid().ToString(), IdPersona = Id };
+                await _dataAccess.SaveData<Curriculum>(sql, curriculum);
+            }
+            return curriculum;
+        }
+
+        public async Task<bool> UpdateCurriculum(Curriculum curriculum)
+        {
+            string sql = "UPDATE dbo.Curriculum SET TramitarPermisoTrabajo = '"+ curriculum.TramitarPermisoTrabajo +"',"
+                + "Movilidad = '"+ curriculum.Movilidad +"' ,"
+                + "AlojamientoPropio = '"+ curriculum.AlojamientoPropio +"' ) "
+                + "WHERE Curriculum.IdCurriculum = '"+ curriculum.IdCurriculum + "'";
+  
+            var result = await _dataAccess.SaveData<Curriculum>(sql, curriculum);
+            return result == 1;
+        }
+
+        public async Task<string> PersonaFromIdFormacion(string id)
+        {
+            string sql = "SELECT Persona.IdPersona from dbo.Formacion INNER JOIN dbo.Curriculum on Formacion.IdCurriculum = Curriculum.IdCurriculum INNER JOIN dbo.Persona on Curriculum.IdPersona = Persona.IdPersona Where Formacion.IdFormacion = '" + id + "'";
+
+            var result = await _dataAccess.LoadData<string, dynamic>(sql, new { });
+            return result.FirstOrDefault();
+         
+
+        }
+
+        public void DeletePersona(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Persona>> GetPersonaById(int id)
+        public async Task<Persona> GetPersonaById(string id)
         {
-            var sql = "SELECT Nombre, PrimerApellido, DNI, FechaNacimiento, CorreoElectronico, CochePropio, Imagen, Sexo, LugarResidencia, ProvinciaResidencia  FROM dbo.Persona WHERE IdPersona = " + id;
+            try
+            {
+                var sql = "SELECT Nombre, PrimerApellido, DNI, FechaNacimiento, CorreoElectronico, CochePropio, Imagen, Sexo, LugarResidencia, ProvinciaResidencia  FROM dbo.Persona WHERE IdPersona = " + id;
 
-            return _dataAccess.LoadData<Persona, dynamic>(sql, new { });
-            
+                var lista = await _dataAccess.LoadData<Persona, dynamic>(sql, new { });
 
-        }
+                return lista.Where(p => p.IdPersona == id).FirstOrDefault();
+            }
+            catch (Exception exc)
+            {
+                Debug.WriteLine(exc.Message);
+                throw;
+            }         
 
-        public void UpdatePersona(int id, Persona persona)
-        {
-            throw new NotImplementedException();
-        }
+        }        
 
         public void Save()
         {
+            
+        }
+
+        public void UpdatePersona(string id, Persona persona)
+        {
             throw new NotImplementedException();
+        }
+
+        public async Task<bool> AddExperiencia(Experiencia experiencia)
+        {
+            string sql = "INSERT INTO dbo.Experiencia (IdExperiencia,"
+                         + " IdCurriculum, Empresa)"
+                         + " VALUES ('"
+                         + experiencia.IdExperiencia
+                         + "', '"
+                         + experiencia.IdCurriculum
+                         + "', '"
+                         + experiencia.Empresa
+                         + "')";
+
+            var result = await _dataAccess.SaveData<Experiencia>(sql, experiencia);
+            return result == 1;
+        }
+
+        public async Task<bool> UpdateExperiencia(Experiencia experiencia)
+        {
+            string sql = "UPDATE dbo.Experiencia SET IdCurriculum = '" + experiencia.IdCurriculum + "', Puesto = '" + experiencia.Puesto + "', FechaInicio = '" + experiencia.FechaInicio + "', FechaFin = '" + experiencia.FechaFin + "', Empresa = '" + experiencia.Empresa + "', DescripcionPuesto = '" + experiencia.DescripcionPuesto + "' " +
+                           "WHERE IdExperiencia = '" + experiencia.IdExperiencia + "'";
+            var result = await _dataAccess.SaveData<Experiencia>(sql, experiencia);
+            return result == 1;
+        }
+
+        public async Task<List<Experiencia>> ExperienciaPorIdPersona(string id)
+        {
+            
+            string sql = "SELECT Persona.IdPersona, Curriculum.IdCurriculum, Experiencia.IdExperiencia, Experiencia.Puesto, Experiencia.FechaInicio, Experiencia.FechaFin, Experiencia.Empresa, Experiencia.DescripcionPuesto from dbo.Persona INNER JOIN dbo.Curriculum on Persona.IdPersona = Curriculum.IdPersona INNER JOIN dbo.Experiencia on Curriculum.IdCurriculum = Experiencia.IdCurriculum Where Persona.IdPersona =  '" + id + "'";
+            var lista = await _dataAccess.LoadData<Experiencia, dynamic>(sql, new { }); 
+            return lista ?? null;
         }
     }
 }

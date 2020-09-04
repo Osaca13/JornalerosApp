@@ -1,218 +1,161 @@
-﻿@page "/Candidato/EditarDP/{Id}"
+﻿@page "/Candidato/DatosPersonales/"
 @using JornalerosApp.Shared.Services
 @using Microsoft.AspNetCore.Components.Forms
 @using Newtonsoft.Json;
-@inject AuthenticationStateProvider Provider
-@inject IHttpClientFactory Factory;
 @inject UserManager<IdentityUser> UserManager
 @inject NavigationManager Navigation
 
-<h3>Editar Datos Personales</h3>
+    
+        <EditForm Model="@Persona" OnValidSubmit="@OnValidSubmit">
+            <DataAnnotationsValidator />
+            <BSValidationSummary/>           
+            <div class="form-group row mb-1">                
+                <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0" IsRow="true">
+                    <BSLabel For="CVCorreo" SM="4">Correo Electrónico</BSLabel>
+                    <BSCol SM="6">
+                        <BSBasicInput Class="" InputType="InputType.Text" Id="CVCorreo" IsReadonly="true" @bind-Value="@Persona.CorreoElectronico"></BSBasicInput>
+                       
+                     </BSCol>
+                </BSFormGroup>
+            </div>
+            <div class="form-group row mb-1">
+                <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                    <BSLabel For="CVNombre" Class="mr-sm-6">Nombre</BSLabel>
+                    <BSBasicInput InputType="InputType.Text" Name="Nombre" Id="CVNombre" PlaceHolder="Nombre" @bind-Value="@Persona.Nombre" />
+                    <BSFormFeedback For="@(() => Persona.Nombre)" />
+                </BSFormGroup>
+                <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                    <BSLabel For="CVApellido" Class="mr-sm-6">Apellidos</BSLabel>
+                    <BSBasicInput InputType="InputType.Text" Name="Apellido" Id="CVApellido" PlaceHolder="Apellido" @bind-Value="@Persona.PrimerApellido" />
+                    <BSFormFeedback For="@(() => Persona.PrimerApellido)" />
+                </BSFormGroup>
+            </div>
 
-<EditForm Model="@persona" OnValidSubmit="@CrearDatosUsuario">
-    <DataAnnotationsValidator />
-    <div asp-validation-summary="All" class="text-danger"></div>
-    <div class="form-group row mb-1">
-        <BSLabel For="CVCorreo" Class="mr-sm-6">Correo Electrónico: @persona.CorreoElectronico</BSLabel>
-        @*<BSBasicInput InputType="InputType.Text" Name="Correo" Id="CVCorreo" PlaceHolder="Correo Electrónico" @bind-Value="" />
-        <BSFormFeedback For="@(() => persona.CorreoElectronico)" />*@
-    </div>
-    <div class="form-group row mb-1">       
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVNombre" Class="mr-sm-6">Nombre</BSLabel>
-            <BSBasicInput InputType="InputType.Text" Name="Nombre" Id="CVNombre" PlaceHolder="Nombre" @bind-Value="@persona.Nombre" />
-            <BSFormFeedback For="@(() => persona.Nombre)" />
-        </BSFormGroup>
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVApellido" Class="mr-sm-6">Apellido</BSLabel>
-            <BSBasicInput InputType="InputType.Text" Name="Apellido" Id="CVApellido" PlaceHolder="Apellido" @bind-Value="@persona.PrimerApellido" />
-            <BSFormFeedback For="@(() => persona.PrimerApellido)" />
-        </BSFormGroup>        
-    </div>
+            <div class="form-group row mb-1">
+                <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                    <BSLabel For="CVDNI" Class="mr-sm-6">DNI/NIE</BSLabel>
+                    <BSBasicInput InputType="InputType.Text" Name="DNI" Id="CVDNI" PlaceHolder="DNI/NIE" @bind-Value="@Persona.Dni" />
+                    <BSFormFeedback InvalidMessage="Error en numero de identidad"  For="@(() => Persona.Dni)" />
 
-    <div class="form-group row mb-1">
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVDNI" Class="mr-sm-6">DNI/NIE</BSLabel>
-            <BSBasicInput InputType="InputType.Text" Name="DNI" Id="CVDNI" PlaceHolder="DNI/NIE" @bind-Value="@persona.Dni" />
-            <BSFormFeedback For="@(() => persona.Dni)" />
-
-        </BSFormGroup>
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVSexo" Class="mr-sm-6">Sexo</BSLabel>
-            <BSBasicInput Id="CVSexo" InputType="InputType.Select" @bind-Value="@persona.Sexo">
-                @if (persona.Sexo != null)
-                {
-                    @foreach (var item2 in Sexos)
-                    {
-                        @if (persona.Sexo.ToString() == item2)
+                </BSFormGroup>
+                <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                    <BSLabel For="CVSexo" Class="mr-sm-6">Sexo</BSLabel>
+                    <BSBasicInput Id="CVSexo" InputType="InputType.Select" @bind-Value="@Persona.Sexo">
+                        @if (Persona.Sexo != null)
                         {
-                            <option selected value="@item2">@item2</option>
-                        }
-                        else
-                        {
-                            <option value="@item2">@item2</option>
-                        }
-                    }
-                }
-            </BSBasicInput>
-            <BSFormFeedback For="@(() => persona.Sexo)" />
-        </BSFormGroup>        
-    </div>
-   
-    <div class="form-group row mb-1">
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVFechaNacimiento" Class="mr-sm-6">Fecha de nacimiento</BSLabel>
-            <BSBasicInput InputType="InputType.Date" Name="FechaNacimiento" Id="CVFechaNacimiento" PlaceHolder="Fecha de Nacimiento" @bind-Value="@persona.FechaNacimiento" />
-            <BSFormFeedback For="@(() => persona.FechaNacimiento)" />
-        </BSFormGroup>
-        
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVCoche" Class="mr-sm-6">Coche propio</BSLabel>
-            <BSBasicInput Id="CVCoche" InputType="InputType.Select" @bind-Value="@persona.CochePropio">
-                @if (persona.CochePropio != null)
-                {
-                    @foreach (var item in CochePropismo)
-                    {
-                        @if (persona.CochePropio.TrimEnd().ToString().Equals(item))
-                        {
-                            <option selected value="@item">@item</option>
-                        }
-                        else
-                        {
-                            <option value="@item">@item</option>
-                        }
-                    }
-                }
-            </BSBasicInput>
-            <BSFormFeedback For="@(() => persona.CochePropio)" />
-        </BSFormGroup>
-    </div>
-    <div class="form-group row mb-1">
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVLocalidad" Class="mr-sm-6">Municipio Residencia</BSLabel>
-            <BSBasicInput InputType="InputType.Select" Name="Localidad" Id="CVLocalidad" PlaceHolder="Localidad" @bind-Value="@persona.LugarResidencia">
-                @if (municipios != null && municipios.Count() > 0)
-                 {
-                   @foreach (var cnt in municipios)
-                    {
-                      @if (persona.LugarResidencia == cnt)
-                       {
-                          <option selected value="@cnt">@cnt</option>
-                       }
-                       else
-                       {
-                          <option value="@cnt">@cnt</option>
-                       }                         
-                    }
-                 }
-            </BSBasicInput>
-            <BSFormFeedback For="@(() => persona.LugarResidencia)" />
-        </BSFormGroup>
-        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
-            <BSLabel For="CVProvincia" Class="mr-sm-6">Provincia</BSLabel>
-            <BSBasicInput InputType="InputType.Select" Name="Provincia" Id="CVProvincia" PlaceHolder="Provincia" @bind-Value="@persona.ProvinciaResidencia">
-                @if (provincias != null)
-                {
-                    @if (provincias.Count() > 0)
-                    {
-                        @foreach (var cnt in provincias)
-                        {
-                            @if (persona.ProvinciaResidencia == cnt)
+                            @foreach (var item2 in Sexos)
                             {
-                                <option selected value="@cnt">@cnt</option>
+                                @if (Persona.Sexo.ToString() == item2)
+                                {
+                                    <option selected value="@item2">@item2</option>
+                                }
+                                else
+                                {
+                                    <option value="@item2">@item2</option>
+                                }
                             }
-                            else
-                            {
-                                <option value="@cnt">@cnt</option>
-                            }
-
                         }
-                    }
-                }
-            </BSBasicInput>
-            <BSFormFeedback For="@(() => persona.ProvinciaResidencia)"  />
-        </BSFormGroup>        
-    </div>       
-    <div class="form-group text-center mb-0">
-        <button type="submit" ref="createButton" id="BtnRegister" class="btn btn-primary">Guardar</button>
-    </div>
-</EditForm>
+                    </BSBasicInput>
+                    <BSFormFeedback For="@(() => Persona.Sexo)" />
+                </BSFormGroup>
+            </div>
 
-@code {
-    [Parameter] public string Id { get; set; }
-    [System.Diagnostics.CodeAnalysis.MaybeNull]
-    private PersonaModel persona { get; set; } = new PersonaModel();
-    private HttpClient client;
-    private bool nuevo { get; set; }
-    private IEnumerable<string> provincias { get; set; } = new List<string>();
-    private IEnumerable<string> municipios { get; set; } = new List<string>();
-    string[] Sexos = { "", "Masculino", "Femenino" };
-    string[] CochePropismo = { "", "si", "no" };
-    [Parameter] public System.Linq.Expressions.Expression<Func<string>> ValueExpression { get; set; }
+            <div class="form-group row mb-1">
+                <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                    <BSLabel For="CVFechaNacimiento" Class="mr-sm-6">Fecha de nacimiento</BSLabel>
+                    <BSBasicInput InputType="InputType.Date" Name="FechaNacimiento" Id="CVFechaNacimiento" PlaceHolder="Fecha de Nacimiento" @bind-Value="@Persona.FechaNacimiento" />
+                    <BSFormFeedback For="@(() => Persona.FechaNacimiento)" />
+                </BSFormGroup>
+
+                <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                    <BSLabel For="CVCoche" Class="mr-sm-6">Coche propio</BSLabel>
+                    <BSBasicInput Id="CVCoche" InputType="InputType.Select" @bind-Value="@Persona.CochePropio">
+                        @if (Persona.CochePropio != null)
+                        {
+                            @foreach (var item in CochePropismo)
+                            {
+                                @if (Persona.CochePropio.TrimEnd().ToString().Equals(item))
+                                {
+                                    <option selected value="@item">@item</option>
+                                }
+                                else
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            }
+                        }
+                    </BSBasicInput>
+                    <BSFormFeedback For="@(() => Persona.CochePropio)" />
+                </BSFormGroup>
+            </div>
+            <div class="form-group row mb-1">
+                <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                    <BSLabel For="CVLocalidad" Class="mr-sm-6">Municipio Residencia</BSLabel>
+                    <BSBasicInput InputType="InputType.Select" Name="Localidad" Id="CVLocalidad" PlaceHolder="Localidad" @bind-Value="@Persona.LugarResidencia">
+                        @if (Municipios != null && Municipios.Count() > 0)
+                        {
+                            @foreach (var cnt in Municipios)
+                            {
+                                @if (Persona.LugarResidencia == cnt)
+                                {
+                                    <option selected value="@cnt">@cnt</option>
+                                }
+                                else
+                                {
+                                    <option value="@cnt">@cnt</option>
+                                }
+                            }
+                        }
+                    </BSBasicInput>
+                    <BSFormFeedback For="@(() => Persona.LugarResidencia)" />
+                </BSFormGroup>
+                <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                    <BSLabel For="CVProvincia" Class="mr-sm-6">Provincia</BSLabel>
+                    <BSBasicInput InputType="InputType.Select" Name="Provincia" Id="CVProvincia" PlaceHolder="Provincia" Value="@Persona.ProvinciaResidencia" ValueChanged="@((string newValue) => MunicipioSegunProvincia(newValue))">
+                      
+                        @if (Provincias != null)
+                        {
+                            @if (Provincias.Count() > 0)
+                            {
+                                @foreach (var cnt in Provincias)
+                                {
+                                    @if (Persona.ProvinciaResidencia == cnt)
+                                    {
+                                        <option selected value="@cnt">@cnt</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@cnt">@cnt</option>
+                                    }
+
+                                }
+                            }
+                        }
+                    </BSBasicInput>
+                    <BSFormFeedback For="@(() => Persona.ProvinciaResidencia)" />
+                </BSFormGroup>
+            </div>
+            <br />           
+
+        </EditForm>
+    
+
+    @code {
+        [Parameter] public string Id { get; set; }
+        [System.Diagnostics.CodeAnalysis.MaybeNull]
+        [Parameter] public Persona Persona { get; set; }
+        string[] Sexos = { "", "Masculino", "Femenino" };
+        string[] CochePropismo = { "", "si", "no" };
+        [Parameter] public EventCallback OnValidSubmit { get; set; }
+        [Parameter] public IEnumerable<string> Provincias { get; set; } = new List<string>();
+        [Parameter] public IEnumerable<string> Municipios { get; set; } = new List<string>();
 
 
-    protected override async Task OnParametersSetAsync()
-    {
-        var authState = await Provider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        client = Factory.CreateClient("clientFirst");
-        try
-        {
-            provincias = await client.GetFromJsonAsync<IEnumerable<string>>("Provincias");
+        [Parameter]
+        public EventCallback<string> OnProvinciaSelection { get; set; }
 
-            persona = await client.GetFromJsonAsync<PersonaModel>("Personas/" + Id);
-            if(persona.ProvinciaResidencia != null)
-            {
-                municipios = await client.GetFromJsonAsync<IEnumerable<string>>("Provincias/" + persona.ProvinciaResidencia);
-            }
-
-            if (persona.CorreoElectronico == null)
-            {
-                nuevo = true;
-                persona = new PersonaModel
-                {
-                    IdPersona = Id,
-                    Nombre = string.Empty,
-                    PrimerApellido = string.Empty,
-                    Sexo = string.Empty,
-                    CorreoElectronico = authState.User.Identity.Name
-                };
-
-            }
-            await InvokeAsync(() => StateHasChanged());
-
-        }
-        catch(Exception exc)
-        {
-            System.Diagnostics.Debug.WriteLine(exc);
+        protected async Task MunicipioSegunProvincia(string e)
+        {            
+            await OnProvinciaSelection.InvokeAsync(e);
         }
     }
-
-    private async void CrearDatosUsuario()
-    {
-        await InvokeAsync(() => StateHasChanged());
-        try
-        {
-            if (nuevo)
-            {
-                var respsta = await client.PostAsJsonAsync<PersonaModel>("Personas", persona);
-                if (respsta.IsSuccessStatusCode)
-                {
-                    Navigation.NavigateTo("/");
-                }
-            }
-            else
-            {
-                var estado = await client.PutAsJsonAsync<PersonaModel>("Personas/" + Id, persona);
-                if (estado.IsSuccessStatusCode)
-                {
-                    Navigation.NavigateTo("/");
-                }
-            }
-        }
-        catch(Exception exc)
-        {
-            System.Diagnostics.Debug.WriteLine(exc.Message);
-        }
-    }
-}

@@ -39,24 +39,24 @@ namespace JornalerosApp.Controllers
 
         // GET: api/Personas/5
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(PersonaModel), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(PersonaModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Persona), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(Persona), (int)HttpStatusCode.OK)]
 
-        public async Task<ActionResult<PersonaModel>> GetPersonas(string id)
+        public async Task<ActionResult<Persona>> GetPersonas(string id)
         {
             var persona = await _dbServices.GetItemById(id);
 
-            var personaModel = this.mapper.Map<Persona, PersonaModel>(persona);
-            personaModel.Curriculum = this.mapper.Map<ICollection<Curriculum>, Curriculum[]>(persona.Curriculum);
-            personaModel.RelacionOfertaPersona = this.mapper.Map<ICollection<RelacionOfertaPersona>, RelacionOfertaPersona[]>(persona.RelacionOfertaPersona);
-            personaModel.Permiso = this.mapper.Map<ICollection<Permiso>, Permiso[]>(persona.Permiso);
-            personaModel.Nacionalidad = this.mapper.Map<ICollection<Nacionalidad>, Nacionalidad[]>(persona.Nacionalidad);
+            //var personaModel = this.mapper.Map<Persona, PersonaModel>(persona);
+            //personaModel.Curriculum = this.mapper.Map<ICollection<Curriculum>, Curriculum[]>(persona.Curriculum);
+            //personaModel.RelacionOfertaPersona = this.mapper.Map<ICollection<RelacionOfertaPersona>, RelacionOfertaPersona[]>(persona.RelacionOfertaPersona);
+            //personaModel.Permiso = this.mapper.Map<ICollection<Permiso>, Permiso[]>(persona.Permiso);
+            //personaModel.Nacionalidad = this.mapper.Map<ICollection<Nacionalidad>, Nacionalidad[]>(persona.Nacionalidad);
 
             if (persona == null)
             {
-                return Ok(new PersonaModel());
+                return Ok(new Persona());
             }
-            return Ok(personaModel);
+            return Ok(persona);
         }
 
         //// GET: api/Personas/Nombre
@@ -84,17 +84,17 @@ namespace JornalerosApp.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> PutPersonas(string id, [FromBody] PersonaModel personaModel)
+        public async Task<IActionResult> PutPersonas(string id, [FromBody] Persona persona)
         {
             try
             {
-                if (id != personaModel.IdPersona)
+                if (id != persona.IdPersona)
                 {
                     return BadRequest();
                 }
 
-                var nueva = this.mapper.Map<PersonaModel, Persona>(personaModel);
-                await _dbServices.UpdateItem(nueva);
+                //var nueva = this.mapper.Map<PersonaModel, Persona>(persona);
+                await _dbServices.UpdateItem(persona);
 
                 //await _dbServices.UpdateItem(persona);           
              
@@ -119,18 +119,18 @@ namespace JornalerosApp.Controllers
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.Conflict)]
-        [ProducesResponseType(typeof(PersonaModel), (int)HttpStatusCode.Created)]
-        public async Task<ActionResult<PersonaModel>> PostPersonas([FromBody] PersonaModel personaModel)
+        [ProducesResponseType(typeof(Persona), (int)HttpStatusCode.Created)]
+        public async Task<ActionResult<Persona>> PostPersonas([FromBody] Persona persona)
         {            
             try
             {
-                var persona = this.mapper.Map<PersonaModel, Persona>(personaModel);
+                //var persona = this.mapper.Map<PersonaModel, Persona>(persona);
                 await _dbServices.AddItem(persona);
 
             }
             catch (DbUpdateException)
             {
-                if (PersonaExists(personaModel.IdPersona))
+                if (PersonaExists(persona.IdPersona))
                 {
                     return Conflict();
                 }
@@ -140,12 +140,12 @@ namespace JornalerosApp.Controllers
                 }
             }
 
-            return CreatedAtAction("GetPersonas", new { id = personaModel.IdPersona }, personaModel);
+            return CreatedAtAction("GetPersonas", new { id = persona.IdPersona }, persona);
         }
 
         // DELETE: api/Personas/5
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(PersonaModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Persona), (int)HttpStatusCode.OK)]
 
         public async Task<ActionResult<Persona>> DeletePersona(string id)
         {

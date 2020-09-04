@@ -1,0 +1,111 @@
+﻿
+<BSContainer IsFluid="true">
+    <BSAlert Color="Color.Info">Seleccione las labores que ha realizado:</BSAlert>         
+            <BSTable>
+                <thead>
+                    <tr>
+                        @foreach (var item in Nivel1)
+                        {
+                        <th align="center">
+                            <BSBasicForm IsInline="true">
+                                <BSFormGroup IsCheck="true" IsRow="true">
+                                    <BSLabel For="experienciaCampo">@item</BSLabel>
+                                    <BSBasicInput Class="ml-3" InputType="InputType.Checkbox" Id="experienciaCampo" ValueChanged="@((bool e) => NuevaExperiencia(e, item))"></BSBasicInput>
+                                </BSFormGroup>
+                            </BSBasicForm>
+                        </th>
+
+                        }
+                    </tr>
+                    </thead>
+                <tbody>
+                    @foreach (var ii in Enumerable.Range(0, 4))
+                    {
+                    <tr>
+                        <td align="center">
+                            <BSBasicForm IsInline="true">
+                                <BSFormGroup IsCheck="true" IsRow="true">
+                                    <BSCol>
+                                        <BSLabel For="experienciaNivel21">@Cosecha[ii]</BSLabel>
+                                        <BSBasicInput Class="ml-3" InputType="InputType.Checkbox" Id="experienciaNivel21" ValueChanged="@((bool e) => NuevaExperiencia(e, Cosecha[ii]))"></BSBasicInput>
+                                    </BSCol>
+                                </BSFormGroup>
+                            </BSBasicForm>
+                        </td>
+                        <td align="center">
+                            <BSBasicForm IsInline="true">
+                                <BSFormGroup IsCheck="true" IsRow="true">
+                                    <BSCol>
+                                        <BSLabel For="experienciaNivel21">@Poda[ii]</BSLabel>
+                                        <BSBasicInput Class="ml-3" InputType="InputType.Checkbox" Id="experienciaNivel21" ValueChanged="@((bool e) => NuevaExperiencia(e, Poda[ii]))"></BSBasicInput>
+                                    </BSCol>
+                                </BSFormGroup>
+                            </BSBasicForm>
+                        </td>
+                        <td align="center">
+                            <BSBasicForm IsInline="true">
+                                <BSFormGroup IsCheck="true" IsRow="true">
+                                    <BSCol>
+                                        <BSLabel For="experienciaNivel21">@Cosecha[ii]</BSLabel>
+                                        <BSBasicInput Class="ml-3" InputType="InputType.Checkbox" Id="experienciaNivel21" ValueChanged="@((bool e) => NuevaExperiencia(e, Cosecha[ii]))"></BSBasicInput>
+                                    </BSCol>
+                                </BSFormGroup>
+                            </BSBasicForm>
+                        </td>
+                        <td align="center">
+                            <BSBasicForm IsInline="true">
+                                <BSFormGroup IsCheck="true" IsRow="true">
+                                    <BSCol>
+                                        <BSLabel For="experienciaNivel21">@Cosecha[ii]</BSLabel>
+                                        <BSBasicInput Class="ml-3" InputType="InputType.Checkbox" Id="experienciaNivel21" ValueChanged="@((bool e) => NuevaExperiencia(e, Cosecha[ii]))"></BSBasicInput>
+                                    </BSCol>
+                                </BSFormGroup>
+                            </BSBasicForm>
+                        </td>
+                        <td align="center">
+                            <BSBasicForm IsInline="true">
+                                <BSFormGroup IsCheck="true" IsRow="true">
+                                    <BSCol>
+                                        <BSLabel For="experienciaNivel21">@Cosecha[ii]</BSLabel>
+                                        <BSBasicInput Class="ml-3" InputType="InputType.Checkbox" Id="experienciaNivel21" ValueChanged="@((bool e) => NuevaExperiencia(e, Cosecha[ii]))"></BSBasicInput>
+                                    </BSCol>
+                                </BSFormGroup>
+                            </BSBasicForm>
+                        </td>
+                    </tr>
+                    }
+
+                </tbody>
+            </BSTable>    
+</BSContainer>
+
+
+
+
+@code {
+    bool isSelected { get; set; }
+    string selectedNivel { get; set; }
+    List<string> Nivel1 = new List<string> { "Cosecha", "Poda", "Plantacion", "Cuidado", "Maquinaria" };
+    List<string> Cosecha = new List<string> { "Frutales", "Viña", "Olivos", "Huerta", "Invernadero" };
+    List<string> Poda = new List<string> { "Frutales", "Viña", "Olivos", "Huerta", "Invernadero" };
+    List<string> Plantacion = new List<string> { "Frutales", "Viña", "Olivos", "Huerta", "Invernadero" };
+    List<string> Cuidado = new List<string> { "Frutales", "Viña", "Olivos", "Huerta", "Invernadero" };
+    List<string> Maquinaria = new List<string> { "Frutales", "Viña", "Olivos", "Huerta", "Invernadero" };
+    Dictionary<string, List<string>> Nivel2 = new Dictionary<string, List<string>>();
+
+
+    void NuevaExperiencia(bool e, string item)
+    {
+
+        isSelected = e;
+        selectedNivel = item;
+    }
+
+    void NuevaExperienciaNivel2(bool e, string item)
+    {
+
+        var data = Nivel1.Select(s => s).Where(p => p.Contains(item)).FirstOrDefault();
+
+    }
+
+}

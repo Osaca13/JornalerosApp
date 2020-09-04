@@ -1,0 +1,91 @@
+﻿@page "/FormularioFormacion"
+@inject JornalerosApp.Shared.Services.ISQLDatabaseServices SQLDBServices
+@inject NavigationManager Navigation
+@using JornalerosApp.Shared.Models
+
+
+<BSJumbotron>
+    <h3>Formacion</h3>
+    <EditForm Model="@FormacionData">
+
+        @*<EditForm Model="@FormacionData" OnValidSubmit="@OnValidSubmit">*@
+        <div class="form-group row">
+            <div class="col">
+                <label>Nombre de Formacion:</label>
+                <div>
+                    <InputText class="form-control" @bind-Value="@FormacionData.Titulo" />
+                    <ValidationMessage For="@(() => FormacionData.Titulo )" />
+                </div>
+            </div>
+            <div class="col">
+                <label>Nombre del Centro:</label>
+                <div>
+                    <InputText class="form-control" @bind-Value="@FormacionData.Centro" />
+                    <ValidationMessage For="@(() => FormacionData.Centro )" />
+                </div>
+            </div>
+            <div class="col">
+                <label>Fecha de Inicio:</label>
+                <div>
+                    <InputDate class="form-control" style="width:100%" @bind-Value="@FormacionData.FechaInicio" @bind-Value:format="dd-mm-yy" />
+                    <ValidationMessage For="@(() => FormacionData.FechaInicio)" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Descripción:</label>
+            <InputTextArea style="width:100%" @bind-Value="@FormacionData.Descripcion" placeholder="Describa brevemente..."></InputTextArea>
+        </div>
+        <div class="form-group row">
+            <div class="col">
+                <label>¿Estudias actualmente?:</label>
+                <div>
+                    <InputCheckbox class="form-control" Value="@ContinuaEstudiando" ValueChanged="((bool e) => ContinuaEstudio(e))" ValueExpression="@(()=> ContinuaEstudiando)" />
+                    @*<ValidationMessage For="@(() => formacion.FechaFin)" />*@
+                </div>
+            </div>
+            <div class="col">
+                <label>Fecha Final:</label>
+                <div>
+                    <InputDate disabled="@ContinuaEstudiando" class="form-control" @bind-Value="@FormacionData.FechaFin" CurrentValue=Datetime.Now />
+                    <ValidationMessage For="@(() => FormacionData.FechaFin)" />
+                </div>
+            </div>
+        </div>
+
+        <BSButtonGroup IsToolbar="true">
+            <BSButtonGroup Class="mr-4">
+                <BSButton Value="Submit" Color="Color.Success" Size="Size.Large" OnClick="@OnClickGuardar">Guardar</BSButton>
+            </BSButtonGroup>
+            <BSButtonGroup Class="mr-4">
+                <BSButton Value="Reset" Color="Color.Warning" Size="Size.Large" OnClick="@OnClickCerrar">Cancelar</BSButton>
+            </BSButtonGroup>
+            <BSButtonGroup Class="mr-4">
+                <BSButton Value="Reset" Color="Color.Danger" Size="Size.Large" OnClick="@OnClickBorrar">Borrar</BSButton>
+            </BSButtonGroup>
+        </BSButtonGroup>
+
+        <DataAnnotationsValidator />
+    </EditForm>
+</BSJumbotron>
+
+@code {
+
+   
+    [Parameter]
+    public Formacion FormacionData { get; set; }
+    [Parameter]
+    public EventCallback OnClickGuardar { get; set; }
+    [Parameter]
+    public EventCallback OnClickBorrar { get; set; }
+    [Parameter]
+    public EventCallback OnClickCerrar { get; set; }
+   
+    bool ContinuaEstudiando { get; set; } = false;
+
+    void ContinuaEstudio(bool e)
+    {
+        ContinuaEstudiando = e;
+        FormacionData.FechaFin = (ContinuaEstudiando == true) ? null : FormacionData.FechaFin;
+    }
+}
