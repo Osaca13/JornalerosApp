@@ -6,18 +6,10 @@
 @inject NavigationManager Navigation
 
     
-        <EditForm Model="@Persona" OnValidSubmit="@OnValidSubmit">
+        <EditForm Model="@Persona" OnValidSubmit="@OnValidSubmit" class="w-100">
             <DataAnnotationsValidator />
             <BSValidationSummary/>           
-            <div class="form-group row mb-1">                
-                <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0" IsRow="true">
-                    <BSLabel For="CVCorreo" SM="4">Correo Electrónico</BSLabel>
-                    <BSCol SM="6">
-                        <BSBasicInput Class="" InputType="InputType.Text" Id="CVCorreo" IsReadonly="true" @bind-Value="@Persona.CorreoElectronico"></BSBasicInput>
-                       
-                     </BSCol>
-                </BSFormGroup>
-            </div>
+            
             <div class="form-group row mb-1">
                 <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
                     <BSLabel For="CVNombre" Class="mr-sm-6">Nombre</BSLabel>

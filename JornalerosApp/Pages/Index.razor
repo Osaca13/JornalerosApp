@@ -7,18 +7,18 @@
 <AuthorizeView Roles="Candidato, Admin, Empresa">
     <NotAuthorized>
         <div class="jumbotron" style="background-color:transparent">
-            <h1>Hello, world!</h1>
+            <h1>Jornaleros</h1>
 
-            Welcome to your new app.
+            Bienvenidos a nuestro portal de búsqueda de trabajo en el campo...
 
-            <SurveyPrompt Title="How is Blazor working for you?" />
+            ¡Para ver las ofertas disponibles como candidato o publicar ofertas como empresa, inscríbase en nuestro portal!
         </div>
     </NotAuthorized>
     <Authorized>        
         @if (Tipo == "candidato")
         {
           
-            <DatosPersona UserName="@Name" Id="@Id"></DatosPersona>
+            <InicioPersona UserName="@Name" Id="@Id"></InicioPersona>
         }
         @if (Tipo == "empresa")
         {
@@ -38,7 +38,8 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        var userAuthenticated = await state;
+        var userAuthenticated = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+       
         Id = UserManager.GetUserId(userAuthenticated.User);
         Name = userAuthenticated.User.Identity.Name;
 

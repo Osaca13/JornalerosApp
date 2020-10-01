@@ -1,4 +1,5 @@
-﻿@page "/BuscarOfertas/{id}"
+﻿@page "/BuscarOfertas/"
+@page "/BuscarOfertas/{id}"
 @using JornalerosApp.Shared.Models
 @using Microsoft.AspNetCore.Identity
 @using Newtonsoft.Json;
@@ -47,7 +48,7 @@
 {
     <ListadoGenerico Listado=@ListaOfertas Titulo=@titulo>
         <ListadoConElementos>
-            @if (Id != "NO")
+            @if (Id != null)
             {
                 <BSButton class="btn btn-dark" OnClick="CrearOferta">Crear nueva oferta</BSButton>
             }
@@ -71,7 +72,7 @@
                             <td>@oferta.Descripcion</td>
                             <td>@oferta.NombreEmpresa</td>
                             <td>@oferta.JornadaReal</td>
-                            @if (Id == "NO")
+                            @if (Id == null)
                             {
                                 <td><BSButton class="btn btn-info" OnClick="VerOferta">Ver detalles</BSButton></td>
                                 <td><BSButton class="btn btn-info" OnClick="IncribirmeOferta">Inscribirme</BSButton></td>
@@ -103,7 +104,7 @@
     private System.Security.Claims.ClaimsPrincipal user { get; set; }
     private AuthenticationState authState { get; set; }
     private string titulo { get; set; }
-    private List<string> Sectores { get; set; } = new List<string> { "", "Cultivos Herbáceos e Industriales",
+    private List<string> Sectores { get; set; } = new List<string> { "Seleccione un sector...", "Cultivos Herbáceos e Industriales",
         "Frutas y Hortalizas", "Vitivinicultura", "Aceite de Oliva y Aceituna de Mesa", "Flores y Plantas Ornamentales"};
 
     protected override async Task OnParametersSetAsync()

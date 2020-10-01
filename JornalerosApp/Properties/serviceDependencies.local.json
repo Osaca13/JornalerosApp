@@ -1,8 +1,21 @@
 {
   "dependencies": {
+    "mssql2": {
+      "type": "mssql",
+      "connectionId": "ContainerConnection",
+      "suggestion": "true",
+      "ignored": "true"
+    },
+    "signalr1": {
+      "type": "signalr",
+      "suggestion": "true",
+      "ignored": "true"
+    },
     "mssql1": {
-      "type": "mssql.local",
-      "connectionId": "ContainerConnection"
+      "resourceId": null,
+      "type": "mssql.onprem",
+      "connectionId": "DefaultConnection",
+      "secretStore": "LocalSecretsFile"
     }
   }
 }

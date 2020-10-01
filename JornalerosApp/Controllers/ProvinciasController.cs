@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using JornalerosApp.Data;
 using JornalerosApp.Services;
@@ -21,14 +23,19 @@ namespace JornalerosApp.Controllers
         }
         // GET: api/<RelacionMunicipiosProvinciasController>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<ActionResult<IEnumerable<string>>> GetProvincias()
         {
-            var result = await _context.AllItems();
-            if(result!= null)
+            try
             {
-               return Ok(result.Select(p => p.Provincia).Distinct().ToList());
+                var result = await _context.AllItems();
+                return Ok(result.Select(p => p.Provincia).Distinct().ToList());
+            }catch(Exception exc)
+            {
+                Debug.WriteLine(exc.Message);
+                throw;
             }
-            return NoContent(); 
         }
 
         // GET api/<RelacionMunicipiosProvinciasController>/5

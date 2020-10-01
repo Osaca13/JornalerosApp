@@ -1,32 +1,22 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using JornalerosApp.Areas.Identity;
 using JornalerosApp.Services;
-using JornalerosApp.Shared.Data;
 using System.Globalization;
-using System.Reflection;
 using Microsoft.Extensions.Options;
 using JornalerosApp.Shared.Services;
 using JornalerosApp.Data;
-using System.Net.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using AutoMapper;
 using JornalerosApp.Shared.Models;
 using BlazorStrap;
-using JornalerosApp.Shared.Entities;
+using Syncfusion.Blazor;
 
 namespace JornalerosApp
 {
@@ -92,14 +82,17 @@ namespace JornalerosApp
             services.AddScoped<IDbServices<Oferta>, OfertaDbServices>();
             services.AddHttpClient();
             services.AddApiClient();
+            services.AddSyncfusionBlazor();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
+                var properties = env.WebRootPath;
             }
             else
             {

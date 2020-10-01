@@ -1,5 +1,6 @@
-﻿@page "/Candidato/CV/"
+﻿@page "/Candidato/CV/{id}"
 @using JornalerosApp.Shared.Models
+@using JornalerosApp.Pages.Candidatos
 @using JornalerosApp.Pages.Curriculum
 @using BlazorDateRangePicker
 @inject AuthenticationStateProvider Provider
@@ -8,133 +9,155 @@
 @inject NavigationManager Navigation
 @inject JornalerosApp.Shared.Services.ISQLDatabaseServices SQLDBServices
 
-@if (panel)
-{
-   
-    <BSContainer IsFluid="true">
-        <BSRow>
-           
-            <BSCol Class="float-right">
-                X
-                @*<BSButton ButtonType="ButtonType.Button" Class="close" OnClick="@OnClickCallBack" aria-label="Close">Cerrar</BSButton>*@
-            </BSCol>
-        </BSRow>
-        <hr/>
-        <BSTabGroup ShowEvent="@Shown">
-            <BSTabList IsList="true" IsFill="true" Class="nav-justified" Alignment="Alignment.Center">
-                <BSTab Id="DatosPersonales" @ref="refDatosPersonales" Name="DatosPersonalesName">
-                    <BSTabLabel>Datos Personales</BSTabLabel>
+<BSContainer IsFluid="true">
+        <hr />
+        <BSTabGroup  @ref="refTabGroup">
+            <BSTabList IsList="true" IsFill="true" Class="nav-justified" Alignment="Alignment.Center" @ref="refTabList">
+                <BSTab Id="DatosPersonales" @ref="refDatosPersonales" >
+                    <BSTabLabel Class="small">Datos Personales</BSTabLabel>
 
-                    <BSTabContent>
-                        <hr />
-                        <EditarDP Persona="@Persona" Id="@Id" Municipios="@Municipios" Provincias="@Provincias" OnProvinciaSelection="@MunicipioSegunProvincia" OnValidSubmit="@GuardarDatos"></EditarDP>
-                        <ButonesFondo Inicio="@NavigacionAInicio"></ButonesFondo>
-                    </BSTabContent>
+                    <BSTabContent Class="jumbotron">
+                        <br />
+                        <BSRow style="height:380px!important" >
+                            <EditarDP Persona="@Persona" Id="@Id" Municipios="@Municipios" Provincias="@Provincias" OnProvinciaSelection="@MunicipioSegunProvincia" OnValidSubmit="@CrearDatosUsuario"></EditarDP>
+                        </BSRow>
+                        <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
+                           <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refDatosPersonales))" Listo="@(()=>IrTabSiguiente(refDatosPersonales))"></ButonesFondo>
+                        </BSRow>
+                     </BSTabContent>
                 </BSTab>
                 <BSTab @ref="refExperiencia" Id="Experiencia" Name="ExperienciaName">
-                    <BSTabLabel>Experiencia Laboral</BSTabLabel>
-                    <BSTabContent>
-                        <hr />
-                        <EditForm Model="@Persona">
-                            <BSFormGroup IsCheck="true" IsRow="true">
-                                <BSCol SM="6">
+                    <BSTabLabel Class="small">Experiencia Laboral</BSTabLabel>
+                    <BSTabContent Class="jumbotron">
+                        <br /> 
+                        <BSRow style="height:380px!important">
+                            <ul class="nav flex-row">
+                                <li class="nav-item p-2">
                                     <BSLabel For="experienciaCampo">¿Tienes experiencia en labores de campo?</BSLabel>
+                                </li>
+                                <li class="nav-item p-2">
                                     <BSBasicInput Class="ml-3" InputType="InputType.Checkbox" Id="experienciaCampo" Value="@VisibleExperiencia" ValueChanged="@((bool e) => NuevaExperiencia(e))"></BSBasicInput>
-                                </BSCol>
-                            </BSFormGroup>
+                                </li>
+                            </ul>
                             @if (VisibleExperiencia)
                             {
-                                <CVComponent></CVComponent>
+                                <CVExperiencia listaExperiencia="@ListaExperiencia"></CVExperiencia>
 
                             }
+                         </BSRow> 
+                        <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
+                           <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refExperiencia))" Listo="@(()=>IrTabSiguiente(refExperiencia))"></ButonesFondo>
+                        </BSRow>
 
-                        </EditForm>
-                        <ButonesFondo Inicio="@NavigacionAInicio"></ButonesFondo>
-                    </BSTabContent>
+                        </BSTabContent>
                 </BSTab>
-                <BSTab  Id="Maquinaria" Name="MaquinariaName">
-                    <BSTabLabel>Carnés de Maquinarias</BSTabLabel>
-                    <BSTabContent>
-                        <hr />                        
-                        <ButonesFondo Inicio="@NavigacionAInicio"></ButonesFondo>
-                    </BSTabContent>
-                </BSTab>
-
-                <BSTab Id="Formacion" @ref="refFormacion" Name="FormacionName">
-                    <BSTabLabel>Nivel Formativo</BSTabLabel>
-                    <BSTabContent>
-                        <hr />
-                        Aqui va la formacion
-                        <ButonesFondo Inicio="@NavigacionAInicio"></ButonesFondo>
-                    </BSTabContent>
-                </BSTab>
-                <BSTab Id="Otros" InitialSelection="@refOtros" Name="OtrosName">
-                    <BSTabLabel>Otros datos</BSTabLabel>
-                    <BSTabContent>
+                <BSTab Id="Maquinaria" Name="MaquinariaName" @ref="refMaquinarias">
+                    <BSTabLabel Class="small">Carnés de Maquinarias</BSTabLabel>
+                    <BSTabContent Class="jumbotron">
                         <br />
+                        <BSRow style="height:380px!important"></BSRow>
+                        <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
+                            <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refMaquinarias))" Listo="@(()=>IrTabSiguiente(refMaquinarias))"></ButonesFondo>
+                        </BSRow>
+                    </BSTabContent>
+                </BSTab>
+                <BSTab Id="Formacion" @ref="refFormacion" Name="FormacionName" s>
+                    <BSTabLabel Class="small">Nivel Formativo</BSTabLabel>
+                    <BSTabContent Class="jumbotron">
                         <br />
-                        <EditForm Model="@curriculum">
-                            <BSRow>
-                                <BSCol>
-                                    <BSLabel For="Movilidad">Movilidad</BSLabel>
-                                    <BSInput InputType="InputType.Text" Id="Movilidad" @bind-Value="@curriculum.Movilidad"></BSInput>
-                                </BSCol>
-                                <BSCol>
-                                    <BSLabel For="AlojamientoPropio">¿Tienes alojamiento propio?</BSLabel>
-                                    <BSInput InputType="InputType.Text" Id="Alojamiento" @bind-Value="@curriculum.AlojamientoPropio"></BSInput>
-                                </BSCol>
-                                <BSCol>
-                                    <BSLabel For="Disponibilidad">¿Qué disponibilidad tienes?</BSLabel>
-                                    <BSInput InputType="InputType.Select" Id="Disponibilidad" @bind-Value="@curriculum.TramitarPermisoTrabajo">
-                                        <option value=""></option>
-                                        <option value="Inmediata">Inmediata</option>
-                                        <option value="15">En 15 días</option>
-                                        <option value="@EntreFechas" @onclick="@((MouseEventArgs e) => SeleccioneIntervalo(e))">Seleccione un intervalo</option>
-                                    </BSInput>
-
-                                </BSCol>
+                        <BSRow style="height:380px!important">
+                            <CVFormacion></CVFormacion>
+                        </BSRow>
+                        <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
+                            <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refFormacion))" Listo="@(()=>IrTabSiguiente(refFormacion))"></ButonesFondo>
                             </BSRow>
-                            <BSRow>
-                                <BSCol SMOffset="6"><DateRangePicker class="form-control form-control-sm" placeholder="Seleccione fechas..." @bind-StartDate="StartDate" @bind-EndDate="EndDate" OnRangeSelect="OnRangeSelect"></DateRangePicker></BSCol>
-
-                            </BSRow>
-                            <br />
-                            <br />
-
-                        </EditForm>
-                        <ButonesFondo Inicio="@NavigacionAInicio"></ButonesFondo>
                     </BSTabContent>
                 </BSTab>
-                <BSTab Id="Permisos" InitialSelection="@refOtros" Name="PermisosName">
-                    <BSTabLabel>Permisos de Conducir</BSTabLabel>
+                <BSTab Id="Otros" Name="OtrosName" @ref="refOtros" >
+                    <BSTabLabel Class="small">Otros datos</BSTabLabel>
                     <BSTabContent>
                         <br />
-                        <br />
+                        <BSRow style="height:380px!important">
 
-                        <ButonesFondo Inicio="@NavigacionAInicio"></ButonesFondo>
+                            <EditForm Model="@curriculum" class="w-100" >
+                                <BSRow>
+                                    <BSCol>
+                                        <BSLabel For="Movilidad">Movilidad</BSLabel>
+                                        <BSInput InputType="InputType.Text" Id="Movilidad" @bind-Value="@curriculum.Movilidad"></BSInput>
+                                    </BSCol>
+                                    <BSCol>
+                                        <BSLabel For="AlojamientoPropio">¿Tienes alojamiento propio?</BSLabel>
+                                        <BSInput InputType="InputType.Text" Id="Alojamiento" @bind-Value="@curriculum.AlojamientoPropio"></BSInput>
+                                    </BSCol>
+                                    
+                                </BSRow>
+                                <br />
+                                
+                                <BSRow Class="align-content-center">
+                                    <BSCol>
+                                        <BSFormGroup>
+                                            <BSLabel For="exampleFormControlSelect1">¿Qué disponibilidad tienes?</BSLabel>
+                                            <BSBasicInput Id="exampleFormControlSelect1" InputType="InputType.Select" Value="@curriculum.TramitarPermisoTrabajo" ValueChanged="@((string e)=>SeleccioneIntervalo(e))">
+                                                <option value="" selected>Seleccione una opcion...</option>
+                                                <option value="15dias">En 15 días</option>
+                                                <option value="hoy">Inmediatamente</option>
+                                                <option value="intervalo">En el período siguiente:</option>
+
+                                            </BSBasicInput>
+                                        </BSFormGroup>
+                                    </BSCol>
+                                    <BSCol>
+                                       @if (isSelected)
+                                        {
+                                        <BSFormGroup>
+                                            <BSLabel style="height:10px"></BSLabel>
+                                            <DateRangePicker>
+                                                <PickerTemplate Context="NewContext">
+                                                    <div id="@NewContext.ParentId" @onclick="NewContext.Toggle" style="background: #fff; cursor: pointer; padding: 5px 10px; width: 100%; border: 1px solid #ccc; border-radius: 3px;">
+                                                        <i class="oi oi-calendar"></i>&nbsp;
+                                                        <span>@NewContext.FormattedRange @(string.IsNullOrEmpty(NewContext.FormattedRange) ? "Selecciona las fechas..." : "")</span>
+                                                        <i class="oi oi-chevron-bottom float-right"></i>
+                                                    </div>
+                                                </PickerTemplate>
+                                            </DateRangePicker>
+                                        </BSFormGroup>
+                                        }
+                                    </BSCol>
+                                    
+                                </BSRow>
+                              
+                            </EditForm>
+                        </BSRow>
+                        
+                        <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
+                            <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refOtros))" Listo="@(()=>IrTabSiguiente(refOtros))"></ButonesFondo>
+                        </BSRow>
                     </BSTabContent>
                 </BSTab>
+                <BSTab Id="Permisos" Name="PermisosName" @ref="refPermisos">
+                    <BSTabLabel Class="small">Permisos</BSTabLabel>
+                    <BSTabContent>                        
+                        <br />
+                        <BSRow style="height:380px!important">
+                           
+                        </BSRow>
 
+                        <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
+                            <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refPermisos))" Listo="@(()=>IrTabSiguiente(refPermisos))"></ButonesFondo>
+                        </BSRow>
+
+                    </BSTabContent>
+                </BSTab>
             </BSTabList>
-            <BSTabSelectedContent />
+            <BSTabSelectedContent />             
+            
         </BSTabGroup>
     </BSContainer>
-}
-@if (VisibleFormacion)
-{
-    <FormularioFormacion FormacionData="@FormacionData" OnClickGuardar="@GuardarFormacion" OnClickCerrar="@Cerrar" OnClickBorrar="@BorrarFormacion"></FormularioFormacion>
-}
-
-@*@if (VisibleExperiencia)
-{
-    <FormularioExperiencia ExperienciaData="@ExperienciaData" OnClickGuardar="@GuardarExperiencia"></FormularioExperiencia>
-}*@
-
 
 @code {
     [Parameter] public string Id { get; set; }
-    [Parameter] public Persona Persona { get; set; }
-    [Parameter] public EventCallback OnClickCallBack { get; set; }
+    public Persona Persona { get; set; } = new Persona();
+
     private Formacion FormacionData { get; set; }
     private Experiencia ExperienciaData { get; set; }
     [System.Diagnostics.CodeAnalysis.MaybeNull]
@@ -143,44 +166,68 @@
     List<Formacion> ListaFormacion { get; set; }
     List<Experiencia> ListaExperiencia { get; set; }
     //[Parameter] public EventCallback OnValidSubmit { get; set; }
-    BSTab refExperiencia;
-    BSTab refDatosPersonales;
-    BSTab refFormacion;
-    bool refOtros { get; set; }
-
+    BSTab refExperiencia { get; set; }
+    BSTab refDatosPersonales { get; set; }
+    BSTab refFormacion { get; set; }
+    BSTab refOtros { get; set; }
+    BSTab refPermisos { get; set; }
+    BSTab refMaquinarias{ get; set; }
+    BSTabList refTabList { get; set; }
+    BSTabGroup refTabGroup { get; set; }
+    BSDropdownItem inmediata { get; set; }
+    BSDropdownItem dias15 { get; set; }
+    BSDropdownItem intervalo { get; set; }
+    bool DatosPersonalesName { get; set; }
+    bool ActivarInmediata { get; set; }
+    DateRangePicker context;
     bool panel { get; set; } = true;
     bool VisibleFormacion { get; set; } = false;
     bool VisibleExperiencia { get; set; } = false;
-    [Parameter] public IEnumerable<string> Provincias { get; set; } = new List<string>();
-    [Parameter] public IEnumerable<string> Municipios { get; set; } = new List<string>();
-    [Parameter]
-    public EventCallback<string> OnProvinciaSelection { get; set; }
+    public IEnumerable<string> Provincias { get; set; } = new List<string>();
+    public IEnumerable<string> Municipios { get; set; } = new List<string>();
+    private bool nuevo { get; set; }
     DateTimeOffset? StartDate { get; set; } = DateTime.Today.AddMonths(-1);
     DateTimeOffset? EndDate { get; set; } = DateTime.Today.AddDays(1).AddTicks(-1);
     TimeSpan? EntreFechas { get; set; }
+    string EntreFechas2 { get; set; }
     bool isSelected { get; set; }
 
-    protected async Task MunicipioSegunProvincia(string e)
+    async void ItemsDeExperiencia(List<string> items)
     {
-        await OnProvinciaSelection.InvokeAsync(e);
-
-    }
-
-    async void GuardarDatos()
-    {
-        var result = await client.PutAsJsonAsync<Persona>("Personas/", Persona);
-        if (result.IsSuccessStatusCode)
+        foreach(var item in items)
         {
-
+            await SQLDBServices.UpdateExperiencia(new Experiencia { IdExperiencia = Guid.NewGuid().ToString(), Puesto = item, IdCurriculum = curriculum.IdCurriculum }); ;
         }
     }
 
-    void NavigacionAInicio()
+    protected async Task MunicipioSegunProvincia(string nombreProvincia)
     {
+        Municipios = await client.GetFromJsonAsync<List<string>>("Provincias?provincias=" + nombreProvincia);
+        await InvokeAsync(() => StateHasChanged());
+    }
 
-        refOtros = true;
+    async void CrearDatosUsuario()
+    {
+        try
+        {
 
-        //Navigation.Uri.Contains("/Candidato");
+            if (nuevo)
+            {
+                var respsta = await client.PostAsJsonAsync<Persona>("Personas", Persona);
+
+            }
+            else
+            {
+                var estado = await client.PutAsJsonAsync<Persona>("Personas/" + Id, Persona);
+
+            }
+            await InvokeAsync(() => StateHasChanged());
+        }
+        catch (Exception exc)
+        {
+            System.Diagnostics.Debug.WriteLine(exc.Message);
+            throw;
+        }
     }
 
     public void OnRangeSelect(DateRange range)
@@ -189,18 +236,17 @@
         EndDate = range.End;
         EntreFechas = EndDate - StartDate;
     }
-    void SeleccioneIntervalo(MouseEventArgs e)
+    void SeleccioneIntervalo(string item)
     {
-        isSelected = true;
-
-    }
-
-    private void Shown(BSTabEvent e)
-    {
-        var data = e.Activated;
-        //?.Id.ToString();
-
-        var data2 = e.Deactivated?.Id.ToString();
+        curriculum.TramitarPermisoTrabajo = item;
+        if(item == "intervalo")
+        {
+            isSelected = true;
+        }
+        else
+        {
+            isSelected = false;
+        }
     }
 
     void EditarFormacion(Formacion groupItem)
@@ -229,21 +275,38 @@
         }
     }
 
-    void TabActivo(EventArgs e)
+    async void IrPaginaInicio(MouseEventArgs args)
     {
+        CrearDatosUsuario();
+        Navigation.NavigateTo("/Candidato");
+        await InvokeAsync(() => StateHasChanged());
+    }
 
-        var data = e;
+    void IrTabAnterior(BSTab bSTab)
+    {
+        CrearDatosUsuario();
+        var render = refTabGroup.Tabs.FindIndex(t => t.Name == bSTab.Name);
+        if (render != 0)
+        {
+            refTabGroup.Tabs[render - 1].Select();
+        }
+    }
+
+    void IrTabSiguiente(BSTab bSTab)
+    {
+        CrearDatosUsuario();
+        var render = refTabGroup.Tabs.FindIndex(t => t.Name == bSTab.Name);
+        if (render != refTabGroup.Tabs.Count()-1)
+        {
+            refTabGroup.Tabs[render + 1].Select();
+        }
     }
 
     void NuevaExperiencia(bool e)
     {
         try
         {
-            //VisibleFormacion = !e;
             VisibleExperiencia = e;
-            //panel = false;
-            //ExperienciaData = new Experiencia { IdExperiencia = Guid.NewGuid().ToString(), IdCurriculum = curriculum.IdCurriculum, Empresa = string.Empty };
-            //var result = await SQLDBServices.AddExperiencia(ExperienciaData);
 
         }
         catch (Exception exc)
@@ -277,6 +340,26 @@
         client = Factory.CreateClient("clientFirst");
         try
         {
+            //Provincias = await client.GetFromJsonAsync<IEnumerable<string>>("Provincias");
+            Persona = await client.GetFromJsonAsync<Persona>("Personas/" + Id);
+            if (Persona.ProvinciaResidencia != null)
+            {
+                Municipios = await client.GetFromJsonAsync<IEnumerable<string>>("Provincias/" + Persona.ProvinciaResidencia);
+            }
+
+            if (Persona.CorreoElectronico == null)
+            {
+                nuevo = true;
+                Persona = new Persona
+                {
+                    IdPersona = Id,
+                    Nombre = string.Empty,
+                    PrimerApellido = string.Empty,
+                    Sexo = string.Empty,
+                    CorreoElectronico = authState.User.Identity.Name
+                };
+
+            }
             curriculum = await SQLDBServices.GetCurriculumPorIdPersona(Id);
             ListaFormacion = await SQLDBServices.FormacionPorIdPersona(Id);
             ListaExperiencia = await SQLDBServices.ExperienciaPorIdPersona(Id);

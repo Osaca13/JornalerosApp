@@ -1,0 +1,151 @@
+﻿
+
+
+<BSContainer IsFluid="true">
+    <BSAlert Color="Color.Info">Seleccione las labores que ha realizado:</BSAlert>
+    <BSTable>
+        <thead>
+            <tr>
+                @foreach (var item in Nivel1)
+                {
+                    <th align="center">
+                        <BSBasicForm IsInline="true">
+                            <BSFormGroup IsCheck="true" IsRow="true">
+                                <BSCol> <BSLabel >@item</BSLabel></BSCol>
+                            </BSFormGroup>
+                        </BSBasicForm>
+                    </th>
+                    <th align="center">
+                        <BSBasicForm IsInline="true">
+                            <BSFormGroup IsCheck="true" IsRow="true">
+                                @if (experienciaData.FirstOrDefault(p => p.Categoria == item).IsChecked.Contains(true))
+                                {
+                                    <BSCol><BSBasicInput Class="ml-3" InputType="InputType.Checkbox"  Value="true" ValueChanged="@((bool e) => NuevaExperiencia(e, item))"></BSBasicInput></BSCol>
+
+                                }
+                                else
+                                {
+                                    <BSCol><BSBasicInput Class="ml-3" InputType="InputType.Checkbox"  Value="false" ValueChanged="@((bool e) => NuevaExperiencia(e, item))"></BSBasicInput></BSCol>
+
+                                }
+                            </BSFormGroup>
+                        </BSBasicForm>
+                    </th>
+
+                }
+            </tr>
+        </thead>
+        <tbody class="justify-content-center">
+            @foreach (int jj in Enumerable.Range(0, 5)) @*filas*@
+            {
+                <tr>
+                    @foreach (int ii in Enumerable.Range(0, 5)) @*columnas*@
+                    {
+                        @if (experienciaData[ii].SubCategoria.Count > jj)
+                        {
+                            <td align="center">
+                                <BSBasicForm IsInline="true">
+                                    <BSFormGroup IsCheck="true" IsRow="true" Class="justify-content-center">
+                                        <BSCol><BSLabel>@experienciaData[ii].SubCategoria[jj]</BSLabel></BSCol>
+                                    </BSFormGroup>
+                                </BSBasicForm>
+                            </td>
+                            <td align="center">
+                                <BSBasicForm IsInline="true">
+                                    <BSFormGroup IsCheck="true" IsRow="true" Class="justify-content-center">
+                                        <BSCol><BSBasicInput Class="ml-3" InputType="InputType.Checkbox" Value="@experienciaData[ii].IsChecked[jj]" ValueChanged="@((bool e) => SelectNivel2(e, experienciaData[ii].Categoria, experienciaData[ii].SubCategoria[jj]))"></BSBasicInput></BSCol>
+                                    </BSFormGroup>
+                                </BSBasicForm>
+                            </td>
+                        }
+                        else
+                        {
+                            <td></td>
+                            <td></td>
+                        }
+                    }
+                </tr>
+            }
+
+        </tbody>
+    </BSTable>
+
+</BSContainer>
+
+@code {
+    //bool isSelected { get; set; }
+    //string selectedNivel { get; set; }
+    List<string> Nivel1 { get; set; } = new List<string>();
+    [Parameter]
+    public List<Experiencia> listaExperiencia { get; set; }
+
+    public List<string> selectedValues { get; set; } = new List<string>();
+    List<ExperienciaData> experienciaData { get; set; } = new List<ExperienciaData>();
+
+
+    protected override void OnInitialized()
+    {
+
+        Nivel1 = new List<string> { "Cosecha", "Poda", "Plantacion", "Cuidado", "Maquinaria" };
+
+
+        experienciaData.Add(new ExperienciaData { Categoria = Nivel1[0], SubCategoria = new List<string> { "Frutales", "Viña", "Olivos", "Huerta", "Invernadero" }, IsChecked = new List<bool> { false, false, false, false, false } });
+        experienciaData.Add(new ExperienciaData { Categoria = Nivel1[1], SubCategoria = new List<string> { "Frutales", "Viña", "Olivos" }, IsChecked = new List<bool> { false, false, false } });
+        experienciaData.Add(new ExperienciaData { Categoria = Nivel1[2], SubCategoria = new List<string> { "Árboles", "Huerta", "Invernadero" }, IsChecked = new List<bool> { false, false, false } });
+        experienciaData.Add(new ExperienciaData { Categoria = Nivel1[3], SubCategoria = new List<string> { "Frutales", "Viña", "Olivos", "Huerta", "Invernadero" }, IsChecked = new List<bool> { false, false, false, false, false } });
+        experienciaData.Add(new ExperienciaData { Categoria = Nivel1[4], SubCategoria = new List<string> { "Tractor", "Cosechadora", "Toro" }, IsChecked = new List<bool> { false, false, false } });
+
+        if (listaExperiencia != null)
+        {
+            if (listaExperiencia.Count > 0)
+            {
+                foreach (var item in listaExperiencia)
+                {
+                    var n1 = experienciaData.Find(p => p.Categoria == item.Puesto);
+                    var n2 = n1.SubCategoria.FindIndex(p => p == item.DescripcionPuesto);
+                    n1.IsChecked[n2] = true;
+                }
+            }
+        }
+
+    }
+
+    bool NuevaExperiencia(bool e, string item)
+    {
+        var n1 = experienciaData.Find(p => p.Categoria == item);
+        var puesto = listaExperiencia.FindAll(p => p.Puesto == item);
+        if (puesto.Count() == 0)
+        {
+            listaExperiencia.Add(new Experiencia { IdExperiencia = Guid.NewGuid().ToString(), Puesto = item });
+        }
+        return e;
+    }
+
+    //bool CategoriaSelected(string item)
+    //{
+    //    return experienciaData.FirstOrDefault(p => p.Categoria == item).IsChecked.Contains(true);
+
+    //}
+
+    void SelectNivel2(bool e, string categoria, string subcategoria)
+    {
+        var index = experienciaData.Find(p => p.Categoria == categoria).SubCategoria.IndexOf(subcategoria);
+        experienciaData.Find(p => p.Categoria == categoria).IsChecked[index] = e;
+    }
+
+    public class ExperienciaData
+    {
+        public ExperienciaData()
+        {
+            this.SubCategoria = new List<string>();
+            this.IsChecked = new List<bool>();
+        }
+        public string Categoria { get; set; }
+        public List<string> SubCategoria { get; set; }
+        public List<bool> IsChecked { get; set; }
+
+    }
+
+
+
+}
