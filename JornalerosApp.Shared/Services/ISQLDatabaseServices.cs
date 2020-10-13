@@ -12,7 +12,7 @@ namespace JornalerosApp.Shared.Services
 
         Task<List<ListaOferta>> OfertasPorParametros(string actividad, string lugar, string sector);
 
-        Task<List<Formacion>> FormacionPorIdPersona(string id);
+        Task<Formacion> FormacionPorIdPersona(string id);
 
         Task<Formacion> FormacionPorId(string id); 
         void DeletePersona(string id);
@@ -29,17 +29,28 @@ namespace JornalerosApp.Shared.Services
 
 
         //Experiencia
-
+        Task<Experiencia> GetExperiencia(string IdExperiencia);
         Task<bool> AddExperiencia(Experiencia experiencia);
 
         Task<bool> UpdateExperiencia(Experiencia experiencia);
 
         Task<List<Experiencia>> ExperienciaPorIdPersona(string id);
 
+        Task<bool> DeleteExperiencia(Experiencia experiencia);
+
         Task<string> PersonaFromIdFormacion(string id);
         Task<Persona> GetPersonaById(string id);
         void UpdatePersona(string id, Persona persona);
 
+        Task<List<EstudiosPorNiveles>> NivelesFormativo();
         void Save();
+
+        //Permisos
+
+        Task<Permiso> PermisosPorIdPersona(string id);
+
+        Task<bool> UpdatePermisos(Permiso permiso);
+
+        Task<bool> AddPermisos(Permiso permiso);
     }
 }

@@ -11,27 +11,20 @@
                     <th align="center">
                         <BSBasicForm IsInline="true">
                             <BSFormGroup IsCheck="true" IsRow="true">
-                                <BSCol> <BSLabel >@item</BSLabel></BSCol>
-                            </BSFormGroup>
-                        </BSBasicForm>
-                    </th>
-                    <th align="center">
-                        <BSBasicForm IsInline="true">
-                            <BSFormGroup IsCheck="true" IsRow="true">
                                 @if (experienciaData.FirstOrDefault(p => p.Categoria == item).IsChecked.Contains(true))
                                 {
-                                    <BSCol><BSBasicInput Class="ml-3" InputType="InputType.Checkbox"  Value="true" ValueChanged="@((bool e) => NuevaExperiencia(e, item))"></BSBasicInput></BSCol>
-
+                                    <BSCol> <BSLabel style="color: #2A26C3">@item</BSLabel></BSCol>
                                 }
                                 else
                                 {
-                                    <BSCol><BSBasicInput Class="ml-3" InputType="InputType.Checkbox"  Value="false" ValueChanged="@((bool e) => NuevaExperiencia(e, item))"></BSBasicInput></BSCol>
-
+                                    <BSCol> <BSLabel style="color: #070629">@item</BSLabel></BSCol>
                                 }
+
                             </BSFormGroup>
                         </BSBasicForm>
                     </th>
-
+                    <th align="center"></th>
+                    
                 }
             </tr>
         </thead>
@@ -73,11 +66,14 @@
 </BSContainer>
 
 @code {
-    //bool isSelected { get; set; }
-    //string selectedNivel { get; set; }
+
     List<string> Nivel1 { get; set; } = new List<string>();
     [Parameter]
-    public List<Experiencia> listaExperiencia { get; set; }
+    public List<Experiencia> ListaExperiencia { get; set; }
+    [Parameter]
+    public string IdCurriculum { get; set; }
+    [Parameter]
+    public EventCallback<List<Experiencia>> ListaExperienciaChanged { get; set; }
 
     public List<string> selectedValues { get; set; } = new List<string>();
     List<ExperienciaData> experienciaData { get; set; } = new List<ExperienciaData>();
@@ -91,15 +87,15 @@
 
         experienciaData.Add(new ExperienciaData { Categoria = Nivel1[0], SubCategoria = new List<string> { "Frutales", "Viña", "Olivos", "Huerta", "Invernadero" }, IsChecked = new List<bool> { false, false, false, false, false } });
         experienciaData.Add(new ExperienciaData { Categoria = Nivel1[1], SubCategoria = new List<string> { "Frutales", "Viña", "Olivos" }, IsChecked = new List<bool> { false, false, false } });
-        experienciaData.Add(new ExperienciaData { Categoria = Nivel1[2], SubCategoria = new List<string> { "Árboles", "Huerta", "Invernadero" }, IsChecked = new List<bool> { false, false, false } });
+        experienciaData.Add(new ExperienciaData { Categoria = Nivel1[2], SubCategoria = new List<string> { "Arboles", "Huerta", "Invernadero" }, IsChecked = new List<bool> { false, false, false } });
         experienciaData.Add(new ExperienciaData { Categoria = Nivel1[3], SubCategoria = new List<string> { "Frutales", "Viña", "Olivos", "Huerta", "Invernadero" }, IsChecked = new List<bool> { false, false, false, false, false } });
         experienciaData.Add(new ExperienciaData { Categoria = Nivel1[4], SubCategoria = new List<string> { "Tractor", "Cosechadora", "Toro" }, IsChecked = new List<bool> { false, false, false } });
 
-        if (listaExperiencia != null)
+        if (ListaExperiencia != null)
         {
-            if (listaExperiencia.Count > 0)
+            if (ListaExperiencia.Count() > 0)
             {
-                foreach (var item in listaExperiencia)
+                foreach (var item in ListaExperiencia)
                 {
                     var n1 = experienciaData.Find(p => p.Categoria == item.Puesto);
                     var n2 = n1.SubCategoria.FindIndex(p => p == item.DescripcionPuesto);
@@ -107,30 +103,49 @@
                 }
             }
         }
-
     }
 
-    bool NuevaExperiencia(bool e, string item)
+    async Task<bool> NuevaExperiencia(bool e, string item)
     {
-        var n1 = experienciaData.Find(p => p.Categoria == item);
-        var puesto = listaExperiencia.FindAll(p => p.Puesto == item);
-        if (puesto.Count() == 0)
-        {
-            listaExperiencia.Add(new Experiencia { IdExperiencia = Guid.NewGuid().ToString(), Puesto = item });
-        }
+        //var n1 = experienciaData.Find(p => p.Categoria == item);
+        //var puesto = ListaExperiencia.FindAll(p => p.Puesto == item);
+        //if (puesto.Count() == 0)
+        //{
+        //    ListaExperiencia.Add(new Experiencia { IdExperiencia = Guid.NewGuid().ToString(), Puesto = item });
+        //}
+        await InvokeAsync(() => StateHasChanged());
         return e;
     }
 
-    //bool CategoriaSelected(string item)
-    //{
-    //    return experienciaData.FirstOrDefault(p => p.Categoria == item).IsChecked.Contains(true);
-
-    //}
-
-    void SelectNivel2(bool e, string categoria, string subcategoria)
+    async Task SelectNivel2(bool e, string categoria, string subcategoria)
     {
         var index = experienciaData.Find(p => p.Categoria == categoria).SubCategoria.IndexOf(subcategoria);
         experienciaData.Find(p => p.Categoria == categoria).IsChecked[index] = e;
+
+        if (e)
+        {
+            if (!ListaExperiencia.Any(p => p.Puesto == categoria & p.DescripcionPuesto == subcategoria))
+            {
+                ListaExperiencia.Add(
+                new Experiencia
+                {
+                    IdExperiencia = Guid.NewGuid().ToString(),
+                    IdCurriculum = IdCurriculum,
+                    IdCurriculumNavigation = ListaExperiencia.FirstOrDefault()?.IdCurriculumNavigation,
+                    Puesto = categoria,
+                    DescripcionPuesto = subcategoria
+                });
+            }
+        }
+        else
+        {
+            if (ListaExperiencia.Any(p => p.Puesto == categoria & p.DescripcionPuesto == subcategoria))
+            {
+                ListaExperiencia.Remove(ListaExperiencia.FirstOrDefault(p => p.Puesto == categoria & p.DescripcionPuesto == subcategoria));
+            }
+        }
+        await InvokeAsync(() => StateHasChanged());
+        await ListaExperienciaChanged.InvokeAsync(ListaExperiencia);
     }
 
     public class ExperienciaData
@@ -143,9 +158,5 @@
         public string Categoria { get; set; }
         public List<string> SubCategoria { get; set; }
         public List<bool> IsChecked { get; set; }
-
     }
-
-
-
 }

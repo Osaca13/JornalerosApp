@@ -1,0 +1,77 @@
+﻿<BSContainer IsFluid="true">
+    <BSBasicForm Class="jumbotron">
+        <BSFormGroup IsRow="true" >
+            <BSCol SM="6"><BSLabel Color="Color.Info">¿Tiene licencia de conducción de vehículos agrícolas?</BSLabel></BSCol>
+           <BSCol SM="2"><BSBasicInput InputType="InputType.Checkbox" Id="exampleRadios1" IsChecked="false" Value="@Afirmativo" ValueChanged="@((bool e)=> RadioValue(e, "Afirmativo"))"></BSBasicInput>
+           <BSLabel For="exampleRadios1">Si</BSLabel></BSCol>
+           <BSCol SM="2"><BSBasicInput InputType="InputType.Checkbox" Id="exampleRadios2" IsChecked="false" Value="@Negativo" ValueChanged="@((bool e)=> RadioValue(e, "Negativo"))"></BSBasicInput>
+           <BSLabel For="exampleRadios2">No</BSLabel></BSCol>
+        </BSFormGroup>
+        <hr/>
+        <BSFormGroup >
+            <BSCol SM="12"> <BSLabel Color="Color.Info">Permisos de conducir:</BSLabel> </BSCol>
+            <BSRow Class="offset-1" >
+                @foreach (var item in PermisosConducir)
+                {
+                    <BSCol SM="2">
+                        <BSBasicInput InputType="InputType.Checkbox" Id="permisos" IsChecked="false" Value="@PermisoChequeado[PermisosConducir.IndexOf(item)]" ValueChanged="@((bool e)=> AñadirPermisos(e, item))"></BSBasicInput>
+                        <BSLabel For="permisos">@item</BSLabel>
+                        
+                   </BSCol>
+                }
+
+            </BSRow>
+        </BSFormGroup>
+    </BSBasicForm>
+</BSContainer>
+
+@code {
+    List<string> LVA { get; set; }
+    List<string> PermisosConducir { get; set; }
+    bool[] PermisoChequeado { get; set; }
+    bool Afirmativo { get; set; } = false;
+    bool Negativo { get; set; } = false;
+    bool Valor { get; set; }
+    [Parameter]
+    public Permiso PermisoData{ get; set; }
+    [Parameter]
+    public EventCallback<Permiso> PermisoDataChanged { get; set; }
+
+    protected override void OnInitialized()
+    {
+        LVA = new List<string> { "Tractor", "Motocultor", "Cosechadora", "Remolques", "Sembradoras"};
+        PermisosConducir = new List<string> { "AM", "A", "A1", "A2", "B", "B+E", "C1", "C1+E", "C", "C+E", "D1", "D1+E", "D", "D+E" };
+        PermisoChequeado = new bool[PermisosConducir.Count()];
+        var permisos = PermisoData?.Tipo?.Split("|");
+    }
+
+    async Task RadioValue(bool e, string item)
+    {
+        if(item == "Afirmativo")
+        {
+            Afirmativo = e;
+            Negativo = !e;
+
+            if (Afirmativo)
+            {
+                PermisoData.Tipo = string.Empty;
+                PermisoData.Tipo.Concat("|LVA");
+                await PermisoDataChanged.InvokeAsync(PermisoData);
+            }
+
+        }
+        if (item == "Negativo")
+        {
+            Afirmativo = !e;
+            Negativo = e;
+        }
+    }
+
+    async Task AñadirPermisos(bool e, string p)
+    {
+        PermisoChequeado[PermisosConducir.IndexOf(p)] = e;
+        PermisoData.Tipo = PermisoData.Tipo + "|" + p;
+        await PermisoDataChanged.InvokeAsync(PermisoData);
+    }
+
+}

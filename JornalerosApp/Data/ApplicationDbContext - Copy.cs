@@ -6,20 +6,19 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace JornalerosApp.Data
 {
-    public partial class ApplicationDbContext : IdentityDbContext
+    public partial class ApplicationDbContext2 : IdentityDbContext
     {
-        public ApplicationDbContext()
+        public ApplicationDbContext2()
         {
         }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public ApplicationDbContext2(DbContextOptions<ApplicationDbContext2> options)
             : base(options)
         {
         }
 
         public virtual DbSet<Curriculum> Curriculum { get; set; }
         public virtual DbSet<Empresa> Empresa { get; set; }
-        public virtual DbSet<EstudiosPorNiveles> EstudiosPorNiveles { get; set; }
         public virtual DbSet<Experiencia> Experiencia { get; set; }
         public virtual DbSet<Formacion> Formacion { get; set; }
         public virtual DbSet<Idioma> Idioma { get; set; }
@@ -46,15 +45,21 @@ namespace JornalerosApp.Data
             {
                 entity.HasKey(e => e.IdCurriculum);
 
-                entity.Property(e => e.AlojamientoPropio).HasMaxLength(2);
+                entity.Property(e => e.AlojamientoPropio)
+                    .HasMaxLength(10)
+                    .IsFixedLength();
 
                 entity.Property(e => e.IdPersona)
                     .IsRequired()
                     .HasMaxLength(450);
 
-                entity.Property(e => e.Movilidad).HasMaxLength(2);
+                entity.Property(e => e.Movilidad)
+                    .HasMaxLength(10)
+                    .IsFixedLength();
 
-                entity.Property(e => e.TramitarPermisoTrabajo).HasMaxLength(2);
+                entity.Property(e => e.TramitarPermisoTrabajo)
+                    .HasMaxLength(10)
+                    .IsFixedLength();
 
                 entity.HasOne(d => d.IdPersonaNavigation)
                     .WithMany(p => p.Curriculum)
@@ -92,25 +97,6 @@ namespace JornalerosApp.Data
                 entity.Property(e => e.Provincia).HasMaxLength(50);
 
                 entity.Property(e => e.Telefono).HasColumnType("numeric(18, 0)");
-            });
-
-            modelBuilder.Entity<EstudiosPorNiveles>(entity =>
-            {
-                entity.HasKey(e => e.IdEstudiosPorNiveles);
-
-                entity.Property(e => e.IdEstudiosPorNiveles).HasMaxLength(150);
-
-                entity.Property(e => e.Familia)
-                    .IsRequired()
-                    .HasMaxLength(450);
-
-                entity.Property(e => e.NivelFormativo)
-                    .IsRequired()
-                    .HasMaxLength(150);
-
-                entity.Property(e => e.Titulacion)
-                    .IsRequired()
-                    .HasMaxLength(450);
             });
 
             modelBuilder.Entity<Experiencia>(entity =>
@@ -185,7 +171,7 @@ namespace JornalerosApp.Data
                     .HasForeignKey(d => d.IdCurriculum)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Idioma_Curriculum");
-            });            
+            });
 
             modelBuilder.Entity<Nacionalidad>(entity =>
             {
@@ -274,7 +260,9 @@ namespace JornalerosApp.Data
             {
                 entity.HasKey(e => e.IdPersona);
 
-                entity.Property(e => e.CochePropio).HasMaxLength(2);
+                entity.Property(e => e.CochePropio)
+                    .HasMaxLength(2)
+                    .IsFixedLength();
 
                 entity.Property(e => e.CorreoElectronico).HasMaxLength(50);
 

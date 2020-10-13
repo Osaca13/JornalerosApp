@@ -1,4 +1,5 @@
 ﻿@page "/Candidato/CV/{id}"
+@*@page "/EditarCV"*@
 @using JornalerosApp.Shared.Models
 @using JornalerosApp.Pages.Candidatos
 @using JornalerosApp.Pages.Curriculum
@@ -10,27 +11,25 @@
 @inject JornalerosApp.Shared.Services.ISQLDatabaseServices SQLDBServices
 
 <BSContainer IsFluid="true">
-        <hr />
         <BSTabGroup  @ref="refTabGroup">
             <BSTabList IsList="true" IsFill="true" Class="nav-justified" Alignment="Alignment.Center" @ref="refTabList">
                 <BSTab Id="DatosPersonales" @ref="refDatosPersonales" >
-                    <BSTabLabel Class="small">Datos Personales</BSTabLabel>
+                    <BSTabLabel Class="font-weight-lighter">Datos Personales</BSTabLabel>
 
-                    <BSTabContent Class="jumbotron">
-                        <br />
-                        <BSRow style="height:380px!important" >
+                    <BSTabContent>
+                        <BSRow style="height:370px!important">
                             <EditarDP Persona="@Persona" Id="@Id" Municipios="@Municipios" Provincias="@Provincias" OnProvinciaSelection="@MunicipioSegunProvincia" OnValidSubmit="@CrearDatosUsuario"></EditarDP>
                         </BSRow>
+                        <br />
                         <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
-                           <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refDatosPersonales))" Listo="@(()=>IrTabSiguiente(refDatosPersonales))"></ButonesFondo>
+                            <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refDatosPersonales))" Listo="@(()=>IrTabSiguiente(refDatosPersonales))"></ButonesFondo>
                         </BSRow>
-                     </BSTabContent>
+                    </BSTabContent>
                 </BSTab>
                 <BSTab @ref="refExperiencia" Id="Experiencia" Name="ExperienciaName">
                     <BSTabLabel Class="small">Experiencia Laboral</BSTabLabel>
-                    <BSTabContent Class="jumbotron">
-                        <br /> 
-                        <BSRow style="height:380px!important">
+                    <BSTabContent>
+                        <BSRow style="height:370px!important">
                             <ul class="nav flex-row">
                                 <li class="nav-item p-2">
                                     <BSLabel For="experienciaCampo">¿Tienes experiencia en labores de campo?</BSLabel>
@@ -41,32 +40,35 @@
                             </ul>
                             @if (VisibleExperiencia)
                             {
-                                <CVExperiencia listaExperiencia="@ListaExperiencia"></CVExperiencia>
+                                <CVExperiencia  ListaExperiencia="@ListaExperiencia" ListaExperienciaChanged="@ListaExperienciaChanged" IdCurriculum="@curriculum.IdCurriculum"></CVExperiencia>
 
                             }
-                         </BSRow> 
+                        </BSRow>
+                        <br />
                         <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
-                           <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refExperiencia))" Listo="@(()=>IrTabSiguiente(refExperiencia))"></ButonesFondo>
+                            <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refExperiencia))" Listo="@(()=>IrTabSiguiente(refExperiencia))"></ButonesFondo>
                         </BSRow>
 
-                        </BSTabContent>
+                    </BSTabContent>
                 </BSTab>
                 <BSTab Id="Maquinaria" Name="MaquinariaName" @ref="refMaquinarias">
                     <BSTabLabel Class="small">Carnés de Maquinarias</BSTabLabel>
                     <BSTabContent Class="jumbotron">
                         <br />
-                        <BSRow style="height:380px!important"></BSRow>
+                        <BSRow style="height:370px!important">
+                            <CVMaquinaria PermisoData="@PermisoData" PermisoDataChanged="@PermisoDataChanged"></CVMaquinaria>
+                        </BSRow>
                         <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
                             <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refMaquinarias))" Listo="@(()=>IrTabSiguiente(refMaquinarias))"></ButonesFondo>
                         </BSRow>
                     </BSTabContent>
                 </BSTab>
-                <BSTab Id="Formacion" @ref="refFormacion" Name="FormacionName" s>
+                <BSTab Id="Formacion" @ref="refFormacion" Name="FormacionName">
                     <BSTabLabel Class="small">Nivel Formativo</BSTabLabel>
                     <BSTabContent Class="jumbotron">
                         <br />
-                        <BSRow style="height:380px!important">
-                            <CVFormacion></CVFormacion>
+                        <BSRow style="height:370px!important">
+                            <CVFormacion NivelFormacion="@NivelFormacion" NivelFormacionChanged="@NivelFormacionChanged" ListaNivelFormativo="@ListaNivelFormativo"></CVFormacion>
                         </BSRow>
                         <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
                             <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refFormacion))" Listo="@(()=>IrTabSiguiente(refFormacion))"></ButonesFondo>
@@ -77,7 +79,7 @@
                     <BSTabLabel Class="small">Otros datos</BSTabLabel>
                     <BSTabContent>
                         <br />
-                        <BSRow style="height:380px!important">
+                        <BSRow style="height:370px!important">
 
                             <EditForm Model="@curriculum" class="w-100" >
                                 <BSRow>
@@ -138,7 +140,7 @@
                     <BSTabLabel Class="small">Permisos</BSTabLabel>
                     <BSTabContent>                        
                         <br />
-                        <BSRow style="height:380px!important">
+                        <BSRow style="height:370px!important">
                            
                         </BSRow>
 
@@ -157,15 +159,15 @@
 @code {
     [Parameter] public string Id { get; set; }
     public Persona Persona { get; set; } = new Persona();
-
+    private Permiso PermisoData { get; set; }
     private Formacion FormacionData { get; set; }
     private Experiencia ExperienciaData { get; set; }
     [System.Diagnostics.CodeAnalysis.MaybeNull]
     private Curriculum curriculum { get; set; } = new Curriculum();
     private HttpClient client;
-    List<Formacion> ListaFormacion { get; set; }
+    Formacion NivelFormacion { get; set; }
     List<Experiencia> ListaExperiencia { get; set; }
-    //[Parameter] public EventCallback OnValidSubmit { get; set; }
+    List<EstudiosPorNiveles> ListaNivelFormativo { get; set; }
     BSTab refExperiencia { get; set; }
     BSTab refDatosPersonales { get; set; }
     BSTab refFormacion { get; set; }
@@ -192,11 +194,73 @@
     string EntreFechas2 { get; set; }
     bool isSelected { get; set; }
 
-    async void ItemsDeExperiencia(List<string> items)
+    async Task PermisoDataChanged()
     {
-        foreach(var item in items)
+        try
         {
-            await SQLDBServices.UpdateExperiencia(new Experiencia { IdExperiencia = Guid.NewGuid().ToString(), Puesto = item, IdCurriculum = curriculum.IdCurriculum }); ;
+            await SQLDBServices.UpdatePermisos(PermisoData);
+        }
+        catch(Exception exc)
+        {
+            System.Diagnostics.Debug.WriteLine(exc.Message);
+            throw;
+        }
+        await InvokeAsync(() => StateHasChanged());
+    }
+
+    async Task NivelFormacionChanged()
+    {
+        try
+        {
+
+            if (await SQLDBServices.FormacionPorId(NivelFormacion.IdFormacion) != null)
+            {
+                await SQLDBServices.UpdateFormacion(NivelFormacion);
+            }
+            else
+            {
+                await SQLDBServices.AddFormacion(NivelFormacion);
+            }
+
+
+            await InvokeAsync(() => StateHasChanged());
+        }
+        catch (Exception exc)
+        {
+            System.Diagnostics.Debug.WriteLine(exc.Message);
+            throw;
+        }
+
+        await InvokeAsync(() => StateHasChanged());
+    }
+
+    async Task ListaExperienciaChanged()
+    {
+        try
+        {
+            var oldExperiencia = await SQLDBServices.ExperienciaPorIdPersona(Id);
+            foreach(var item in oldExperiencia)
+            {
+                await SQLDBServices.DeleteExperiencia(item);
+            }
+
+            foreach (var item in ListaExperiencia)
+            {
+                if(await SQLDBServices.GetExperiencia(item.IdExperiencia) != null)
+                {
+                    await SQLDBServices.UpdateExperiencia(item);
+                }
+                else
+                {
+                    await SQLDBServices.AddExperiencia(item);
+                }
+
+            }
+            await InvokeAsync(() => StateHasChanged());
+        }catch(Exception exc)
+        {
+            System.Diagnostics.Debug.WriteLine(exc.Message);
+            throw;
         }
     }
 
@@ -210,16 +274,13 @@
     {
         try
         {
-
             if (nuevo)
             {
                 var respsta = await client.PostAsJsonAsync<Persona>("Personas", Persona);
-
             }
             else
             {
                 var estado = await client.PutAsJsonAsync<Persona>("Personas/" + Id, Persona);
-
             }
             await InvokeAsync(() => StateHasChanged());
         }
@@ -307,7 +368,6 @@
         try
         {
             VisibleExperiencia = e;
-
         }
         catch (Exception exc)
         {
@@ -316,22 +376,22 @@
         }
     }
 
-    void EditarExperiencia(Experiencia experiencia)
-    {
-        try
-        {
-            VisibleFormacion = false;
-            VisibleExperiencia = true;
-            panel = false;
-            ExperienciaData = experiencia;
+    //void EditarExperiencia(Experiencia experiencia)
+    //{
+    //    try
+    //    {
+    //        VisibleFormacion = false;
+    //        VisibleExperiencia = true;
+    //        panel = false;
+    //        ExperienciaData = experiencia;
 
-        }
-        catch (Exception exc)
-        {
-            System.Diagnostics.Debug.WriteLine(exc);
-            throw;
-        }
-    }
+    //    }
+    //    catch (Exception exc)
+    //    {
+    //        System.Diagnostics.Debug.WriteLine(exc);
+    //        throw;
+    //    }
+    //}
 
     protected override async Task OnParametersSetAsync()
     {
@@ -340,7 +400,7 @@
         client = Factory.CreateClient("clientFirst");
         try
         {
-            //Provincias = await client.GetFromJsonAsync<IEnumerable<string>>("Provincias");
+            Provincias = await client.GetFromJsonAsync<IEnumerable<string>>("Provincias");
             Persona = await client.GetFromJsonAsync<Persona>("Personas/" + Id);
             if (Persona.ProvinciaResidencia != null)
             {
@@ -361,11 +421,14 @@
 
             }
             curriculum = await SQLDBServices.GetCurriculumPorIdPersona(Id);
-            ListaFormacion = await SQLDBServices.FormacionPorIdPersona(Id);
+            NivelFormacion = await SQLDBServices.FormacionPorIdPersona(Id);
             ListaExperiencia = await SQLDBServices.ExperienciaPorIdPersona(Id);
-            ListaFormacion = ListaFormacion ?? new List<Formacion>();
+            ListaNivelFormativo = await SQLDBServices.NivelesFormativo();
+            PermisoData = await SQLDBServices.PermisosPorIdPersona(Id);
+            NivelFormacion = NivelFormacion ?? new Formacion();
             ListaExperiencia = ListaExperiencia ?? new List<Experiencia>();
-
+            ListaNivelFormativo = ListaNivelFormativo ?? new List<EstudiosPorNiveles>();
+            PermisoData = PermisoData ?? new Permiso { IdPermisos = Guid.NewGuid().ToString(), IdPersona = Id, Tipo = string.Empty};
             await InvokeAsync(() => StateHasChanged());
 
         }
@@ -376,64 +439,64 @@
         }
     }
 
-    async void GuardarFormacion()
-    {
-        try
-        {
-            var result = await SQLDBServices.UpdateFormacion(FormacionData);
-            VisibleFormacion = false;
-            VisibleExperiencia = false;
-            panel = true;
-            await InvokeAsync(() => StateHasChanged());
+    //async void GuardarFormacion()
+    //{
+    //    try
+    //    {
+    //        var result = await SQLDBServices.UpdateFormacion(FormacionData);
+    //        VisibleFormacion = false;
+    //        VisibleExperiencia = false;
+    //        panel = true;
+    //        await InvokeAsync(() => StateHasChanged());
 
-        }
-        catch (Exception exc)
-        {
-            System.Diagnostics.Debug.WriteLine(exc.Message);
-            throw;
-        }
-    }
+    //    }
+    //    catch (Exception exc)
+    //    {
+    //        System.Diagnostics.Debug.WriteLine(exc.Message);
+    //        throw;
+    //    }
+    //}
 
-    async void GuardarExperiencia()
-    {
-        try
-        {
-            var result = await SQLDBServices.UpdateExperiencia(ExperienciaData);
-            VisibleFormacion = false;
-            VisibleExperiencia = false;
-            panel = true;
-            await InvokeAsync(() => StateHasChanged());
+    //async void GuardarExperiencia()
+    //{
+    //    try
+    //    {
+    //        var result = await SQLDBServices.UpdateExperiencia(ExperienciaData);
+    //        VisibleFormacion = false;
+    //        VisibleExperiencia = false;
+    //        panel = true;
+    //        await InvokeAsync(() => StateHasChanged());
 
-        }
-        catch (Exception exc)
-        {
-            System.Diagnostics.Debug.WriteLine(exc.Message);
-            throw;
-        }
-    }
+    //    }
+    //    catch (Exception exc)
+    //    {
+    //        System.Diagnostics.Debug.WriteLine(exc.Message);
+    //        throw;
+    //    }
+    //}
 
-    async void BorrarFormacion()
-    {
-        try
-        {
-            await SQLDBServices.DeleteFormacion(FormacionData);
-            await InvokeAsync(() => StateHasChanged());
-            VisibleFormacion = false;
-            panel = true;
+    //async void BorrarFormacion()
+    //{
+    //    try
+    //    {
+    //        await SQLDBServices.DeleteFormacion(FormacionData);
+    //        await InvokeAsync(() => StateHasChanged());
+    //        VisibleFormacion = false;
+    //        panel = true;
 
 
-        }
-        catch (Exception exc)
-        {
-            System.Diagnostics.Debug.WriteLine(exc.Message);
-            throw;
-        }
-    }
+    //    }
+    //    catch (Exception exc)
+    //    {
+    //        System.Diagnostics.Debug.WriteLine(exc.Message);
+    //        throw;
+    //    }
+    //}
 
-    async void Cerrar()
-    {
-        await InvokeAsync(() => StateHasChanged());
-        VisibleFormacion = false;
-        panel = true;
-    }
+    //async void Cerrar()
+    //{
+    //    await InvokeAsync(() => StateHasChanged());
+    //    VisibleFormacion = false;
+    //    panel = true;
+    //}
 }
