@@ -1,15 +1,12 @@
-﻿using System;
+﻿using JornalerosApp.Infrastructure.Data;
+using JornalerosApp.Shared.Entities;
+using JornalerosApp.Shared.Models;
+using JornalerosApp.Shared.Services;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using JornalerosApp.Data;
-using JornalerosApp.Shared.Data;
-using JornalerosApp.Shared.Entities;
-using JornalerosApp.Shared.Models;
-using JornalerosApp.Shared.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace JornalerosApp.Services
@@ -113,9 +110,9 @@ namespace JornalerosApp.Services
 
         public async Task<bool> UpdateCurriculum(Curriculum curriculum)
         {
-            string sql = "UPDATE dbo.Curriculum SET TramitarPermisoTrabajo = '" + curriculum.TramitarPermisoTrabajo + "',"
-                + "Movilidad = '" + curriculum.Movilidad + "' ,"
-                + "AlojamientoPropio = '" + curriculum.AlojamientoPropio + "' ) "
+            string sql = "UPDATE dbo.Curriculum SET Disponibilidad = '" + curriculum.Disponibilidad + "', "
+                + "Movilidad = '" + curriculum.Movilidad + "', "
+                + "AlojamientoPropio = '" + curriculum.AlojamientoPropio + "' "
                 + "WHERE Curriculum.IdCurriculum = '" + curriculum.IdCurriculum + "'";
 
             var result = await _dataAccess.SaveData<Curriculum>(sql, curriculum);
@@ -222,9 +219,17 @@ namespace JornalerosApp.Services
 
         public async Task<Permiso> PermisosPorIdPersona(string id)
         {
-            string sql = "SELECT Permiso.IdPermisos, Permiso.IdPersona, Permiso.Tipo from dbo.Persona INNER JOIN dbo.Permiso on Persona.IdPersona = Permiso.IdPersona Where Persona.IdPersona =  '" + id + "'";
-            var lista = await _dataAccess.LoadData<Permiso, dynamic>(sql, new { });
-            return lista?.First();
+            try
+            {
+                string sql = "SELECT Permiso.IdPermisos, Permiso.IdPersona, Permiso.Tipo from dbo.Persona INNER JOIN dbo.Permiso on Persona.IdPersona = Permiso.IdPersona Where Persona.IdPersona =  '" + id + "'";
+                var lista = await _dataAccess.LoadData<Permiso, dynamic>(sql, new { });
+                return lista?.FirstOrDefault();
+            }catch(Exception exc)
+            {
+                Console.WriteLine(exc.Message);
+                throw;
+            }
+            
         }
 
         public async Task<bool> UpdatePermisos(Permiso permiso)

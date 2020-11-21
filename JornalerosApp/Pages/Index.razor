@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using BlazorDateRangePicker
 @using Microsoft.AspNetCore.Identity
 @using JornalerosApp.Pages.Candidatos
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -8,23 +9,23 @@
     <NotAuthorized>
         <div class="jumbotron" style="background-color:transparent">
             <h1>Jornaleros</h1>
-
+            
             Bienvenidos a nuestro portal de búsqueda de trabajo en el campo...
 
             ¡Para ver las ofertas disponibles como candidato o publicar ofertas como empresa, inscríbase en nuestro portal!
         </div>
     </NotAuthorized>
-    <Authorized>        
+    <Authorized>
         @if (Tipo == "candidato")
         {
-          
+
             <InicioPersona UserName="@Name" Id="@Id"></InicioPersona>
         }
         @if (Tipo == "empresa")
         {
-           
+
             <DatosEmpresa UserName="@Name" Id="@Id"></DatosEmpresa>
-        }    
+        }
     </Authorized>
 </AuthorizeView>
 
@@ -39,7 +40,7 @@
     protected override async Task OnParametersSetAsync()
     {
         var userAuthenticated = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-       
+
         Id = UserManager.GetUserId(userAuthenticated.User);
         Name = userAuthenticated.User.Identity.Name;
 
@@ -52,5 +53,11 @@
             Tipo = "empresa";
         }
         //StateHasChanged();
+    }
+
+    public void OnRangeSelect(DateRange range)
+    {
+       Console.WriteLine(range.Start.ToString() + " - "+ range.End.ToString());
+        //Use range.Start and range.End here
     }
 }

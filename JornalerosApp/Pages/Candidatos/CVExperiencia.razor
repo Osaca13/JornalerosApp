@@ -1,89 +1,98 @@
-﻿
+﻿@page "/Candidato/Experiencia/"
+@inject JornalerosApp.Shared.Services.ISQLDatabaseServices SQLDBServices
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider Provider
+@inject UserManager<IdentityUser> UserManager
 
+    <EditForm Model="ListaExperiencia">
+       
+        <BSCard CardType="CardType.Card">
+            <BSCard CardType="CardType.Header" HeadingSize="HeadingSize.H5">Seleccione la máxima formación alcanzada:</BSCard>
+            <BSCard CardType="CardType.Body" Alignment="Alignment.Center" style="height:315px!important">
 
-<BSContainer IsFluid="true">
-    <BSAlert Color="Color.Info">Seleccione las labores que ha realizado:</BSAlert>
-    <BSTable>
-        <thead>
-            <tr>
-                @foreach (var item in Nivel1)
-                {
-                    <th align="center">
-                        <BSBasicForm IsInline="true">
-                            <BSFormGroup IsCheck="true" IsRow="true">
-                                @if (experienciaData.FirstOrDefault(p => p.Categoria == item).IsChecked.Contains(true))
-                                {
-                                    <BSCol> <BSLabel style="color: #2A26C3">@item</BSLabel></BSCol>
-                                }
-                                else
-                                {
-                                    <BSCol> <BSLabel style="color: #070629">@item</BSLabel></BSCol>
-                                }
-
-                            </BSFormGroup>
-                        </BSBasicForm>
-                    </th>
-                    <th align="center"></th>
-                    
-                }
-            </tr>
-        </thead>
-        <tbody class="justify-content-center">
-            @foreach (int jj in Enumerable.Range(0, 5)) @*filas*@
-            {
-                <tr>
-                    @foreach (int ii in Enumerable.Range(0, 5)) @*columnas*@
-                    {
-                        @if (experienciaData[ii].SubCategoria.Count > jj)
+                <BSTable>
+                    <thead>
+                        <tr>
+                            @foreach (var item in Nivel1)
+                            {
+                                <th align="center">
+                                    <BSBasicForm IsInline="true">
+                                        <BSFormGroup IsCheck="true" IsRow="true">
+                                            @if (experienciaData.FirstOrDefault(p => p.Categoria == item).IsChecked.Contains(true))
+                                            {
+                                                <BSCol> <BSLabel style="color: #2A26C3">@item</BSLabel></BSCol>
+                                            }
+                                            else
+                                            {
+                                                <BSCol> <BSLabel style="color: #070629">@item</BSLabel></BSCol>
+                                            }
+                                        </BSFormGroup>
+                                    </BSBasicForm>
+                                </th>
+                                <th align="center"></th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody class="justify-content-center">
+                        @if (experienciaData.Count() > 0)
                         {
-                            <td align="center">
-                                <BSBasicForm IsInline="true">
-                                    <BSFormGroup IsCheck="true" IsRow="true" Class="justify-content-center">
-                                        <BSCol><BSLabel>@experienciaData[ii].SubCategoria[jj]</BSLabel></BSCol>
-                                    </BSFormGroup>
-                                </BSBasicForm>
-                            </td>
-                            <td align="center">
-                                <BSBasicForm IsInline="true">
-                                    <BSFormGroup IsCheck="true" IsRow="true" Class="justify-content-center">
-                                        <BSCol><BSBasicInput Class="ml-3" InputType="InputType.Checkbox" Value="@experienciaData[ii].IsChecked[jj]" ValueChanged="@((bool e) => SelectNivel2(e, experienciaData[ii].Categoria, experienciaData[ii].SubCategoria[jj]))"></BSBasicInput></BSCol>
-                                    </BSFormGroup>
-                                </BSBasicForm>
-                            </td>
-                        }
-                        else
-                        {
-                            <td></td>
-                            <td></td>
-                        }
-                    }
-                </tr>
-            }
-
-        </tbody>
-    </BSTable>
-
-</BSContainer>
+                            @foreach (int jj in Enumerable.Range(0, 5))@*filas*@
+                            {
+                                <tr>
+                                    @foreach (int ii in Enumerable.Range(0, 5))@*columnas*@
+                                    {
+                                        @if (experienciaData[ii].SubCategoria.Count > jj)
+                                        {
+                                            <td align="center">
+                                                <BSBasicForm IsInline="true">
+                                                    <BSFormGroup IsCheck="true" IsRow="true" Class="justify-content-center">
+                                                        <BSCol><BSLabel>@experienciaData[ii].SubCategoria[jj]</BSLabel></BSCol>
+                                                    </BSFormGroup>
+                                                </BSBasicForm>
+                                            </td>
+                                            <td align="center">
+                                                <BSBasicForm IsInline="true">
+                                                    <BSFormGroup IsCheck="true" IsRow="true" Class="justify-content-center">
+                                                        <BSCol><BSBasicInput Class="ml-3" InputType="InputType.Checkbox" Value="@experienciaData[ii].IsChecked[jj]" ValueChanged="@((bool e) => SelectNivel2(e, experienciaData[ii].Categoria, experienciaData[ii].SubCategoria[jj]))"></BSBasicInput></BSCol>
+                                                    </BSFormGroup>
+                                                </BSBasicForm>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                            <td></td>
+                                        }
+                                     }
+                                </tr>
+                             }
+                         }
+                    </tbody>
+                </BSTable>
+            </BSCard>
+            <BSCard CardType="CardType.Footer">
+                <BSRow Class="fixed-bottom, float-right, ml-4, mr-4" style="display:block; margin:0; padding:0">
+                    <ButonesFondo BackDisabled="false" Inicio="IrPaginaInicio" Atras=" IrTabAnterior" Listo="IrTabSiguiente"></ButonesFondo>
+                </BSRow>
+            </BSCard>
+        </BSCard>
+    </EditForm>
 
 @code {
 
     List<string> Nivel1 { get; set; } = new List<string>();
-    [Parameter]
-    public List<Experiencia> ListaExperiencia { get; set; }
-    [Parameter]
-    public string IdCurriculum { get; set; }
-    [Parameter]
-    public EventCallback<List<Experiencia>> ListaExperienciaChanged { get; set; }
+    string Id { get; set; }
+    string UserName { get; set; }
+    List<Experiencia> ListaExperiencia { get; set; } = new List<Experiencia>();
+    Curriculum Curriculum { get; set; }
+    CustomValidator customValidator;
+    Dictionary<string, bool> messages { get; set; } = new Dictionary<string, bool>();
 
-    public List<string> selectedValues { get; set; } = new List<string>();
     List<ExperienciaData> experienciaData { get; set; } = new List<ExperienciaData>();
 
-
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
-
         Nivel1 = new List<string> { "Cosecha", "Poda", "Plantacion", "Cuidado", "Maquinaria" };
-
 
         experienciaData.Add(new ExperienciaData { Categoria = Nivel1[0], SubCategoria = new List<string> { "Frutales", "Viña", "Olivos", "Huerta", "Invernadero" }, IsChecked = new List<bool> { false, false, false, false, false } });
         experienciaData.Add(new ExperienciaData { Categoria = Nivel1[1], SubCategoria = new List<string> { "Frutales", "Viña", "Olivos" }, IsChecked = new List<bool> { false, false, false } });
@@ -105,6 +114,24 @@
         }
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await Provider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (Id == null)
+        {
+            Id = UserManager.GetUserId(user);
+            UserName = user.Identity.Name;
+        }
+
+        ListaExperiencia = await SQLDBServices.ExperienciaPorIdPersona(Id);
+        Curriculum = await SQLDBServices.GetCurriculumPorIdPersona(Id);
+        ListaExperiencia = ListaExperiencia ?? new List<Experiencia>();
+        Curriculum = Curriculum ?? new Curriculum() { IdPersona = Id, IdCurriculum = Guid.NewGuid().ToString() };
+
+    }
+
     async Task<bool> NuevaExperiencia(bool e, string item)
     {
         //var n1 = experienciaData.Find(p => p.Categoria == item);
@@ -119,33 +146,70 @@
 
     async Task SelectNivel2(bool e, string categoria, string subcategoria)
     {
-        var index = experienciaData.Find(p => p.Categoria == categoria).SubCategoria.IndexOf(subcategoria);
-        experienciaData.Find(p => p.Categoria == categoria).IsChecked[index] = e;
+        try
+        {
+            var index = experienciaData.Find(p => p.Categoria == categoria).SubCategoria.IndexOf(subcategoria);
+            experienciaData.Find(p => p.Categoria == categoria).IsChecked[index] = e;
 
-        if (e)
-        {
-            if (!ListaExperiencia.Any(p => p.Puesto == categoria & p.DescripcionPuesto == subcategoria))
+            if (e)
             {
-                ListaExperiencia.Add(
-                new Experiencia
+                if (!ListaExperiencia.Any(p => p.Puesto == categoria & p.DescripcionPuesto == subcategoria))
                 {
-                    IdExperiencia = Guid.NewGuid().ToString(),
-                    IdCurriculum = IdCurriculum,
-                    IdCurriculumNavigation = ListaExperiencia.FirstOrDefault()?.IdCurriculumNavigation,
-                    Puesto = categoria,
-                    DescripcionPuesto = subcategoria
-                });
+                    var nueva = new Experiencia
+                    {
+                        IdExperiencia = Guid.NewGuid().ToString(),
+                        IdCurriculum = Curriculum.IdCurriculum,
+                        IdCurriculumNavigation = ListaExperiencia.FirstOrDefault()?.IdCurriculumNavigation ?? null,
+                        Puesto = categoria,
+                        DescripcionPuesto = subcategoria
+                    };
+
+                    ListaExperiencia.Add(nueva);
+                }
             }
-        }
-        else
-        {
-            if (ListaExperiencia.Any(p => p.Puesto == categoria & p.DescripcionPuesto == subcategoria))
+            else
             {
-                ListaExperiencia.Remove(ListaExperiencia.FirstOrDefault(p => p.Puesto == categoria & p.DescripcionPuesto == subcategoria));
+                if (ListaExperiencia.Any(p => p.Puesto == categoria & p.DescripcionPuesto == subcategoria))
+                {
+                    ListaExperiencia.Remove(ListaExperiencia.FirstOrDefault(p => p.Puesto == categoria & p.DescripcionPuesto == subcategoria));
+                }
             }
+            await InvokeAsync(() => StateHasChanged());
+            await ListaExperienciaChanged();
         }
-        await InvokeAsync(() => StateHasChanged());
-        await ListaExperienciaChanged.InvokeAsync(ListaExperiencia);
+        catch (Exception exc)
+        {
+            Console.WriteLine(exc.Message);
+            throw;
+        }
+    }
+
+    async Task<bool> ListaExperienciaChanged()
+    {
+        bool[] tryValidateList = new bool[ListaExperiencia.Count()];
+        try
+        {
+            var oldExperiencia = await SQLDBServices.ExperienciaPorIdPersona(Id);
+            if(oldExperiencia != null)
+            {
+                foreach (var item in oldExperiencia)
+                {
+                    await SQLDBServices.DeleteExperiencia(item);
+                }
+            }
+
+            foreach (var item in ListaExperiencia)
+            {
+                tryValidateList[ListaExperiencia.IndexOf(item)] = await SQLDBServices.AddExperiencia(item);
+
+            }
+            return !tryValidateList.Contains(false);
+        }
+        catch (Exception exc)
+        {
+            System.Diagnostics.Debug.WriteLine(exc.Message);
+            throw;
+        }
     }
 
     public class ExperienciaData
@@ -158,5 +222,37 @@
         public string Categoria { get; set; }
         public List<string> SubCategoria { get; set; }
         public List<bool> IsChecked { get; set; }
+    }
+
+    async void IrPaginaInicio(MouseEventArgs args)
+    {
+        if(await ListaExperienciaChanged())
+        {
+            Navigation.NavigateTo("/Candidato");
+        }
+    }
+
+    async void IrTabAnterior(MouseEventArgs args)
+    {
+        if (await ListaExperienciaChanged())
+        {
+
+            Navigation.NavigateTo("/Candidato/DatosPersonales/");
+        }
+    }
+
+    async void IrTabSiguiente(MouseEventArgs args)
+    {
+        try
+        {
+            if (await ListaExperienciaChanged())
+            {
+                Navigation.NavigateTo("/Candidato/Maquinaria/");
+            }
+        }catch(Exception exc)
+        {
+            Console.WriteLine(exc.Message);
+            throw;
+        }
     }
 }

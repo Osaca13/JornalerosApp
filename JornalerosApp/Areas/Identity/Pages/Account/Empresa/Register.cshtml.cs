@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
+﻿using JornalerosApp.Shared.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -13,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using JornalerosApp.Shared.Models;
-using JornalerosApp.Shared.Data.Migrations;
-using JornalerosApp.Data;
-using JornalerosApp.Shared.Services;
-using JornalerosApp.Services;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
 {
@@ -103,9 +99,8 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
             public string Provincia { get; set; }
 
             [Required]
-            [ValidacionNIF]
             [StringLength(9, MinimumLength = 9)]
-            [DataType(DataType.Text)]
+            [DataType(DataType.Text)]            
             [Display(Name = "CIF/NIF")]
             public string CIF { get; set; }
 
@@ -133,6 +128,12 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
 
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            //var val = new ValidacionNIF();
+            //if (!val.IsValid(Input.CIF))
+            //{
+            //    ModelState.AddModelError(nameof(Input.CIF), "Identificacion no válida");
+            //}
+
             if (ModelState.IsValid)
             {
                 var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };

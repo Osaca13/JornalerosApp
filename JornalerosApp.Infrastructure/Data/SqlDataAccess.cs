@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JornalerosApp.Data
+namespace JornalerosApp.Infrastructure.Data
 {
     public class SqlDataAccess : ISqlDataAccess
     {

@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using JornalerosApp.Shared.Models;
+using JornalerosApp.Shared.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using JornalerosApp.Data;
-using JornalerosApp.Shared.Models;
+using System;
+using System.Collections.Generic;
 using System.Net;
-using JornalerosApp.Shared.Services;
-using AutoMapper;
-using JornalerosApp.Shared.Entities;
+using System.Threading.Tasks;
 
 namespace JornalerosApp.Controllers
 {
@@ -19,7 +15,8 @@ namespace JornalerosApp.Controllers
     public class PersonasController : ControllerBase
     {
         private readonly IDbServices<Persona> _dbServices;
-        private readonly IMapper mapper = null;
+        private readonly IMapper mapper = null;      
+
 
         public PersonasController(IDbServices<Persona> dbServices, IMapper mapper)
         {
@@ -81,6 +78,7 @@ namespace JornalerosApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
@@ -88,16 +86,25 @@ namespace JornalerosApp.Controllers
         {
             try
             {
-                if (id != persona.IdPersona)
+
+                if (ModelState.IsValid)
                 {
-                    return BadRequest();
+                    if (id != persona.IdPersona)
+                    {
+                        return BadRequest(ModelState);
+                    }
+
+                    //var nueva = this.mapper.Map<PersonaModel, Persona>(persona);
+                   // var result = await TryUpdateModelAsync<Persona>(persona);
+                    //await _dbServices.UpdateItem(persona);
+
+                    var result = await _dbServices.UpdateItem(persona);           
+                    if (result)
+                    {
+                        return Ok();
+                    }
                 }
 
-                //var nueva = this.mapper.Map<PersonaModel, Persona>(persona);
-                await _dbServices.UpdateItem(persona);
-
-                //await _dbServices.UpdateItem(persona);           
-             
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -114,6 +121,11 @@ namespace JornalerosApp.Controllers
             return NoContent();
         }
 
+        private void Validate<T>(T persona)
+        {
+            throw new NotImplementedException();
+        }
+
         // POST: api/Personas
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
@@ -124,8 +136,12 @@ namespace JornalerosApp.Controllers
         {            
             try
             {
+                if (ModelState.IsValid)
+                {
+                    await _dbServices.AddItem(persona);
+                }
                 //var persona = this.mapper.Map<PersonaModel, Persona>(persona);
-                await _dbServices.AddItem(persona);
+               
 
             }
             catch (DbUpdateException)
@@ -163,5 +179,43 @@ namespace JornalerosApp.Controllers
         {
             return _dbServices.GetItemById(id).Result != null;
         }
-    }
+
+        //private BadRequestObjectResult CustomErrorResponse(ActionContext actionContext)
+        //{
+        //    //BadRequestObjectResult is class found Microsoft.AspNetCore.Mvc and is inherited from ObjectResult.    
+        //    //Rest code is linq.    
+        //    return new BadRequestObjectResult(actionContext.ModelState
+        //     .Where(modelError => modelError.Value.Errors.Count > 0)
+        //     .Select(modelError => new Error
+        //     {
+        //         ErrorField = modelError.Key,
+        //         ErrorDescription = modelError.Value.Errors.FirstOrDefault().ErrorMessage
+        //     }).ToList());
+        //}
+
+
+
+
+        //GetType().GetRuntimeProperty(this.Nombre);
+
+        //foreach(var member in attributes.Values)
+        //{
+        //    if(member.Name == "Dni")
+        //    {
+        //        var data = validacionNIF.GetValidationResult(Dni, validationContext);
+        //        if (!string.IsNullOrEmpty(data?.ErrorMessage))
+        //        {
+        //            results.Add(new ValidationResult("Identificacion no válida"));
+        //        }
+        //    }
+        //    else
+        //    {
+        //        
+        //    }               
+        //}
+
+       
+
+
+    }    
 }

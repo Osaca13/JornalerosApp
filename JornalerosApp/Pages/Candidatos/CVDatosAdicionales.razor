@@ -1,0 +1,184 @@
+﻿@page "/Candidato/DatosAdicionales/"
+@using BlazorDateRangePicker
+@inject JornalerosApp.Shared.Services.ISQLDatabaseServices SQLDBServices
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider Provider
+@inject UserManager<IdentityUser> UserManager
+
+
+    <EditForm Model="Curriculum">
+        <BSCard CardType="CardType.Card">
+            <BSCard CardType="CardType.Header" HeadingSize="HeadingSize.H5">Datos Adicionales</BSCard>
+            <BSCard CardType="CardType.Body" Alignment="Alignment.Center" style="height:300px!important">
+                <BSBasicForm>
+                    <BSRow>
+                        <BSCol>
+                            <BSLabel For="Movilidad">Movilidad</BSLabel>
+                            <BSInput InputType="InputType.Text" Id="Movilidad" @bind-Value="Curriculum.Movilidad"></BSInput>
+                        </BSCol>
+                        <BSCol>
+                            <BSLabel For="AlojamientoPropio">¿Tienes alojamiento propio?</BSLabel>
+                            <BSInput InputType="InputType.Text" Id="Alojamiento" @bind-Value="Curriculum.AlojamientoPropio"></BSInput>
+                        </BSCol>
+                    </BSRow>
+                    <br />
+                    <BSRow Class="align-content-center">
+                        <BSCol>
+                            <BSFormGroup>
+                                <BSLabel For="exampleFormControlSelect1">¿Qué disponibilidad tienes?</BSLabel>
+                                <BSBasicInput Id="exampleFormControlSelect1" InputType="InputType.Select" @bind-Value="Curriculum.Disponibilidad" @onselectionchange="((EventArgs e) => SeleccioneIntervalo(e, Curriculum.Disponibilidad))">
+                                    <option value="" selected>Elige una opción...</option>
+                                    @foreach (var item in disponibilidad)
+                                    {
+                                        @if (Curriculum.IdCurriculum != null)
+                                        {
+                                            @if (cvdis == item)
+                                            {
+                                                <option value="@item" selected>@item</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item">@item</option>
+                                            }
+                                        }
+                                    }
+                                </BSBasicInput>
+                            </BSFormGroup>
+                        </BSCol>
+                        <BSCol>
+                            @if (isSelected)
+                            {
+                                <BSFormGroup>
+                                    <BSLabel style="height:10px"></BSLabel>
+                                    <DateRangePicker OnRangeSelect="OnRangeSelect" @bind-StartDate="StartDate" @bind-EndDate="EndDate" ApplyLabel="Ok" CancelLabel="Cancelar">
+                                        <PickerTemplate Context="datecontext">
+                                            <div id="@datecontext.ParentId" @onclick="datecontext.Toggle" style="background: #fff; cursor: pointer; padding: .45rem 10px; border: 1px solid #ccc; border-radius: 5px;">
+                                                <i class="oi oi-calendar"></i>&nbsp;
+                                                <span>@datecontext.FormattedRange @(string.IsNullOrEmpty(datecontext.FormattedRange) ? "Selecciona las fechas..." : "")</span>
+                                                <i class="oi oi-chevron-bottom float-right"></i>
+                                            </div>
+                                        </PickerTemplate>
+                                    </DateRangePicker>
+                                </BSFormGroup>
+                            }
+                        </BSCol>
+
+                    </BSRow>
+                </BSBasicForm>
+            </BSCard>
+            <br />
+            <BSCard CardType="CardType.Footer">
+            <BSRow Class="fixed-bottom, float-right, ml-4, mr-4" style="display:block; margin:0; padding:0">
+                <ButonesFondo BackDisabled="false" Inicio="IrPaginaInicio" Atras=" IrTabAnterior" Listo="IrTabSiguiente"></ButonesFondo>
+            </BSRow>
+            </BSCard>
+        </BSCard>
+    </EditForm>
+
+@code {
+
+    Curriculum Curriculum { get; set; } = new Curriculum();
+    List<string> disponibilidad { get; set; } = new List<string> { "15 días", "inmediatamente","intervalo"};
+    string cvdis { get; set; }
+    bool isSelected { get; set; }
+    DateTimeOffset? StartDate { get; set; } = DateTime.Today;
+    DateTimeOffset? EndDate { get; set; } = DateTime.Today.AddYears(1);
+    TimeSpan? EntreFechas { get; set; }
+    string Id { get; set; }
+    string UserName { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var authState = await Provider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (Id == null)
+        {
+            Id = UserManager.GetUserId(user);
+            UserName = user.Identity.Name;
+        }
+
+        Curriculum = await SQLDBServices.GetCurriculumPorIdPersona(Id);
+
+        Curriculum = Curriculum ?? new Curriculum
+        {
+            IdCurriculum = Guid.NewGuid().ToString(),
+            IdPersona = Id,
+            Disponibilidad = null
+        };
+
+        cvdis = Curriculum.Disponibilidad?.Split(":").First() ?? null;
+        if(cvdis == "intervalo")
+        {
+            isSelected = true;
+            var fechas = Curriculum.Disponibilidad?.Split(":")[1].Split("|");
+            StartDate = Convert.ToDateTime(fechas[0]); // fechas[0];
+            EndDate = Convert.ToDateTime(fechas[1]);
+        }
+    }
+
+    async void OnRangeSelect(DateRange range)
+    {
+        Curriculum.Disponibilidad = "intervalo: "+ range.Start.Date.ToShortDateString() + "|"+ range.End.Date.ToShortDateString();
+        await UpdateCurriculum();
+    }
+
+    public void ResetClick(MouseEventArgs e, DateRangePicker picker)
+    {
+        StartDate = null;
+        EndDate = null;
+        // Close the picker
+        picker.Close();
+        // Fire OnRangeSelectEvent
+        picker.OnRangeSelect.InvokeAsync(new DateRange());
+    }
+
+    //protected override Task OnParametersSetAsync()
+    //{
+    //    return base.OnParametersSetAsync();
+    //}
+
+    async void SeleccioneIntervalo(EventArgs e, string item)
+    {
+        
+        Curriculum.Disponibilidad = item+":";
+        if (item == "intervalo")
+        {
+            isSelected = true;
+        }
+        else
+        {
+            isSelected = false;
+        }
+        await UpdateCurriculum();
+    }
+
+    async Task<bool> UpdateCurriculum()
+    {
+        try
+        {
+            return await SQLDBServices.UpdateCurriculum(Curriculum);
+        }
+        catch (Exception exc)
+        {
+            Console.WriteLine(exc.Message);
+            throw;
+        }
+    }
+
+    void IrPaginaInicio(MouseEventArgs args)
+    {
+        Navigation.NavigateTo("/Candidato");
+    }
+
+    void IrTabAnterior(MouseEventArgs args)
+    {
+        Navigation.NavigateTo("/Candidato/Formacion/");
+    }
+
+    void IrTabSiguiente(MouseEventArgs args)
+    {
+        Navigation.NavigateTo("/BuscarOfertas/");
+    }
+
+}

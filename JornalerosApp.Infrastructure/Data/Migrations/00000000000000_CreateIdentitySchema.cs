@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace JornalerosApp.Shared.Data.Migrations
+namespace JornalerosApp.Infrastructure.Data.Migrations
 {
     public partial class CreateIdentitySchema : Migration
     {

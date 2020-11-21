@@ -1,77 +1,168 @@
-﻿<BSContainer IsFluid="true">
-    <BSBasicForm Class="jumbotron">
-        <BSFormGroup IsRow="true" >
-            <BSCol SM="6"><BSLabel Color="Color.Info">¿Tiene licencia de conducción de vehículos agrícolas?</BSLabel></BSCol>
-           <BSCol SM="2"><BSBasicInput InputType="InputType.Checkbox" Id="exampleRadios1" IsChecked="false" Value="@Afirmativo" ValueChanged="@((bool e)=> RadioValue(e, "Afirmativo"))"></BSBasicInput>
-           <BSLabel For="exampleRadios1">Si</BSLabel></BSCol>
-           <BSCol SM="2"><BSBasicInput InputType="InputType.Checkbox" Id="exampleRadios2" IsChecked="false" Value="@Negativo" ValueChanged="@((bool e)=> RadioValue(e, "Negativo"))"></BSBasicInput>
-           <BSLabel For="exampleRadios2">No</BSLabel></BSCol>
-        </BSFormGroup>
-        <hr/>
-        <BSFormGroup >
-            <BSCol SM="12"> <BSLabel Color="Color.Info">Permisos de conducir:</BSLabel> </BSCol>
-            <BSRow Class="offset-1" >
-                @foreach (var item in PermisosConducir)
-                {
-                    <BSCol SM="2">
-                        <BSBasicInput InputType="InputType.Checkbox" Id="permisos" IsChecked="false" Value="@PermisoChequeado[PermisosConducir.IndexOf(item)]" ValueChanged="@((bool e)=> AñadirPermisos(e, item))"></BSBasicInput>
-                        <BSLabel For="permisos">@item</BSLabel>
-                        
-                   </BSCol>
-                }
+﻿@page "/Candidato/Maquinaria/"
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider Provider
+@inject UserManager<IdentityUser> UserManager
+@inject JornalerosApp.Shared.Services.ISQLDatabaseServices SQLDBServices
 
-            </BSRow>
-        </BSFormGroup>
-    </BSBasicForm>
-</BSContainer>
+
+    <EditForm Model="PermisoData" >
+        <BSCard CardType="CardType.Card">
+            <BSCard CardType="CardType.Header" HeadingSize="HeadingSize.H5">Marca la casilla si posees los siguientes documentos:</BSCard>
+            <BSCard CardType="CardType.Body" Alignment="Alignment.Center" style="height:300px!important">
+
+                <BSBasicForm>
+                    <BSFormGroup IsRow="true" Class="m-1">
+                        <BSCol SM="5"><BSLabel Class="h5">Licencia de conducción de vehículos agrícolas</BSLabel></BSCol>
+
+                        <BSCol>
+                            <BSBasicInput InputType="InputType.Checkbox" Id="exampleRadios1" Value="PermisoChequeado.First()" ValueChanged="((bool e) => AñadirPermisos(e, PermisosConducir.First()))"></BSBasicInput>
+                        </BSCol>
+
+                    </BSFormGroup>
+                    <hr />
+                    <BSFormGroup>
+                        <BSCol SM="12"> <BSLabel Class="h5">Permisos de conducir</BSLabel> </BSCol>
+                        <BSRow Class="ml-3">
+                            @foreach (var item in PermisosConducir.Skip(1))
+                            {
+                                <BSCol SM="2">
+                                    <BSBasicInput InputType="InputType.Checkbox" Id="@item" IsChecked="false" Value="PermisoChequeado[PermisosConducir.IndexOf(item)]" ValueChanged="@((bool e)=> AñadirPermisos(e, item))"></BSBasicInput>
+                                    <BSLabel For=@item>@item</BSLabel>
+                                </BSCol>
+                            }
+                        </BSRow>
+                    </BSFormGroup>
+                </BSBasicForm>
+                </BSCard>
+                <br />
+                <BSCard CardType="CardType.Footer">
+                    <BSRow Class="fixed-bottom, float-right, ml-4, mr-4" style="display:block; margin:0; padding:0">
+                        <ButonesFondo BackDisabled="false" Inicio="IrPaginaInicio" Atras=" IrTabAnterior" Listo="IrTabSiguiente"></ButonesFondo>
+                    </BSRow>
+                </BSCard>
+            </BSCard>
+    </EditForm>
 
 @code {
-    List<string> LVA { get; set; }
-    List<string> PermisosConducir { get; set; }
-    bool[] PermisoChequeado { get; set; }
+    List<string> PermisosConducir { get; set; } = new List<string> { "LVA", "AM", "A", "A1", "A2", "B", "B+E", "C1", "C1+E", "C", "C+E", "D1", "D1+E", "D", "D+E" };
+    bool[] PermisoChequeado { get; set; } = new bool[15];
+    bool PermisoChequeado0 { get; set; }
     bool Afirmativo { get; set; } = false;
-    bool Negativo { get; set; } = false;
-    bool Valor { get; set; }
-    [Parameter]
-    public Permiso PermisoData{ get; set; }
-    [Parameter]
-    public EventCallback<Permiso> PermisoDataChanged { get; set; }
+    string Id { get; set; }
+    string UserName { get; set; }
+    Permiso PermisoData { get; set; } = new Permiso();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        LVA = new List<string> { "Tractor", "Motocultor", "Cosechadora", "Remolques", "Sembradoras"};
-        PermisosConducir = new List<string> { "AM", "A", "A1", "A2", "B", "B+E", "C1", "C1+E", "C", "C+E", "D1", "D1+E", "D", "D+E" };
-        PermisoChequeado = new bool[PermisosConducir.Count()];
-        var permisos = PermisoData?.Tipo?.Split("|");
+        try
+        {
+            var authState = await Provider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (Id == null)
+            {
+                Id = UserManager.GetUserId(user);
+                UserName = user.Identity.Name;
+            }
+            PermisoData = await SQLDBServices.PermisosPorIdPersona(Id);
+            PermisoData = PermisoData ?? new Permiso { IdPermisos = Guid.NewGuid().ToString(), IdPersona = Id, Tipo = string.Empty };
+        }catch(Exception exc)
+        {
+            Console.WriteLine(exc.Message);
+            throw;
+        }
     }
 
-    async Task RadioValue(bool e, string item)
+    protected override async Task OnParametersSetAsync()
     {
-        if(item == "Afirmativo")
-        {
-            Afirmativo = e;
-            Negativo = !e;
 
-            if (Afirmativo)
+        //PermisosConducir = new List<string> { "LVA", "AM", "A", "A1", "A2", "B", "B+E", "C1", "C1+E", "C", "C+E", "D1", "D1+E", "D", "D+E" };
+        //PermisoChequeado = new bool[PermisosConducir.Count()];
+        PermisoChequeado.Initialize();
+        var permisos = PermisoData?.Tipo?.Split("|");
+        if (permisos?.Count() > 0)
+        {
+            permisos.ToList().ForEach(p =>
             {
-                PermisoData.Tipo = string.Empty;
-                PermisoData.Tipo.Concat("|LVA");
-                await PermisoDataChanged.InvokeAsync(PermisoData);
-            }
-
+                if (PermisosConducir.IndexOf(p) != -1)
+                {
+                    PermisoChequeado[PermisosConducir.IndexOf(p)] = true;
+                }
+            });
         }
-        if (item == "Negativo")
-        {
-            Afirmativo = !e;
-            Negativo = e;
-        }
+        await InvokeAsync(() => StateHasChanged());
     }
 
     async Task AñadirPermisos(bool e, string p)
     {
+        PermisoData.Tipo = string.Empty;
+
         PermisoChequeado[PermisosConducir.IndexOf(p)] = e;
-        PermisoData.Tipo = PermisoData.Tipo + "|" + p;
-        await PermisoDataChanged.InvokeAsync(PermisoData);
+
+        foreach (var item in PermisoChequeado.ToList().Select((value, i) => (value, i)))
+        {
+            if (item.value)
+            {
+                PermisoData.Tipo = PermisoData.Tipo + PermisosConducir[item.i] + "|";
+            }
+        }
+
+        //PermisoData.Tipo += PermisosConducir[PermisoChequeado.ToList().IndexOf(c)] + "|";
+
+        if (PermisoData.Tipo.Length > 0)
+        {
+            PermisoData.Tipo = PermisoData.Tipo.Remove(PermisoData.Tipo.Length - 1);
+        }
+
+        await PermisoDataChanged();
     }
 
+    async Task<bool> PermisoDataChanged()
+    {
+        try
+        {
+            var result = await SQLDBServices.UpdatePermisos(PermisoData);
+
+            return result;
+        }
+        catch (Exception exc)
+        {
+            System.Diagnostics.Debug.WriteLine(exc.Message);
+            throw;
+        }
+    }
+
+    async void IrPaginaInicio(MouseEventArgs args)
+    {
+        if (await PermisoDataChanged())
+        {
+            Navigation.NavigateTo("/Candidato");
+        }
+        await InvokeAsync(() => StateHasChanged());
+    }
+
+    async void IrTabAnterior(MouseEventArgs args)
+    {
+        if (await PermisoDataChanged())
+        {
+            Navigation.NavigateTo("/Candidato/Experiencia/");
+        }
+        await InvokeAsync(() => StateHasChanged());
+    }
+
+    async void IrTabSiguiente(MouseEventArgs args)
+    {
+        try
+        {
+            if (await PermisoDataChanged())
+            {
+                Navigation.NavigateTo("/Candidato/Formacion/");
+            }
+        }
+        catch (Exception exc)
+        {
+            Console.WriteLine(exc.Message);
+            throw;
+        }
+    }
 }

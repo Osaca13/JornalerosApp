@@ -13,6 +13,7 @@ namespace JornalerosApp
 {
     public class Program
     {
+        //string puertosQueUsaElPCx = "netsh interface ipv4 show excludedportrange protocol=tcp"
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();

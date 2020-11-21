@@ -1,5 +1,5 @@
 ﻿@page "/Candidato/CV/{id}"
-@*@page "/EditarCV"*@
+@page "/Candidato/CV"
 @using JornalerosApp.Shared.Models
 @using JornalerosApp.Pages.Candidatos
 @using JornalerosApp.Pages.Curriculum
@@ -10,108 +10,107 @@
 @inject NavigationManager Navigation
 @inject JornalerosApp.Shared.Services.ISQLDatabaseServices SQLDBServices
 
+
 <BSContainer IsFluid="true">
-        <BSTabGroup  @ref="refTabGroup">
-            <BSTabList IsList="true" IsFill="true" Class="nav-justified" Alignment="Alignment.Center" @ref="refTabList">
-                <BSTab Id="DatosPersonales" @ref="refDatosPersonales" >
-                    <BSTabLabel Class="font-weight-lighter">Datos Personales</BSTabLabel>
+    <BSTabGroup @ref="refTabGroup">
+        <BSTabList IsList="true" IsFill="true" Class="nav-justified" Alignment="Alignment.Center" @ref="refTabList">
+            <BSTab Id="DatosPersonales" @ref="refDatosPersonales">
+                <BSTabLabel Class="small">Datos Personales</BSTabLabel>
 
-                    <BSTabContent>
-                        <BSRow style="height:370px!important">
-                            <EditarDP Persona="@Persona" Id="@Id" Municipios="@Municipios" Provincias="@Provincias" OnProvinciaSelection="@MunicipioSegunProvincia" OnValidSubmit="@CrearDatosUsuario"></EditarDP>
-                        </BSRow>
-                        <br />
-                        <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
-                            <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refDatosPersonales))" Listo="@(()=>IrTabSiguiente(refDatosPersonales))"></ButonesFondo>
-                        </BSRow>
-                    </BSTabContent>
-                </BSTab>
-                <BSTab @ref="refExperiencia" Id="Experiencia" Name="ExperienciaName">
-                    <BSTabLabel Class="small">Experiencia Laboral</BSTabLabel>
-                    <BSTabContent>
-                        <BSRow style="height:370px!important">
-                            <ul class="nav flex-row">
-                                <li class="nav-item p-2">
-                                    <BSLabel For="experienciaCampo">¿Tienes experiencia en labores de campo?</BSLabel>
-                                </li>
-                                <li class="nav-item p-2">
-                                    <BSBasicInput Class="ml-3" InputType="InputType.Checkbox" Id="experienciaCampo" Value="@VisibleExperiencia" ValueChanged="@((bool e) => NuevaExperiencia(e))"></BSBasicInput>
-                                </li>
-                            </ul>
-                            @if (VisibleExperiencia)
-                            {
-                                <CVExperiencia  ListaExperiencia="@ListaExperiencia" ListaExperienciaChanged="@ListaExperienciaChanged" IdCurriculum="@curriculum.IdCurriculum"></CVExperiencia>
+                <BSTabContent>
+                    <BSRow style="height:370px!important">
+                        @*<EditarDP Persona="@Persona" Id="@Id" Municipios="@Municipios" Provincias="@Provincias" ProvinciaSelection="@MunicipioSegunProvincia" PersonaChanged="PersonaChanged"></EditarDP>*@
+                    </BSRow>
+                    <br />
+                    <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
+                        <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(() => IrTabAnterior(refDatosPersonales))" Listo="@(() => IrTabSiguiente(refDatosPersonales))"></ButonesFondo>
+                    </BSRow>
+                </BSTabContent>
+            </BSTab>
+            <BSTab @ref="refExperiencia" Id="Experiencia" Name="ExperienciaName">
+                <BSTabLabel Class="small">Experiencia Laboral</BSTabLabel>
+                <BSTabContent>
+                    <BSRow style="height:370px!important">
+                        <BSBasicForm style="width:100%; padding-left:3%; padding-right:1%; padding-top:1%">
+                            <BSFormGroup IsRow="true" Class="m-0">
+                                <BSCol SM="5"> <BSLabel For="experienciaCampo">¿Tienes experiencia en labores de campo?</BSLabel></BSCol>
+                                <BSCol> <BSBasicInput Class="ml-3" InputType="InputType.Checkbox" Id="experienciaCampo" Value="@VisibleExperiencia" ValueChanged="@((bool e) => NuevaExperiencia(e))"></BSBasicInput></BSCol>
+                            </BSFormGroup>
+                        </BSBasicForm>
+                        @if (VisibleExperiencia)
+                        {
+                            @*<CVExperiencia ListaExperiencia="@ListaExperiencia" ListaExperienciaChanged="@ListaExperienciaChanged" IdCurriculum="@curriculum.IdCurriculum"></CVExperiencia>*@
+                        }
+                    </BSRow>
+                    <br />
+                    <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
+                        <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(() => IrTabAnterior(refExperiencia))" Listo="@(() => IrTabSiguiente(refExperiencia))"></ButonesFondo>
+                    </BSRow>
 
-                            }
-                        </BSRow>
-                        <br />
-                        <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
-                            <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refExperiencia))" Listo="@(()=>IrTabSiguiente(refExperiencia))"></ButonesFondo>
-                        </BSRow>
+                </BSTabContent>
+            </BSTab>
+            <BSTab Id="Maquinaria" Name="MaquinariaName" @ref="refMaquinarias">
+                <BSTabLabel Class="small">Carnés de Maquinarias</BSTabLabel>
+                <BSTabContent Class="jumbotron">
+                    <br />
+                    <BSRow style="height:370px!important">
+                        @*<CVMaquinaria PermisoData="@PermisoData" PermisoDataChanged="PermisoDataChanged"></CVMaquinaria>*@
+                    </BSRow>
+                    <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
+                        <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(() => IrTabAnterior(refMaquinarias))" Listo="@(() => IrTabSiguiente(refMaquinarias))"></ButonesFondo>
+                    </BSRow>
+                </BSTabContent>
+            </BSTab>
+            <BSTab Id="Formacion" @ref="refFormacion" Name="FormacionName">
+                <BSTabLabel Class="small">Nivel Formativo</BSTabLabel>
+                <BSTabContent Class="jumbotron">
+                    <br />
+                    <BSRow style="height:370px!important">
+                        @*<CVFormacion NivelFormacion="@NivelFormacion" NivelFormacionChanged="@NivelFormacionChanged" ListaNivelFormativo="@ListaNivelFormativo"></CVFormacion>*@
+                    </BSRow>
+                    <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
+                        <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(() => IrTabAnterior(refFormacion))" Listo="@(() => IrTabSiguiente(refFormacion))"></ButonesFondo>
+                    </BSRow>
+                </BSTabContent>
+            </BSTab>
+            <BSTab Id="Otros" Name="OtrosName" @ref="refOtros">
+                <BSTabLabel Class="small">Otros datos</BSTabLabel>
+                <BSTabContent>
+                    <br />
+                    <BSRow style="height:370px!important">
 
-                    </BSTabContent>
-                </BSTab>
-                <BSTab Id="Maquinaria" Name="MaquinariaName" @ref="refMaquinarias">
-                    <BSTabLabel Class="small">Carnés de Maquinarias</BSTabLabel>
-                    <BSTabContent Class="jumbotron">
-                        <br />
-                        <BSRow style="height:370px!important">
-                            <CVMaquinaria PermisoData="@PermisoData" PermisoDataChanged="@PermisoDataChanged"></CVMaquinaria>
-                        </BSRow>
-                        <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
-                            <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refMaquinarias))" Listo="@(()=>IrTabSiguiente(refMaquinarias))"></ButonesFondo>
-                        </BSRow>
-                    </BSTabContent>
-                </BSTab>
-                <BSTab Id="Formacion" @ref="refFormacion" Name="FormacionName">
-                    <BSTabLabel Class="small">Nivel Formativo</BSTabLabel>
-                    <BSTabContent Class="jumbotron">
-                        <br />
-                        <BSRow style="height:370px!important">
-                            <CVFormacion NivelFormacion="@NivelFormacion" NivelFormacionChanged="@NivelFormacionChanged" ListaNivelFormativo="@ListaNivelFormativo"></CVFormacion>
-                        </BSRow>
-                        <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
-                            <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refFormacion))" Listo="@(()=>IrTabSiguiente(refFormacion))"></ButonesFondo>
+                        <EditForm Model="@curriculum" class="w-100">
+                            <BSRow>
+                                <BSCol>
+                                    <BSLabel For="Movilidad">Movilidad</BSLabel>
+                                    <BSInput InputType="InputType.Text" Id="Movilidad" @bind-Value="@curriculum.Movilidad"></BSInput>
+                                </BSCol>
+                                <BSCol>
+                                    <BSLabel For="AlojamientoPropio">¿Tienes alojamiento propio?</BSLabel>
+                                    <BSInput InputType="InputType.Text" Id="Alojamiento" @bind-Value="@curriculum.AlojamientoPropio"></BSInput>
+                                </BSCol>
+
                             </BSRow>
-                    </BSTabContent>
-                </BSTab>
-                <BSTab Id="Otros" Name="OtrosName" @ref="refOtros" >
-                    <BSTabLabel Class="small">Otros datos</BSTabLabel>
-                    <BSTabContent>
-                        <br />
-                        <BSRow style="height:370px!important">
+                            <br />
 
-                            <EditForm Model="@curriculum" class="w-100" >
-                                <BSRow>
-                                    <BSCol>
-                                        <BSLabel For="Movilidad">Movilidad</BSLabel>
-                                        <BSInput InputType="InputType.Text" Id="Movilidad" @bind-Value="@curriculum.Movilidad"></BSInput>
-                                    </BSCol>
-                                    <BSCol>
-                                        <BSLabel For="AlojamientoPropio">¿Tienes alojamiento propio?</BSLabel>
-                                        <BSInput InputType="InputType.Text" Id="Alojamiento" @bind-Value="@curriculum.AlojamientoPropio"></BSInput>
-                                    </BSCol>
-                                    
-                                </BSRow>
-                                <br />
-                                
-                                <BSRow Class="align-content-center">
-                                    <BSCol>
-                                        <BSFormGroup>
-                                            <BSLabel For="exampleFormControlSelect1">¿Qué disponibilidad tienes?</BSLabel>
-                                            <BSBasicInput Id="exampleFormControlSelect1" InputType="InputType.Select" Value="@curriculum.TramitarPermisoTrabajo" ValueChanged="@((string e)=>SeleccioneIntervalo(e))">
-                                                <option value="" selected>Seleccione una opcion...</option>
-                                                <option value="15dias">En 15 días</option>
-                                                <option value="hoy">Inmediatamente</option>
-                                                <option value="intervalo">En el período siguiente:</option>
+                            <BSRow Class="align-content-center">
+                                <BSCol>
+                                    <BSFormGroup>
+                                        <BSLabel For="exampleFormControlSelect1">¿Qué disponibilidad tienes?</BSLabel>
+                                        <BSBasicInput Id="exampleFormControlSelect1" InputType="InputType.Select" Value="@curriculum.Disponibilidad" ValueChanged="@((string e) => SeleccioneIntervalo(e))">
+                                            <option value="" selected>Seleccione una opcion...</option>
+                                            <option value="15dias">En 15 días</option>
+                                            <option value="hoy">Inmediatamente</option>
+                                            <option value="intervalo">En el período siguiente:</option>
 
-                                            </BSBasicInput>
-                                        </BSFormGroup>
-                                    </BSCol>
-                                    <BSCol>
-                                       @if (isSelected)
-                                        {
+                                        </BSBasicInput>
+                                    </BSFormGroup>
+                                </BSCol>
+                                <BSCol>
+                                    @if (isSelected)
+                                    {
                                         <BSFormGroup>
+                                            
                                             <BSLabel style="height:10px"></BSLabel>
                                             <DateRangePicker>
                                                 <PickerTemplate Context="NewContext">
@@ -123,38 +122,38 @@
                                                 </PickerTemplate>
                                             </DateRangePicker>
                                         </BSFormGroup>
-                                        }
-                                    </BSCol>
-                                    
-                                </BSRow>
-                              
-                            </EditForm>
-                        </BSRow>
-                        
-                        <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
-                            <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refOtros))" Listo="@(()=>IrTabSiguiente(refOtros))"></ButonesFondo>
-                        </BSRow>
-                    </BSTabContent>
-                </BSTab>
-                <BSTab Id="Permisos" Name="PermisosName" @ref="refPermisos">
+                                    }
+                                </BSCol>
+
+                            </BSRow>
+
+                        </EditForm>
+                    </BSRow>
+
+                    <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
+                        <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(() => IrTabAnterior(refOtros))" Listo="@(() => IrTabSiguiente(refOtros))"></ButonesFondo>
+                    </BSRow>
+                </BSTabContent>
+            </BSTab>
+            @*<BSTab Id="Permisos" Name="PermisosName" @ref="refPermisos">
                     <BSTabLabel Class="small">Permisos</BSTabLabel>
-                    <BSTabContent>                        
+                    <BSTabContent>
                         <br />
                         <BSRow style="height:370px!important">
-                           
+
                         </BSRow>
 
                         <BSRow Class="fixed-bottom, float-right, ml-4, mr-4">
-                            <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(()=>IrTabAnterior(refPermisos))" Listo="@(()=>IrTabSiguiente(refPermisos))"></ButonesFondo>
+                            <ButonesFondo Navigation="@Navigation" Inicio="IrPaginaInicio" Atras="@(() => IrTabAnterior(refPermisos))" Listo="@(() => IrTabSiguiente(refPermisos))"></ButonesFondo>
                         </BSRow>
 
                     </BSTabContent>
-                </BSTab>
-            </BSTabList>
-            <BSTabSelectedContent />             
-            
-        </BSTabGroup>
-    </BSContainer>
+                </BSTab>*@
+        </BSTabList>
+        <BSTabSelectedContent />
+
+    </BSTabGroup>
+</BSContainer>
 
 @code {
     [Parameter] public string Id { get; set; }
@@ -165,6 +164,7 @@
     [System.Diagnostics.CodeAnalysis.MaybeNull]
     private Curriculum curriculum { get; set; } = new Curriculum();
     private HttpClient client;
+    EditContext EditContext { get; set; }
     Formacion NivelFormacion { get; set; }
     List<Experiencia> ListaExperiencia { get; set; }
     List<EstudiosPorNiveles> ListaNivelFormativo { get; set; }
@@ -173,7 +173,7 @@
     BSTab refFormacion { get; set; }
     BSTab refOtros { get; set; }
     BSTab refPermisos { get; set; }
-    BSTab refMaquinarias{ get; set; }
+    BSTab refMaquinarias { get; set; }
     BSTabList refTabList { get; set; }
     BSTabGroup refTabGroup { get; set; }
     BSDropdownItem inmediata { get; set; }
@@ -194,13 +194,13 @@
     string EntreFechas2 { get; set; }
     bool isSelected { get; set; }
 
-    async Task PermisoDataChanged()
+    async Task PermisoDataChanged(Permiso permiso)
     {
         try
         {
-            await SQLDBServices.UpdatePermisos(PermisoData);
+            await SQLDBServices.UpdatePermisos(permiso);
         }
-        catch(Exception exc)
+        catch (Exception exc)
         {
             System.Diagnostics.Debug.WriteLine(exc.Message);
             throw;
@@ -230,8 +230,6 @@
             System.Diagnostics.Debug.WriteLine(exc.Message);
             throw;
         }
-
-        await InvokeAsync(() => StateHasChanged());
     }
 
     async Task ListaExperienciaChanged()
@@ -239,14 +237,14 @@
         try
         {
             var oldExperiencia = await SQLDBServices.ExperienciaPorIdPersona(Id);
-            foreach(var item in oldExperiencia)
+            foreach (var item in oldExperiencia)
             {
                 await SQLDBServices.DeleteExperiencia(item);
             }
 
             foreach (var item in ListaExperiencia)
             {
-                if(await SQLDBServices.GetExperiencia(item.IdExperiencia) != null)
+                if (await SQLDBServices.GetExperiencia(item.IdExperiencia) != null)
                 {
                     await SQLDBServices.UpdateExperiencia(item);
                 }
@@ -257,7 +255,8 @@
 
             }
             await InvokeAsync(() => StateHasChanged());
-        }catch(Exception exc)
+        }
+        catch (Exception exc)
         {
             System.Diagnostics.Debug.WriteLine(exc.Message);
             throw;
@@ -270,23 +269,28 @@
         await InvokeAsync(() => StateHasChanged());
     }
 
-    async void CrearDatosUsuario()
+    async Task PersonaChanged(Persona persona)
     {
         try
         {
             if (nuevo)
             {
-                var respsta = await client.PostAsJsonAsync<Persona>("Personas", Persona);
+                var respsta = await client.PostAsJsonAsync<Persona>("Personas", persona);
             }
             else
             {
-                var estado = await client.PutAsJsonAsync<Persona>("Personas/" + Id, Persona);
+
+                var estado = await client.PutAsJsonAsync<Persona>("Personas/" + Id, persona);
+                if(estado.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    
+                }
             }
             await InvokeAsync(() => StateHasChanged());
         }
         catch (Exception exc)
         {
-            System.Diagnostics.Debug.WriteLine(exc.Message);
+            Console.WriteLine(exc.Message);
             throw;
         }
     }
@@ -299,8 +303,8 @@
     }
     void SeleccioneIntervalo(string item)
     {
-        curriculum.TramitarPermisoTrabajo = item;
-        if(item == "intervalo")
+        curriculum.Disponibilidad = item;
+        if (item == "intervalo")
         {
             isSelected = true;
         }
@@ -336,16 +340,22 @@
         }
     }
 
+    async void FieldChanged(object sender, FieldChangedEventArgs args)
+    {
+        await PersonaChanged(Persona);
+    }
+
     async void IrPaginaInicio(MouseEventArgs args)
     {
-        CrearDatosUsuario();
+
+        await PersonaChanged(Persona);
         Navigation.NavigateTo("/Candidato");
         await InvokeAsync(() => StateHasChanged());
     }
 
-    void IrTabAnterior(BSTab bSTab)
+    async void IrTabAnterior(BSTab bSTab)
     {
-        CrearDatosUsuario();
+        await PersonaChanged(Persona);
         var render = refTabGroup.Tabs.FindIndex(t => t.Name == bSTab.Name);
         if (render != 0)
         {
@@ -353,13 +363,17 @@
         }
     }
 
-    void IrTabSiguiente(BSTab bSTab)
+    async void IrTabSiguiente(BSTab bSTab)
     {
-        CrearDatosUsuario();
+        await PersonaChanged(Persona);
         var render = refTabGroup.Tabs.FindIndex(t => t.Name == bSTab.Name);
-        if (render != refTabGroup.Tabs.Count()-1)
+        if (render != refTabGroup.Tabs.Count() - 1)
         {
             refTabGroup.Tabs[render + 1].Select();
+        }
+        if (bSTab.Name == "OtrosName")
+        {
+            Navigation.NavigateTo("/BuscarOfertas/" + Id);
         }
     }
 
@@ -375,23 +389,6 @@
             throw;
         }
     }
-
-    //void EditarExperiencia(Experiencia experiencia)
-    //{
-    //    try
-    //    {
-    //        VisibleFormacion = false;
-    //        VisibleExperiencia = true;
-    //        panel = false;
-    //        ExperienciaData = experiencia;
-
-    //    }
-    //    catch (Exception exc)
-    //    {
-    //        System.Diagnostics.Debug.WriteLine(exc);
-    //        throw;
-    //    }
-    //}
 
     protected override async Task OnParametersSetAsync()
     {
@@ -424,12 +421,15 @@
             NivelFormacion = await SQLDBServices.FormacionPorIdPersona(Id);
             ListaExperiencia = await SQLDBServices.ExperienciaPorIdPersona(Id);
             ListaNivelFormativo = await SQLDBServices.NivelesFormativo();
-            PermisoData = await SQLDBServices.PermisosPorIdPersona(Id);
+           
             NivelFormacion = NivelFormacion ?? new Formacion();
             ListaExperiencia = ListaExperiencia ?? new List<Experiencia>();
             ListaNivelFormativo = ListaNivelFormativo ?? new List<EstudiosPorNiveles>();
-            PermisoData = PermisoData ?? new Permiso { IdPermisos = Guid.NewGuid().ToString(), IdPersona = Id, Tipo = string.Empty};
+            PermisoData = PermisoData ?? new Permiso { IdPermisos = Guid.NewGuid().ToString(), IdPersona = Id, Tipo = string.Empty };
             await InvokeAsync(() => StateHasChanged());
+
+
+
 
         }
         catch (Exception exc)
@@ -437,66 +437,13 @@
             System.Diagnostics.Debug.WriteLine(exc);
             throw;
         }
+        await base.OnParametersSetAsync();
     }
 
-    //async void GuardarFormacion()
-    //{
-    //    try
-    //    {
-    //        var result = await SQLDBServices.UpdateFormacion(FormacionData);
-    //        VisibleFormacion = false;
-    //        VisibleExperiencia = false;
-    //        panel = true;
-    //        await InvokeAsync(() => StateHasChanged());
-
-    //    }
-    //    catch (Exception exc)
-    //    {
-    //        System.Diagnostics.Debug.WriteLine(exc.Message);
-    //        throw;
-    //    }
-    //}
-
-    //async void GuardarExperiencia()
-    //{
-    //    try
-    //    {
-    //        var result = await SQLDBServices.UpdateExperiencia(ExperienciaData);
-    //        VisibleFormacion = false;
-    //        VisibleExperiencia = false;
-    //        panel = true;
-    //        await InvokeAsync(() => StateHasChanged());
-
-    //    }
-    //    catch (Exception exc)
-    //    {
-    //        System.Diagnostics.Debug.WriteLine(exc.Message);
-    //        throw;
-    //    }
-    //}
-
-    //async void BorrarFormacion()
-    //{
-    //    try
-    //    {
-    //        await SQLDBServices.DeleteFormacion(FormacionData);
-    //        await InvokeAsync(() => StateHasChanged());
-    //        VisibleFormacion = false;
-    //        panel = true;
-
-
-    //    }
-    //    catch (Exception exc)
-    //    {
-    //        System.Diagnostics.Debug.WriteLine(exc.Message);
-    //        throw;
-    //    }
-    //}
-
-    //async void Cerrar()
-    //{
-    //    await InvokeAsync(() => StateHasChanged());
-    //    VisibleFormacion = false;
-    //    panel = true;
-    //}
+    protected override async Task OnInitializedAsync()
+    {
+        EditContext = new EditContext(Persona);
+        this.EditContext.OnFieldChanged += FieldChanged;
+        await base.OnInitializedAsync();
+    }
 }

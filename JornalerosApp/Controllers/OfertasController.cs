@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using JornalerosApp.Shared.Models;
+using JornalerosApp.Shared.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using JornalerosApp.Data;
-using JornalerosApp.Shared.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
-using JornalerosApp.Shared.Services;
-using AutoMapper;
-using JornalerosApp.Shared.Entities;
+using System.Threading.Tasks;
 
 namespace JornalerosApp.Controllers
 {

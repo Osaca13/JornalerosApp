@@ -25,7 +25,6 @@ namespace JornalerosApp.Shared.Entities
 
         public string PrimerApellido { get; set; }
         [Required]
-        [ValidacionNIF(ErrorMessage = "Numero de documento incorrecto")]
         [StringLength(9, MinimumLength = 9)]
         public string Dni { get; set; }
         public DateTime? FechaNacimiento { get; set; }

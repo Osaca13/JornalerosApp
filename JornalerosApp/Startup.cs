@@ -9,14 +9,19 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using JornalerosApp.Areas.Identity;
 using JornalerosApp.Services;
+using JornalerosApp;
 using System.Globalization;
 using Microsoft.Extensions.Options;
 using JornalerosApp.Shared.Services;
-using JornalerosApp.Data;
+using JornalerosApp.Infrastructure.Data;
 using AutoMapper;
 using JornalerosApp.Shared.Models;
 using BlazorStrap;
-using Syncfusion.Blazor;
+
+using Microsoft.AspNetCore.Mvc;
+using System;
+using JornalerosApp.Pages.Validators;
+using BlazorDateRangePicker;
 
 namespace JornalerosApp
 {
@@ -29,28 +34,42 @@ namespace JornalerosApp
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            string mensaje = @"Documento no válido";
             //services.Configure<ISQLDatabaseSettings>(Configuration.GetSection(nameof(SQLDatabaseSettings)));
             //services.AddSingleton<ISQLDatabaseSettings>(sp => sp.GetRequiredService<IOptions<SQLDatabaseSettings>>().Value);
             services.AddDbContext<ApplicationDbContext>(options =>
                {
                    options.UseSqlServer(
-                      Configuration.GetConnectionString("DefaultConnection"));    
+                      Configuration.GetConnectionString("DefaultConnection"));
                });
-           
+
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddScoped<ApplicationDbContext>();
             services.AddControllers().AddNewtonsoftJson();
             //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddMvc();
+            services.AddScoped<NifValidatorAttribute>();
+            //services.AddScoped<PersonaValidator>();
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = actionContext => {
+                    if (actionContext.HttpContext.Request.Path == "/Personas")
+                    {
+                        return new BadRequestObjectResult(actionContext.ModelState);
+                    }
+                    else
+                    {
+                        return new BadRequestObjectResult(
+                            new ValidationProblemDetails(actionContext.ModelState));
+                    }
+                };
+            });
             services.AddLocalization();
             var supportedCultures = new List<CultureInfo> { new CultureInfo("es"), new CultureInfo("ca") };
             services.Configure<RequestLocalizationOptions>(opt =>
@@ -71,27 +90,34 @@ namespace JornalerosApp
             });
             services.AddBootstrapCss();
             services.AddAutoMapper(typeof(ModelMapper));
-            services.AddScoped<IWeatherForecastService, WeatherForecastService>();
-            services.AddTransient<ISqlDataAccess, SqlDataAccess>();
-            services.AddTransient<ISQLDatabaseServices, SQLDatabaseServices>();
+            //services.AddScoped<IWeatherForecastService, WeatherForecastService>();
+            services.AddScoped<ISqlDataAccess, SqlDataAccess>();
+            services.AddScoped<ISQLDatabaseServices, SQLDatabaseServices>();
             services.AddLogging();
-            services.AddTransient<ValidacionNIF>();
+            
+            
             services.AddScoped<IGetDbServices<RelacionMunicipioProvincia>, MunicipiosDbServices>();
             services.AddScoped<IDbServices<Persona>, PersonaDbServices>();
             services.AddScoped<IDbServices<Empresa>, EmpresaDbServices>();
             services.AddScoped<IDbServices<Oferta>, OfertaDbServices>();
             services.AddHttpClient();
             services.AddApiClient();
-            services.AddSyncfusionBlazor();
-        }
+            //services.AddDateRangePicker(config =>
+            //{
+            //    config.Attributes = new Dictionary<string, object>
+            //    {
+            //        { "class", "form-control form-control-sm" }
+            //    };
+            //    config.Name = "DateRangePickerConfig";
+            //});
+        }        
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                //app.UseDatabaseErrorPage();
                 var properties = env.WebRootPath;
             }
             else
@@ -119,5 +145,9 @@ namespace JornalerosApp
                 endpoints.MapFallbackToPage("/_Host");
             });
         }
+
+        
+
+        
     }
 }

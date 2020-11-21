@@ -11,8 +11,8 @@
 
 <AuthorizeView Roles="Candidato, Admin">
     <Authorized Context="authState">
-        <BSJumbotron>
-            <h3>Buscar Oferta </h3>
+        <BSJumbotron Class="pt-4" style="height:300px">
+            <BSAlert Color="Color.None" Class="h3" style="text-align:center; display:block">Ofertas </BSAlert>
             <BSForm Model="@searchParameters">
                 <BSFormGroup IsRow="true">
                     <BSCol SM="4">
@@ -34,9 +34,9 @@
                     </BSCol>
                 </BSFormGroup>
 
-                <BSFormGroup IsRow="true">
-                    <BSCol SM="6" SMOffset="2">
-                        <BSButton Size="Size.Medium" IsBlock="true" ButtonType="ButtonType.Submit" @onclick="@(() =>Busqueda())">Filtrar</BSButton>
+                <BSFormGroup IsRow="true" Class="pt-5">
+                    <BSCol >
+                        <BSButton Size="Size.Large" IsBlock="true" ButtonType="ButtonType.Submit" @onclick="@(() =>Busqueda())">Filtrar</BSButton>
                     </BSCol>
                 </BSFormGroup>
             </BSForm>

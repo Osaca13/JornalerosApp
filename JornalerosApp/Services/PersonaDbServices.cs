@@ -1,18 +1,13 @@
-﻿using System;
+﻿using JornalerosApp.Infrastructure.Data;
+using JornalerosApp.Shared.Models;
+using JornalerosApp.Shared.Services;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using JornalerosApp.Data;
-using JornalerosApp.Shared.Data;
-using JornalerosApp.Shared.Models;
-using JornalerosApp.Shared.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Extensions.Logging;
 
 namespace JornalerosApp.Services
 {
@@ -60,12 +55,21 @@ namespace JornalerosApp.Services
         {
              return await _context.Persona.Where(p => p.Nombre == name).FirstOrDefaultAsync();
         }
-        
+
         public async Task<bool> AddItem(Persona item)
         {
-            var result = await _context.Persona.AddAsync(item);
-            await Save();
-            return result.State == EntityState.Added;         
+            try
+            {
+                var result = await _context.Persona.AddAsync(item);
+                await Save();
+                return result.State == EntityState.Added;
+            }
+            catch (Exception exc)
+            {
+                Debug.WriteLine("Error añadiendo nuevo item: " + exc.Message);
+                throw;
+
+            }
         }
 
         public async Task<bool> UpdateItem(Persona item)
@@ -79,11 +83,10 @@ namespace JornalerosApp.Services
             }
             catch (Exception exc)
             {
-                Debug.WriteLine("Error updating" + exc.Message);
+                Debug.WriteLine("Error actualizando item existente: " + exc.Message);
                 throw;
             }           
         }
-
         public async Task<bool> DeleteItem(string id)
         {
             var result = await _context.Persona.FindAsync(id);

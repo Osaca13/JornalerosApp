@@ -1,4 +1,4 @@
-﻿using JornalerosApp.Data;
+﻿using JornalerosApp.Infrastructure.Data;
 using JornalerosApp.Shared.Models;
 using JornalerosApp.Shared.Services;
 using Microsoft.EntityFrameworkCore;

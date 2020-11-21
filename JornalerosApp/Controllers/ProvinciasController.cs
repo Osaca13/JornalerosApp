@@ -1,14 +1,12 @@
-﻿using System;
+﻿using JornalerosApp.Shared.Models;
+using JornalerosApp.Shared.Services;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using JornalerosApp.Data;
-using JornalerosApp.Services;
-using JornalerosApp.Shared.Models;
-using JornalerosApp.Shared.Services;
-using Microsoft.AspNetCore.Mvc;
 
 namespace JornalerosApp.Controllers
 {

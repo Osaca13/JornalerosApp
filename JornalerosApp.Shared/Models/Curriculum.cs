@@ -14,7 +14,7 @@ namespace JornalerosApp.Shared.Models
 
         public string IdCurriculum { get; set; }
         public string IdPersona { get; set; }
-        public string TramitarPermisoTrabajo { get; set; }
+        public string Disponibilidad { get; set; }
         public string Movilidad { get; set; }
         public string AlojamientoPropio { get; set; }
 

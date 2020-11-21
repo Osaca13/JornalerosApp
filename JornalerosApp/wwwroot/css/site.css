@@ -188,4 +188,8 @@ app {
 /*        background-color: #C3DCCC;
 */        /*        #105026;*/
     }
+
+    .daterangepicker {
+        display:block;
+    }
 }

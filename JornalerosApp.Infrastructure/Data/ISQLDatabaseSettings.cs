@@ -1,4 +1,4 @@
-﻿namespace JornalerosApp.Data
+﻿namespace JornalerosApp.Infrastructure.Data
 {
     public interface ISQLDatabaseSettings
     {

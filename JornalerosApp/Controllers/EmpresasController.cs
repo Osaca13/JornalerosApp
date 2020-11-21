@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using JornalerosApp.Data;
 using JornalerosApp.Shared.Models;
 using JornalerosApp.Shared.Services;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;

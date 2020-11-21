@@ -4,7 +4,7 @@
 @using JornalerosApp.Pages.Candidatos
 @using JornalerosApp.Shared.Services
 @inject AuthenticationStateProvider Provider
-@inject IHttpClientFactory Factory;
+@*@inject IHttpClientFactory Factory;*@
 @inject UserManager<IdentityUser> UserManager
 @inject NavigationManager Navigation
 
@@ -18,7 +18,7 @@
             <BSRow Class="justify-content-center" >
                 <ul class="nav flex-row">
                     <li class="nav-item px-3">
-                        <NavLink class="nav-link btn btn-primary" Match="NavLinkMatch.All" @onclick="@((MouseEventArgs e) =>IraCV(e))">
+                        <NavLink class="nav-link btn btn-primary"  @onclick="@((MouseEventArgs e) =>IraCV(e))">
                             <span class="oi oi-home" aria-hidden="true"></span>
                             Datos Personales
                         </NavLink>
@@ -39,11 +39,12 @@
     [Parameter] public string UserName { get; set; }
     [Parameter] public string Id { get; set; }
 
-    private HttpClient client;
+    //private HttpClient client;
 
     private void IraCV(MouseEventArgs e)
     {
-        string direccion = "/Candidato/CV/" + Id;
+        string direccion = "/Candidato/DatosPersonales/";
+        //"/Candidato/CV/" + Id;
         Navigation.NavigateTo(direccion);
     }
 
