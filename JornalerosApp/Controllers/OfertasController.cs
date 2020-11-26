@@ -16,20 +16,19 @@ namespace JornalerosApp.Controllers
     public class OfertasController : ControllerBase
     {
         private readonly IDbServices<Oferta> _dbServices;
-        private readonly IMapper mapper;
+        
 
-        public OfertasController(IDbServices<Oferta> dbServices, IMapper mapper)
+        public OfertasController(IDbServices<Oferta> dbServices)
         {
             _dbServices = dbServices ?? throw new ArgumentNullException(nameof(dbServices));
-            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Personas
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Oferta>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<Oferta>>> GetOfertas()
+        [ProducesResponseType(typeof(IReadOnlyList<Oferta>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IReadOnlyList<Oferta>>> GetOfertas()
         {
-            var result = await _dbServices.AllItems();
+            var result = await _dbServices.GetAllAsync();
             
             return Ok(result);
         }
@@ -38,11 +37,11 @@ namespace JornalerosApp.Controllers
         [Route("Buscar")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Oferta>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<Oferta>>> Get([FromQuery] string actividad, [FromQuery] string lugar)
+        public async Task<ActionResult<IEnumerable<Oferta>>> Get([FromQuery] string actividad, [FromQuery] string lugar, [FromQuery] string sector)
         {
-            var result = await _dbServices.AllItems();
-            return result.AsQueryable().Where(p => p.Titulo.Contains(actividad) && p.LugarTrabajo.Contains(lugar)).Select(p => p).ToList(); 
-            
+            //var result = await _dbServices.GetAsync(predicate: );
+            //result.AsQueryable().Where(p => p.Titulo.Contains(actividad) && p.LugarTrabajo.Contains(lugar)).Select(p => p).ToList(); 
+            return new List<Oferta>();
         }
 
         // GET: api/Personas/5
@@ -52,7 +51,7 @@ namespace JornalerosApp.Controllers
 
         public async Task<ActionResult<Oferta>> GetOfertas(string id)
         {
-            var oferta = await _dbServices.GetItemById(id);
+            var oferta = await _dbServices.GetByIdAsync(id);
             
             if (oferta == null)
             {
@@ -96,7 +95,7 @@ namespace JornalerosApp.Controllers
                 }
 
                 //var nueva = this.mapper.Map<Oferta>(oferta);
-                await _dbServices.UpdateItem(oferta);
+                await _dbServices.UpdateAsync(oferta);
 
                 //await _dbServices.UpdateItem(Oferta);           
              
@@ -126,7 +125,7 @@ namespace JornalerosApp.Controllers
         {            
             try
             {
-               await _dbServices.AddItem(oferta);
+               await _dbServices.AddAsync(oferta);
 
             }
             catch (DbUpdateException)
@@ -147,19 +146,19 @@ namespace JornalerosApp.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Oferta>> DeleteOferta(string id)
         {
-            var oferta = await _dbServices.GetItemById(id);
+            var oferta = await _dbServices.GetByIdAsync(id);
             if (oferta == null)
             {
                 return NotFound();
             }
-            await _dbServices.DeleteItem(id);
+            await _dbServices.DeleteAsync(oferta);
             //return this.mapper.Map<PersonaModel>(Oferta);
             return oferta;
         }
 
         private bool OfertaExists(string id)
         {
-            return _dbServices.GetItemById(id).Result != null;
+            return _dbServices.GetByIdAsync(id).Result != null;
         }
     }
 }

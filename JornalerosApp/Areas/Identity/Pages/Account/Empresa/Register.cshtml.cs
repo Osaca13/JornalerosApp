@@ -198,7 +198,7 @@ namespace JornalerosApp.Areas.Identity.Pages.Account.Empresa
             Empresa.Telefono = Input.Telefono;
             Empresa.Dirección = Input.Dirección;
             Empresa.CodigoPostal = Input.CodigoPostal;
-            await _empresaServices.AddItem(Empresa);
+            await _empresaServices.AddAsync(Empresa);
         }
 
     }

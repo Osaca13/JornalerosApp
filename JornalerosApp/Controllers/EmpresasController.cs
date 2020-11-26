@@ -19,89 +19,43 @@ namespace JornalerosApp.Controllers
     public class EmpresasController : ControllerBase
     {
         private readonly IDbServices<Empresa> _context;
-        private readonly IMapper mapper;
 
-        public EmpresasController(IDbServices<Empresa> context, IMapper mapper)
+        public EmpresasController(IDbServices<Empresa> context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Empresas
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Empresa>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IReadOnlyList<Empresa>), (int)HttpStatusCode.OK)]
 
-        public async Task<ActionResult<IEnumerable<Empresa>>> GetEmpresas()
+        public async Task<ActionResult<IReadOnlyList<Empresa>>> GetEmpresas()
         {
-            var lista = new List<EmpresaModel>();
-            await _context.AllItems().ContinueWith((result) => 
-                                                    result.Result.ToList().ForEach(p => {
-                                                    lista.Add(this.mapper.Map<EmpresaModel>(p));            
-            }));
+            var lista = await _context.GetAllAsync(); 
             return Ok(lista);
         }
 
         // GET: api/Empresas/5
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(EmpresaModel), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(EmpresaModel), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<EmpresaModel>> GetEmpresas(string id)
+        [ProducesResponseType(typeof(Empresa), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(Empresa), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<Empresa>> GetEmpresaById(string id)
         {
             try
             {
-                var empresa = await _context.GetItemById(id);
-                var data = mapper.Map<Empresa, EmpresaModel>(empresa);
-                data.Oferta = mapper.Map<ICollection<Oferta>, OfertaModel[]>(empresa.Oferta);
+                var empresa = await _context.GetByIdAsync(id);
+                
                 if (empresa == null)
                 {
-                    return Ok(new EmpresaModel());
+                    return Ok(new Empresa());
                 }
-                //int i = 0;
-                
-                //OfertaModel[] listaOfertaModel = new OfertaModel[empresa.Oferta.Count];
-                //empresa.Oferta.ToList().ForEach(o =>
-                //{
-                //    var nuevo = new OfertaModel
-                //    {
-                //        Alojamiento = o.Alojamiento,
-                //        CantidadPersonas = o.CantidadPersonas,
-                //        ContinuidadIgualLabor = o.ContinuidadIgualLabor,
-                //        ContinuidadOtraLabor = o.ContinuidadOtraLabor,
-                //        Descripcion = o.Descripcion,
-                //        FechaCaducidad = o.FechaCaducidad,
-                //        FechaPublicacion = o.FechaPublicacion,
-                //        IdEmpresa = o.IdEmpresa,
-                //        IdOferta = o.IdOferta,
-                //        JornadaReal = o.JornadaReal
-                //    };
-                //    listaOfertaModel[i] = nuevo;
-                //    i++;
-                //});
-
-                //EmpresaModel result = new EmpresaModel
-                //{
-                //    Actividad = empresa.Actividad,
-                //    Cargo = empresa.Cargo,
-                //    CodigoPostal = empresa.CodigoPostal,
-                //    CorreoElectronico = empresa.CorreoElectronico,
-                //    Dirección = empresa.Dirección,
-                //    IdEmpresa = empresa.IdEmpresa,
-                //    Nifcif = empresa.Nifcif,
-                //    NombreContacto = empresa.NombreContacto,
-                //    NombreEmpresa = empresa.NombreEmpresa,
-                //    Oferta = listaOfertaModel,
-                //    Provincia = empresa.Provincia,
-                //    Telefono = empresa.Telefono
-                //};
-
-                return Ok(data);
+                return Ok(empresa);
             }
             catch (Exception exc)
             {
                 Debug.WriteLine(exc.Message);
                 throw;
             }
-           
         }
 
         // PUT: api/Empresas/5
@@ -110,18 +64,17 @@ namespace JornalerosApp.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> PutEmpresas(string id, [FromBody] EmpresaModel empresa)
+        public async Task<IActionResult> PutEmpresas(string id, [FromBody] Empresa empresa)
         {
-            if (id != empresa.IdEmpresa)
-            {
-                return BadRequest();
-            }          
-
             try
             {
-                var data = this.mapper.Map<EmpresaModel, Empresa>(empresa);
-                data.Oferta = (ICollection<Oferta>)empresa.Oferta.ToList();
-                await _context.UpdateItem(data);
+                if (id != empresa.IdEmpresa)
+                {
+                    return BadRequest();
+                }
+
+                await _context.UpdateAsync(empresa);
+                
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -143,12 +96,12 @@ namespace JornalerosApp.Controllers
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.Conflict)]
-        [ProducesResponseType(typeof(EmpresaModel), (int)HttpStatusCode.Created)]
-        public async Task<ActionResult<EmpresaModel>> PostEmpresas([FromBody] EmpresaModel empresa)
+        [ProducesResponseType(typeof(Empresa), (int)HttpStatusCode.Created)]
+        public async Task<ActionResult<EmpresaModel>> PostEmpresas([FromBody] Empresa empresa)
         {           
             try
             {
-                await _context.AddItem(this.mapper.Map<Empresa>(empresa));
+                await _context.AddAsync(empresa);
             }
             catch (DbUpdateException)
             {
@@ -168,22 +121,22 @@ namespace JornalerosApp.Controllers
         // DELETE: api/Empresas/5
         [HttpDelete("{id}")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
 
-        public async Task<ActionResult<string>> DeleteEmpresas(string id)
+        public async Task<ActionResult> DeleteEmpresas(string id)
         {
-
-            var deleteResult = await _context.DeleteItem(id);
-            if (!deleteResult)
+            var result = await _context.GetByIdAsync(id);
+            if (result == null)
             {
                 return NotFound();
             }
-            return Ok(id);
+            await _context.DeleteAsync(result);
+            return NoContent();
         }
 
         private bool EmpresaExists(string id)
         {
-            var result = _context.GetItemById(id);
+            var result = _context.GetByIdAsync(id);
             return (result != null);
         }
     }

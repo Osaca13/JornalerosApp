@@ -36,14 +36,13 @@ namespace JornalerosApp
 
         public void ConfigureServices(IServiceCollection services)
         {
-            string mensaje = @"Documento no válido";
+            
             //services.Configure<ISQLDatabaseSettings>(Configuration.GetSection(nameof(SQLDatabaseSettings)));
             //services.AddSingleton<ISQLDatabaseSettings>(sp => sp.GetRequiredService<IOptions<SQLDatabaseSettings>>().Value);
             services.AddDbContext<ApplicationDbContext>(options =>
                {
-                   options.UseSqlServer(
-                      Configuration.GetConnectionString("DefaultConnection"));
-               });
+                   options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+               }, ServiceLifetime.Singleton);
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()

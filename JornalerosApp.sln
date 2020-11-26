@@ -11,6 +11,8 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JornalerosApp.Infrastructure", "JornalerosApp.Infrastructure\JornalerosApp.Infrastructure.csproj", "{69D0BFC9-9531-4DB6-9CF6-B12C8694FA4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JornalerosApp.Application", "JornalerosApp.Application\JornalerosApp.Application\JornalerosApp.Application.csproj", "{16A07D19-2113-445B-BC63-34C20EB83986}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{69D0BFC9-9531-4DB6-9CF6-B12C8694FA4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69D0BFC9-9531-4DB6-9CF6-B12C8694FA4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69D0BFC9-9531-4DB6-9CF6-B12C8694FA4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16A07D19-2113-445B-BC63-34C20EB83986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16A07D19-2113-445B-BC63-34C20EB83986}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16A07D19-2113-445B-BC63-34C20EB83986}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16A07D19-2113-445B-BC63-34C20EB83986}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

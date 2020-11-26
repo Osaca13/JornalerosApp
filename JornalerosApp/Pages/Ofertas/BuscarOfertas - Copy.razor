@@ -1,5 +1,5 @@
-﻿@page "/BuscarOfertas/"
-@page "/BuscarOfertas/{id}"
+﻿@*@page "/BuscarOfertas/"
+@page "/BuscarOfertas/{id}"*@
 @using JornalerosApp.Shared.Models
 @using Microsoft.AspNetCore.Identity
 @using Newtonsoft.Json;
@@ -52,33 +52,40 @@
             {
                 <BSButton class="btn btn-dark" OnClick="CrearOferta">Crear nueva oferta</BSButton>
             }
+            <BSTable class="table">
+                <thead>
+                    <tr>
+                        <th>Titulo</th>
+                        <th>Descripcion</th>
+                        <th>Nombre de Empresa</th>
+                        <th>Jornada</th>
+                        <th></th>
+                        <th></th>
 
-            @foreach (var oferta in ListaOfertas)
-            {
-        <BSContainer IsFluid="true" Class="w-75" style="border:1px solid #E6E4E3; padding:0; margin:0; margin-left:1%">
-            <BSRow style="padding:0; margin:0">
-                <BSCol XS="2"><BSImage IsResponsive="true" src="/images/ofertasempleo.gif"/></BSCol>
-                <BSCol XS="6" Class="text-center">
-                    <BSCard style="border:none">
-                        <BSCard CardType="CardType.Body">
-                            <BSCard CardType="CardType.Title">@oferta.Titulo</BSCard>
-                            <BSCard CardType="CardType.Subtitle">@oferta.Descripcion</BSCard>
-                            <BSCard CardType="CardType.Text">@oferta.NombreEmpresa</BSCard>
-                            
-                        </BSCard>
-                    </BSCard>                    
-                </BSCol>
-                <BSCol XS="2" Class="text-center">
-                    <BSCard style="border:none">
-                        <BSCard CardType="CardType.Body" VerticalAlignment="VerticalAlignment.Center">
-                            <BSCard VerticalAlignment="VerticalAlignment.Center" CardType="CardType.Link" href="#">Detalles</BSCard>
-                        </BSCard>
-                     </BSCard>
-                </BSCol>
-            </BSRow>
-        </BSContainer>
-                <br />
-            }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var oferta in ListaOfertas)
+                    {
+                        <tr>
+                            <td>@oferta.Titulo</td>
+                            <td>@oferta.Descripcion</td>
+                            <td>@oferta.NombreEmpresa</td>
+                            <td>@oferta.JornadaReal</td>
+                            @if (Id == null)
+                            {
+                                <td><BSButton class="btn btn-info" OnClick="VerOferta">Ver detalles</BSButton></td>
+                                <td><BSButton class="btn btn-info" OnClick="IncribirmeOferta">Inscribirme</BSButton></td>
+                            }
+                            else
+                            {
+                                <td><BSButton class="btn btn-info" OnClick="EditarOferta">Editar</BSButton></td>
+                                <td><BSButton class="btn btn-danger" OnClick="EliminarOferta">Eliminar</BSButton></td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </BSTable>
         </ListadoConElementos>
     </ListadoGenerico>
 }
@@ -130,8 +137,7 @@
         try
         {
             ListaOfertas = await SqlDbServices.OfertasPorParametros(searchParameters.Actividad, searchParameters.Lugar, searchParameters.Sector);
-            //var data = await client.GetFromJsonAsync<IReadOnlyList<ListaOferta>>($"Ofertas/{searchParameters.Actividad}/{searchParameters.Lugar}/{searchParameters.Sector}" );
-           
+
             await InvokeAsync(() => StateHasChanged());
         }
         catch (Exception exc)

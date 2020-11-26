@@ -15,21 +15,20 @@ namespace JornalerosApp.Controllers
     public class PersonasController : ControllerBase
     {
         private readonly IDbServices<Persona> _dbServices;
-        private readonly IMapper mapper = null;      
+            
 
 
-        public PersonasController(IDbServices<Persona> dbServices, IMapper mapper)
+        public PersonasController(IDbServices<Persona> dbServices)
         {
             _dbServices = dbServices ?? throw new ArgumentNullException(nameof(dbServices));
-            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Personas
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Persona>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<Persona>>> GetPersonas()
+        [ProducesResponseType(typeof(IReadOnlyList<Persona>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IReadOnlyList<Persona>>> GetPersonas()
         {
-            var result = await _dbServices.AllItems();
+            var result = await _dbServices.GetAllAsync();
             
             return Ok(result);
         }
@@ -41,13 +40,7 @@ namespace JornalerosApp.Controllers
 
         public async Task<ActionResult<Persona>> GetPersonas(string id)
         {
-            var persona = await _dbServices.GetItemById(id);
-
-            //var personaModel = this.mapper.Map<Persona, PersonaModel>(persona);
-            //personaModel.Curriculum = this.mapper.Map<ICollection<Curriculum>, Curriculum[]>(persona.Curriculum);
-            //personaModel.RelacionOfertaPersona = this.mapper.Map<ICollection<RelacionOfertaPersona>, RelacionOfertaPersona[]>(persona.RelacionOfertaPersona);
-            //personaModel.Permiso = this.mapper.Map<ICollection<Permiso>, Permiso[]>(persona.Permiso);
-            //personaModel.Nacionalidad = this.mapper.Map<ICollection<Nacionalidad>, Nacionalidad[]>(persona.Nacionalidad);
+            Persona persona = await _dbServices.GetByIdAsync(id);
 
             if (persona == null)
             {
@@ -86,7 +79,6 @@ namespace JornalerosApp.Controllers
         {
             try
             {
-
                 if (ModelState.IsValid)
                 {
                     if (id != persona.IdPersona)
@@ -94,15 +86,9 @@ namespace JornalerosApp.Controllers
                         return BadRequest(ModelState);
                     }
 
-                    //var nueva = this.mapper.Map<PersonaModel, Persona>(persona);
-                   // var result = await TryUpdateModelAsync<Persona>(persona);
-                    //await _dbServices.UpdateItem(persona);
-
-                    var result = await _dbServices.UpdateItem(persona);           
-                    if (result)
-                    {
-                        return Ok();
-                    }
+                    await _dbServices.UpdateAsync(persona);          
+                    return Ok();
+                    
                 }
 
             }
@@ -121,10 +107,7 @@ namespace JornalerosApp.Controllers
             return NoContent();
         }
 
-        private void Validate<T>(T persona)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         // POST: api/Personas
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
@@ -138,11 +121,8 @@ namespace JornalerosApp.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await _dbServices.AddItem(persona);
+                    await _dbServices.AddAsync(persona);
                 }
-                //var persona = this.mapper.Map<PersonaModel, Persona>(persona);
-               
-
             }
             catch (DbUpdateException)
             {
@@ -165,19 +145,18 @@ namespace JornalerosApp.Controllers
 
         public async Task<ActionResult<Persona>> DeletePersona(string id)
         {
-            var persona = await _dbServices.GetItemById(id);
+            var persona = await _dbServices.GetByIdAsync(id);
             if (persona == null)
             {
                 return NotFound();
             }
-            await _dbServices.DeleteItem(id);
-            //return this.mapper.Map<PersonaModel>(persona);
+            await _dbServices.DeleteAsync(persona);
             return Ok(persona);
         }
 
         private bool PersonaExists(string id)
         {
-            return _dbServices.GetItemById(id).Result != null;
+            return _dbServices.GetByIdAsync(id).Result != null;
         }
 
         //private BadRequestObjectResult CustomErrorResponse(ActionContext actionContext)
