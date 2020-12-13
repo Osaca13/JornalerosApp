@@ -1,5 +1,6 @@
-﻿using JornalerosApp.Infrastructure.Data;
-using JornalerosApp.Shared.Models;
+﻿using EmpresasApp.Data;
+using EmpresasApp.Services;
+using EmpresasApp.Models;
 using JornalerosApp.Shared.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,12 +9,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace JornalerosApp.Services
+namespace EmpresaApp.Services
 {
     public class EmpresaDbServices : DbServices<Empresa>
     {    
 
-        public EmpresaDbServices(ApplicationDbContext applicationDbContext):base(applicationDbContext)
+        public EmpresaDbServices(EmpresasDataContext empresasDataContext):base(empresasDataContext)
         {
         }
 

@@ -8,7 +8,7 @@ namespace JornalerosApp.Shared.Models
         public Curriculum()
         {
             Experiencia = new HashSet<Experiencia>();
-            Formacion = new HashSet<Formacion>();
+           
             Idioma = new HashSet<Idioma>();
         }
 
@@ -20,7 +20,7 @@ namespace JornalerosApp.Shared.Models
 
         public virtual Persona IdPersonaNavigation { get; set; }
         public virtual ICollection<Experiencia> Experiencia { get; set; }
-        public virtual ICollection<Formacion> Formacion { get; set; }
+        public virtual Formacion Formacion { get; set; }
         public virtual ICollection<Idioma> Idioma { get; set; }
     }
 }

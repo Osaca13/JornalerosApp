@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JornalerosApp.Shared.Services
 {
-    public interface IGetDbServices<T> : IDisposable where T: class
+    public interface IGetDbServices<T> where T: class
     {
         Task<IReadOnlyList<T>> GetAllAsync();        
     }

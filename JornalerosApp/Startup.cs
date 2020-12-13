@@ -22,6 +22,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using JornalerosApp.Pages.Validators;
 using BlazorDateRangePicker;
+using MediatR;
+using JornalerosApp.Application.Handlers;
 
 namespace JornalerosApp
 {
@@ -43,13 +45,14 @@ namespace JornalerosApp
                {
                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
                }, ServiceLifetime.Singleton);
+            
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddScoped<ApplicationDbContext>();
             services.AddControllers().AddNewtonsoftJson();
-            //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddMvc();
@@ -88,7 +91,7 @@ namespace JornalerosApp
                 //options.Password.RequiredUniqueChars = 6;
             });
             services.AddBootstrapCss();
-            services.AddAutoMapper(typeof(ModelMapper));
+            //services.AddAutoMapper(typeof(ModelMapper));
             //services.AddScoped<IWeatherForecastService, WeatherForecastService>();
             services.AddScoped<ISqlDataAccess, SqlDataAccess>();
             services.AddScoped<ISQLDatabaseServices, SQLDatabaseServices>();
@@ -96,11 +99,15 @@ namespace JornalerosApp
             
             
             services.AddScoped<IGetDbServices<RelacionMunicipioProvincia>, MunicipiosDbServices>();
-            services.AddScoped<IDbServices<Persona>, PersonaDbServices>();
-            services.AddScoped<IDbServices<Empresa>, EmpresaDbServices>();
-            services.AddScoped<IDbServices<Oferta>, OfertaDbServices>();
+            services.AddScoped(typeof(IDbServices<>), typeof(DbServices<>));
+            
             services.AddHttpClient();
             services.AddApiClient();
+            services.AddMediatR(typeof(CheckOutOfertaHandler).GetType().Assembly);
+            //services.AddSwaggerGen(c =>
+            //   {
+            //       c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Oferta API", Version = "v1" });
+            //   });
             //services.AddDateRangePicker(config =>
             //{
             //    config.Attributes = new Dictionary<string, object>
@@ -109,6 +116,7 @@ namespace JornalerosApp
             //    };
             //    config.Name = "DateRangePickerConfig";
             //});
+
         }        
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -117,7 +125,6 @@ namespace JornalerosApp
             {
                 app.UseDeveloperExceptionPage();
                 //app.UseDatabaseErrorPage();
-                var properties = env.WebRootPath;
             }
             else
             {
@@ -138,11 +145,17 @@ namespace JornalerosApp
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
-            { 
+            {
                 endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+
+            //app.UseSwagger();
+            //app.UseSwaggerUI(c => {
+
+            //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Order Api v1");
+            //}); 
         }
 
         

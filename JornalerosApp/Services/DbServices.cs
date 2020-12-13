@@ -9,18 +9,11 @@ using System.Threading.Tasks;
 
 namespace JornalerosApp.Services
 {
-    public class DbServices<T> : IDbServices<T> where T : class
+    public class DbServices<T> : GetDbServices<T>, IDbServices<T> where T : class
     {
-        protected readonly ApplicationDbContext _dbContext;
 
-        public DbServices(ApplicationDbContext dbContext)
+        public DbServices(ApplicationDbContext dbContext): base(dbContext)
         {
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-        }
-
-        public async Task<IReadOnlyList<T>> GetAllAsync()
-        {
-            return await _dbContext.Set<T>().ToListAsync();
         }
 
         public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate)
@@ -79,64 +72,5 @@ namespace JornalerosApp.Services
             _dbContext.Set<T>().Remove(entity);
             await _dbContext.SaveChangesAsync();
         }
-
-        private bool disposed = false;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    _dbContext.Dispose();
-                }
-            }
-            this.disposed = true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        //public Task<bool> AddItem(T item)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<IReadOnlyList<T>> AllItems()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<bool> DeleteItem(string id)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public void Dispose()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<T> GetItemById(string id)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<T> GetItemByname(string name)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task Save()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<bool> UpdateItem(T item)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }

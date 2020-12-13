@@ -1,0 +1,67 @@
+﻿@page "/Empresa"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Authentication
+@using JornalerosApp.Pages.Empresa
+@using JornalerosApp.Shared.Services
+
+@inject NavigationManager Navigation
+
+
+<BSContainer IsFluid="true" Class="w-75">
+    <BSCard Alignment="Alignment.Center" Class="h-50">
+        <BSCard CardType="CardType.Image"  src="/images/empresa-de-servicios-agricolas.jpg" alt="empresa-de-servicios-agricolas" />
+        <BSCard CardType="CardType.Body">
+            <BSCard CardType="CardType.Title">Perfil de Empresa</BSCard>
+            @*<BSCard CardType="CardType.Text">Le brindamos una forma sencilla y ágil de publicar sus ofertas de empleo y buscar candidatos...</BSCard>*@
+            <BSRow Class="justify-content-center">
+                <ul class="nav flex-row">
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link btn btn-primary" @onclick="@((MouseEventArgs e) =>IraPerfil(e))">
+                            <span class="oi oi-home" aria-hidden="true"></span>
+                            Informacion de Empresa
+                        </NavLink>
+                    </li>
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link btn btn-primary" @onclick="@((MouseEventArgs e) =>IraOfertas(e))">
+                            <span class="oi oi-eye" aria-hidden="true"></span>
+                            Ver mis ofertas
+                        </NavLink>
+                    </li>
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link btn btn-primary" @onclick="@((MouseEventArgs e) =>IraCandidatos(e))">
+                            <span class="oi oi-home" aria-hidden="true"></span>
+                            Buscar Candidatos
+                        </NavLink>
+                    </li>
+                </ul>
+            </BSRow>
+        </BSCard>
+    </BSCard>
+</BSContainer>
+@code {
+    [Parameter] public string UserName { get; set; }
+    [Parameter] public string Id { get; set; }
+
+
+
+    private void IraPerfil(MouseEventArgs e)
+    {
+        string direccion = "/Empresa/EditarFichaEmpresa/" + Id;
+
+        Navigation.NavigateTo(direccion);
+    }
+    private void IraOfertas(MouseEventArgs e)
+    {
+        string direccion = "/BuscarOfertas/"+Id;
+
+        Navigation.NavigateTo(direccion);
+    }
+
+    private void IraCandidatos(MouseEventArgs e)
+    {
+        string direccion = "/BuscarOfertas/" + Id;
+
+        Navigation.NavigateTo(direccion);
+    }
+
+}

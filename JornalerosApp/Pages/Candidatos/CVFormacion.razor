@@ -85,7 +85,7 @@
                 Id = UserManager.GetUserId(user);
                 UserName = user.Identity.Name;
             }
-            NivelFormacion = await SQLDBServices.FormacionPorIdPersona(Id);
+            NivelFormacion = await SQLDBServices.GetFormacionPorIdPersona(Id);
             Curriculum = await SQLDBServices.GetCurriculumPorIdPersona(Id);
             Curriculum = Curriculum ?? new Curriculum() { IdPersona = Id, IdCurriculum = Guid.NewGuid().ToString() };
             ListaNivelFormativo = await SQLDBServices.NivelesFormativo();
@@ -93,8 +93,8 @@
 
             NivelFormacion = NivelFormacion ?? new Formacion
             {
-                IdCurriculum = Curriculum.IdCurriculum,
-                IdFormacion = Guid.NewGuid().ToString()
+                IdPersona = Id,
+                IdPersonaNavigation = Curriculum
             };
 
             Nivel1 = new List<string> { "Básica", "ESO", "Bachillerato", "FP Grado Medio", "FP Grado Superior", "Grado Universitario" };
@@ -159,7 +159,7 @@
             try
             {
                 bool result;
-                if (await SQLDBServices.FormacionPorId(NivelFormacion.IdFormacion) != null)
+                if (await SQLDBServices.FormacionPorId(NivelFormacion.IdPersona) != null)
                 {
                     result = await SQLDBServices.UpdateFormacion(NivelFormacion);
                 }

@@ -11,7 +11,13 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JornalerosApp.Infrastructure", "JornalerosApp.Infrastructure\JornalerosApp.Infrastructure.csproj", "{69D0BFC9-9531-4DB6-9CF6-B12C8694FA4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JornalerosApp.Application", "JornalerosApp.Application\JornalerosApp.Application\JornalerosApp.Application.csproj", "{16A07D19-2113-445B-BC63-34C20EB83986}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JornalerosApp.Application", "JornalerosApp.Application\JornalerosApp.Application\JornalerosApp.Application.csproj", "{16A07D19-2113-445B-BC63-34C20EB83986}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RabbitMQ", "RabbitMQ", "{1F731B8A-AC79-4C20-9278-7001CEE2F55F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBusRabbitMQ", "RabbitMQ\EventBusRabbitMQ\EventBusRabbitMQ.csproj", "{9A1366A5-80FB-4F1D-A94D-60D2F29687C9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmpresasApp", "EmpresasApp\EmpresasApp.csproj", "{EBF479B7-7813-4E0D-B81D-A2E7E246C7F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,9 +45,20 @@ Global
 		{16A07D19-2113-445B-BC63-34C20EB83986}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16A07D19-2113-445B-BC63-34C20EB83986}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16A07D19-2113-445B-BC63-34C20EB83986}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A1366A5-80FB-4F1D-A94D-60D2F29687C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A1366A5-80FB-4F1D-A94D-60D2F29687C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A1366A5-80FB-4F1D-A94D-60D2F29687C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A1366A5-80FB-4F1D-A94D-60D2F29687C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBF479B7-7813-4E0D-B81D-A2E7E246C7F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBF479B7-7813-4E0D-B81D-A2E7E246C7F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBF479B7-7813-4E0D-B81D-A2E7E246C7F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBF479B7-7813-4E0D-B81D-A2E7E246C7F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9A1366A5-80FB-4F1D-A94D-60D2F29687C9} = {1F731B8A-AC79-4C20-9278-7001CEE2F55F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D57E45A0-24FB-4A0D-9CC0-58B1B2AB4C45}

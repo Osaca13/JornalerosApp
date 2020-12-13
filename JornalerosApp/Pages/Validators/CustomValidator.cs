@@ -32,7 +32,7 @@ namespace JornalerosApp.Pages.Validators
             CurrentEditContext.OnValidationRequested += validateModel;
 
             // Perform per-field validation on each field edit
-            CurrentEditContext.OnFieldChanged += validateField;
+            CurrentEditContext.OnFieldChanged += ValidateField;
         }
 
         private void validateModel(object sender, ValidationRequestedEventArgs e)
@@ -63,7 +63,7 @@ namespace JornalerosApp.Pages.Validators
             editContext.NotifyValidationStateChanged();
         }
 
-        private void validateField(object? sender, FieldChangedEventArgs e)
+        private void ValidateField(object? sender, FieldChangedEventArgs e)
         {
             if (!TryGetValidatableProperty(e.FieldIdentifier, out var propertyInfo)) return;
 
@@ -101,7 +101,7 @@ namespace JornalerosApp.Pages.Validators
         {
             if (CurrentEditContext == null) return;
             CurrentEditContext.OnValidationRequested -= validateModel;
-            CurrentEditContext.OnFieldChanged -= validateField;
+            CurrentEditContext.OnFieldChanged -= ValidateField;
         }
 
     }

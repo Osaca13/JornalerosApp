@@ -27,9 +27,9 @@ namespace JornalerosApp.Services
             return await _dataAccess.LoadData<ListaOferta, dynamic>(sql, new { });
         }
 
-        public async Task<Formacion> FormacionPorIdPersona(string id)
+        public async Task<Formacion> GetFormacionPorIdPersona(string id)
         {
-            string sql = "SELECT Formacion.IdFormacion, Formacion.IdCurriculum, Formacion.Titulo, Formacion.FechaInicio, Formacion.FechaFin, Formacion.Centro, Formacion.Descripcion from dbo.Persona INNER JOIN dbo.Curriculum on Persona.IdPersona = Curriculum.IdPersona INNER JOIN dbo.Formacion on Curriculum.IdCurriculum = Formacion.IdCurriculum Where Persona.IdPersona =  '" + id + "'";
+            string sql = "SELECT Formacion.IdPersona, Formacion.Titulo, Formacion.FechaInicio, Formacion.FechaFin, Formacion.Centro, Formacion.Descripcion from dbo.Persona INNER JOIN dbo.Curriculum on Persona.IdPersona = Curriculum.IdPersona INNER JOIN dbo.Formacion on Curriculum.IdPersona = Formacion.IdPersona Where Persona.IdPersona =  '" + id + "'";
             var lista = await _dataAccess.LoadData<Formacion, dynamic>(sql, new { });
             return lista?.First();
         }
@@ -60,7 +60,7 @@ namespace JornalerosApp.Services
 
         public async Task<bool> DeleteFormacion(Formacion formacion)
         {
-            string sql = "DELETE FROM dbo.Formacion WHERE Formacion.IdFormacion = '" + formacion.IdFormacion + "'";
+            string sql = "DELETE FROM dbo.Formacion WHERE Formacion.IdPersona = '" + formacion.IdPersona + "'";
 
             var result = await _dataAccess.SaveData<Formacion>(sql, formacion);
             return result == 1;
@@ -69,12 +69,12 @@ namespace JornalerosApp.Services
 
         public async Task<bool> AddFormacion(Formacion formacion)
         {
-            string sql = "INSERT INTO dbo.Formacion (IdFormacion,"
-                         + " IdCurriculum, Titulo)"
+            string sql = "INSERT INTO dbo.Formacion (IdPersona,"
+                         + " Descripcion, Titulo)"
                          + " VALUES ('"
-                         + formacion.IdFormacion
+                         + formacion.IdPersona
                          + "', '"
-                         + formacion.IdCurriculum
+                         + formacion.Descripcion
                          + "', '"
                          + formacion.Titulo
                          + "')";
@@ -85,8 +85,8 @@ namespace JornalerosApp.Services
 
         public async Task<bool> UpdateFormacion(Formacion formacion)
         {
-            string sql = "UPDATE dbo.Formacion SET IdCurriculum = '" + formacion.IdCurriculum + "', Titulo = '" + formacion.Titulo + "', FechaInicio = '" + formacion.FechaInicio + "', FechaFin = '" + formacion.FechaFin + "', Centro = '" + formacion.Centro + "', Descripcion = '" + formacion.Descripcion + "' " +
-                           "WHERE IdFormacion = '" + formacion.IdFormacion + "'";
+            string sql = "UPDATE dbo.Formacion SET Titulo = '" + formacion.Titulo + "', FechaInicio = '" + formacion.FechaInicio + "', FechaFin = '" + formacion.FechaFin + "', Centro = '" + formacion.Centro + "', Descripcion = '" + formacion.Descripcion + "' " +
+                           "WHERE IdPersona = '" + formacion.IdPersona + "'";
             var result = await _dataAccess.SaveData<Formacion>(sql, formacion);
             return result == 1;
         }
@@ -102,7 +102,7 @@ namespace JornalerosApp.Services
             }
             else
             {
-                curriculum = new Curriculum { IdCurriculum = Guid.NewGuid().ToString(), IdPersona = Id };
+                curriculum = new Curriculum { IdPersona = Id };
                 await _dataAccess.SaveData<Curriculum>(sql, curriculum);
             }
             return curriculum;
@@ -113,7 +113,7 @@ namespace JornalerosApp.Services
             string sql = "UPDATE dbo.Curriculum SET Disponibilidad = '" + curriculum.Disponibilidad + "', "
                 + "Movilidad = '" + curriculum.Movilidad + "', "
                 + "AlojamientoPropio = '" + curriculum.AlojamientoPropio + "' "
-                + "WHERE Curriculum.IdCurriculum = '" + curriculum.IdCurriculum + "'";
+                + "WHERE Curriculum.IdPersona = '" + curriculum.IdPersona + "'";
 
             var result = await _dataAccess.SaveData<Curriculum>(sql, curriculum);
             return result == 1;
@@ -121,7 +121,7 @@ namespace JornalerosApp.Services
 
         public async Task<string> PersonaFromIdFormacion(string id)
         {
-            string sql = "SELECT Persona.IdPersona from dbo.Formacion INNER JOIN dbo.Curriculum on Formacion.IdCurriculum = Curriculum.IdCurriculum INNER JOIN dbo.Persona on Curriculum.IdPersona = Persona.IdPersona Where Formacion.IdFormacion = '" + id + "'";
+            string sql = "SELECT Persona.IdPersona from dbo.Formacion INNER JOIN dbo.Curriculum on Formacion.IdPersona = Curriculum.IdPersona INNER JOIN dbo.Persona on Curriculum.IdPersona = Persona.IdPersona Where Formacion.IdFormacion = '" + id + "'";
 
             var result = await _dataAccess.LoadData<string, dynamic>(sql, new { });
             return result.FirstOrDefault();
@@ -169,11 +169,11 @@ namespace JornalerosApp.Services
         public async Task<bool> AddExperiencia(Experiencia experiencia)
         {
             string sql = "INSERT INTO dbo.Experiencia (IdExperiencia,"
-                         + " IdCurriculum, Empresa, Puesto, DescripcionPuesto)"
+                         + " IdPersona, Empresa, Puesto, DescripcionPuesto)"
                          + " VALUES ('"
                          + experiencia.IdExperiencia
                          + "', '"
-                         + experiencia.IdCurriculum
+                         + experiencia.IdPersona
                          + "', '"
                          + experiencia.Empresa
                           + "', '"
@@ -188,7 +188,7 @@ namespace JornalerosApp.Services
 
         public async Task<bool> UpdateExperiencia(Experiencia experiencia)
         {
-            string sql = "UPDATE dbo.Experiencia SET IdCurriculum = '" + experiencia.IdCurriculum + "', Puesto = '" + experiencia.Puesto + "', FechaInicio = '" + experiencia.FechaInicio + "', FechaFin = '" + experiencia.FechaFin + "', Empresa = '" + experiencia.Empresa + "', DescripcionPuesto = '" + experiencia.DescripcionPuesto + "' " +
+            string sql = "UPDATE dbo.Experiencia SET IdPersona = '" + experiencia.IdPersona + "', Puesto = '" + experiencia.Puesto + "', FechaInicio = '" + experiencia.FechaInicio + "', FechaFin = '" + experiencia.FechaFin + "', Empresa = '" + experiencia.Empresa + "', DescripcionPuesto = '" + experiencia.DescripcionPuesto + "' " +
                            "WHERE IdExperiencia = '" + experiencia.IdExperiencia + "'";
             var result = await _dataAccess.SaveData<Experiencia>(sql, experiencia);
 
@@ -205,7 +205,7 @@ namespace JornalerosApp.Services
 
         public async Task<List<Experiencia>> ExperienciaPorIdPersona(string id)
         {
-            string sql = "SELECT Experiencia.IdExperiencia, Experiencia.IdCurriculum, Experiencia.Empresa, Experiencia.Puesto, Experiencia.FechaInicio, Experiencia.FechaFin, Experiencia.DescripcionPuesto from dbo.Persona INNER JOIN dbo.Curriculum on Persona.IdPersona = Curriculum.IdPersona INNER JOIN dbo.Experiencia on Curriculum.IdCurriculum = Experiencia.IdCurriculum Where Persona.IdPersona =  '" + id + "'";
+            string sql = "SELECT Experiencia.IdExperiencia, Experiencia.IdPersona, Experiencia.Empresa, Experiencia.Puesto, Experiencia.FechaInicio, Experiencia.FechaFin, Experiencia.DescripcionPuesto from dbo.Persona INNER JOIN dbo.Curriculum on Persona.IdPersona = Curriculum.IdPersona INNER JOIN dbo.Experiencia on Curriculum.IdPersona = Experiencia.IdPersona Where Persona.IdPersona =  '" + id + "'";
             var lista = await _dataAccess.LoadData<Experiencia, dynamic>(sql, new { });
             return lista ?? null;
         }

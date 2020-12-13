@@ -11,7 +11,7 @@ namespace JornalerosApp.Shared.Models
     {       
         public Persona()
         {
-            Curriculum = new HashSet<Curriculum>();
+            
             Nacionalidad = new HashSet<Nacionalidad>();
             Permiso = new HashSet<Permiso>();
             RelacionOfertaPersona = new HashSet<RelacionOfertaPersona>();
@@ -47,7 +47,7 @@ namespace JornalerosApp.Shared.Models
         public string LugarResidencia { get; set; }
         public string ProvinciaResidencia { get; set; }
 
-        public virtual ICollection<Curriculum> Curriculum { get; set; }
+        public virtual Curriculum Curriculum { get; set; }
         public virtual ICollection<Nacionalidad> Nacionalidad { get; set; }
         public virtual ICollection<Permiso> Permiso { get; set; }
         public virtual ICollection<RelacionOfertaPersona> RelacionOfertaPersona { get; set; }        

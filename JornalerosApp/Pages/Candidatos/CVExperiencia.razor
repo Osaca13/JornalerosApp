@@ -128,7 +128,7 @@
         ListaExperiencia = await SQLDBServices.ExperienciaPorIdPersona(Id);
         Curriculum = await SQLDBServices.GetCurriculumPorIdPersona(Id);
         ListaExperiencia = ListaExperiencia ?? new List<Experiencia>();
-        Curriculum = Curriculum ?? new Curriculum() { IdPersona = Id, IdCurriculum = Guid.NewGuid().ToString() };
+        Curriculum = Curriculum ?? new Curriculum() { IdPersona = Id };
 
     }
 
@@ -158,8 +158,8 @@
                     var nueva = new Experiencia
                     {
                         IdExperiencia = Guid.NewGuid().ToString(),
-                        IdCurriculum = Curriculum.IdCurriculum,
-                        IdCurriculumNavigation = ListaExperiencia.FirstOrDefault()?.IdCurriculumNavigation ?? null,
+                        IdPersona = Id,
+                        IdPersonaNavigation = Curriculum,
                         Puesto = categoria,
                         DescripcionPuesto = subcategoria
                     };

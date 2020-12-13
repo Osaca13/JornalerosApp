@@ -1,11 +1,9 @@
 version: '3.4'
 
 services:
-    blazor:
-     container_name: blazor
-     restart: always
-     volumes:
-     - ${WEBAPP_STORAGE_HOME}/site:/data/db
+    jornalerosdb:
+     container_name: jornalerosdb
+     restart: always     
      ports:
      - "1433:1433"
      environment:
@@ -16,13 +14,26 @@ services:
      container_name: jornalerosapp
      environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
-      - "ConnectionStrings:ContainerConnection=Server=blazor;Database=Blazor;Persist Security Info=True;User ID=sa;Password=odynJRiC12"
+      - ASPNETCORE_URLS=http://+:80
+      - "ConnectionStrings:ContainerConnection=jornalerosdb:1433"
      ports:
-      - "8000:80"
-      - "44339:443"
+      - "8000:80"      
      volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
      depends_on:
-     - blazor
+     - jornalerosdb
+
+    empresasapp:
+     container_name: empresasapp
+     environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - "ConnectionStrings:ContainerConnection=jornalerosdb:1433"
+     ports:
+      - "8001:80"     
+     volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+     depends_on:
+     - jornalerosdb

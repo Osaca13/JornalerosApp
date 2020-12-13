@@ -2,26 +2,74 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers;
 @inject NavigationManager Navigation;
 
-<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-    <span class="oi oi-home" aria-hidden="true"></span> Home
-</NavLink>
-<AuthorizeView>
-    <Authorized>
-        <a href="Identity/Account/Manage">@context.User.Identity.Name</a>
-        <form method="post" action="Identity/Account/Logout">
-            <button type="submit" class="nav-link btn btn-link">Salir</button>
-        </form>
-    </Authorized>
-    <NotAuthorized>
-        <a href="Identity/Account/Candidato/Register">Candidato</a>
+    <BSContainer>
+        <BSRow>
+            <BSCol XS="6" SM="5">
+                
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                </NavLink>
+            </BSCol>
+            
+                
+                <AuthorizeView>
+                    <Authorized>
+                        <BSCol XS="6" SM="7">
+                            <BSRow Class="m-0">
+                                <BSCol>
+                                    
+                                    <NavLink class="nav-link" href="Identity/Account/Manage">
+                                        <span class="oi oi-person" aria-hidden="true"></span>
+                                        @context.User.Identity.Name
+                                    </NavLink>
+                                </BSCol>
+                                <BSCol>
+                                    @*<a href="Identity/Account/Manage">@context.User.Identity.Name</a>*@
+                                    <BSBasicForm method="post" action="Identity/Account/Logout">
+                                        <BSButton type="submit" Id="tooltip2" class="btn btn-link m-0"><span class="oi oi-account-logout" aria-hidden="true"></span></BSButton>
+                                        <BSTooltip Target="tooltip2" Placement="Placement.Auto">Salir</BSTooltip>
+                                    </BSBasicForm>
+                                </BSCol>
+                            </BSRow>
+                        </BSCol>
+                    </Authorized>
+                    <NotAuthorized>
+                        <BSCol XS="6" SM="7">
+                            <BSRow Class="m-0">
+                                <BSCol>                                    
+                                    <NavLink class="nav-link" href="Identity/Account/Candidato/Register">
+                                        <span class="oi oi-person" aria-hidden="true"></span>
+                                        Candidato
+                                    </NavLink>
+                                </BSCol>
+                                <BSCol>
+                                    <NavLink class="nav-link" href="Identity/Account/Empresa/Register">
+                                        <span class="oi oi-briefcase" aria-hidden="true"></span>
+                                        Empresa
+                                    </NavLink>
+                                </BSCol>
+                                @*<BSCol>
+                                    <NavLink class="nav-link" href="Identity/Account/Login">
+                                        <span class="oi oi-account-login" aria-hidden="true"></span>
+                                        Entrar
+                                    </NavLink>
+                                </BSCol>*@
+                            </BSRow>
+                        </BSCol>
+                        @*<a href="Identity/Account/Candidato/Register">Candidato</a>
         <a href="Identity/Account/Empresa/Register">Empresa</a>
 
-        <a href="Identity/Account/Login">Entrar</a>
-    </NotAuthorized>
-</AuthorizeView>
+        <a href="Identity/Account/Login">Entrar</a>*@
+                    </NotAuthorized>
+                </AuthorizeView>
 
-@code
+            
+        </BSRow>
+    </BSContainer>
+    @code
+
+
 {
 
 
-}
+    }

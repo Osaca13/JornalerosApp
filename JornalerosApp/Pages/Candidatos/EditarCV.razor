@@ -213,7 +213,7 @@
         try
         {
 
-            if (await SQLDBServices.FormacionPorId(NivelFormacion.IdFormacion) != null)
+            if (await SQLDBServices.FormacionPorId(NivelFormacion.IdPersona) != null)
             {
                 await SQLDBServices.UpdateFormacion(NivelFormacion);
             }
@@ -330,7 +330,7 @@
             VisibleExperiencia = false;
             panel = false;
 
-            FormacionData = new Formacion { IdFormacion = Guid.NewGuid().ToString(), IdCurriculum = curriculum.IdCurriculum, Titulo = string.Empty };
+            FormacionData = new Formacion { IdPersona  = Id, IdPersonaNavigation = curriculum, Titulo = string.Empty };
             var result = await SQLDBServices.AddFormacion(FormacionData);
         }
         catch (Exception exc)
@@ -418,7 +418,7 @@
 
             }
             curriculum = await SQLDBServices.GetCurriculumPorIdPersona(Id);
-            NivelFormacion = await SQLDBServices.FormacionPorIdPersona(Id);
+            NivelFormacion = await SQLDBServices.GetFormacionPorIdPersona(Id);
             ListaExperiencia = await SQLDBServices.ExperienciaPorIdPersona(Id);
             ListaNivelFormativo = await SQLDBServices.NivelesFormativo();
            

@@ -5,6 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\ApplicationDbContext - Copy %282%29.cs" />
+    <Compile Remove="Data\ApplicationDbContext - Copy.cs" />
+    <Compile Remove="Data\JornalerosDbContext.cs" />
+    <Compile Remove="Data\Migrations\20201208144608_FithMigration.cs" />
+    <Compile Remove="Data\Migrations\20201208144608_FithMigration.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201208153518_SevenMigration.cs" />
+    <Compile Remove="Data\Migrations\20201208153518_SevenMigration.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201208160055_EigthMigration.cs" />
+    <Compile Remove="Data\Migrations\20201208160055_EigthMigration.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="FluentValidation" Version="9.3.0" />
     <PackageReference Include="MediatR" Version="9.0.0" />

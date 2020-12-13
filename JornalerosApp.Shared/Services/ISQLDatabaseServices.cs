@@ -12,7 +12,7 @@ namespace JornalerosApp.Shared.Services
 
         Task<List<ListaOferta>> OfertasPorParametros(string actividad, string lugar, string sector);
 
-        Task<Formacion> FormacionPorIdPersona(string id);
+        Task<Formacion> GetFormacionPorIdPersona(string id);
 
         Task<Formacion> FormacionPorId(string id); 
         void DeletePersona(string id);

@@ -35,7 +35,11 @@
     </div>
     <div class="col-md-6 col-md-offset-2">
         <section>
-            <h4>Use another service to register.</h4>
+            <h5>Si ya está registrado haga click en el siguiente enlace: <a href="../Login">Entrar</a></h5>
+
+        </section>
+        <section>
+            <h4>Use otro servicio para registro.</h4>
             <hr />
             @{
                 if ((Model.ExternalLogins?.Count ?? 0) == 0)
@@ -62,6 +66,7 @@
                 }
             }
         </section>
+
     </div>
 </div>
 

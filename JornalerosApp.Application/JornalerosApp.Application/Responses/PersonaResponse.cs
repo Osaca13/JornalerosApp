@@ -16,29 +16,17 @@ namespace JornalerosApp.Application.Responses
             RelacionOfertaPersona = new HashSet<RelacionOfertaPersona>();
         }
 
-        [Key]
-        [Required]
+        
         public string IdPersona { get; set; }
-
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Nombre requerido")]
-        [DataType(DataType.Text, ErrorMessage = "Texto no válido")]
-        [StringLength(100, ErrorMessage = "Debe tener más de 2 y menos de 100 caracteres", MinimumLength = 2)]
+       
         public string Nombre { get; set; }
-
-        [DataType(DataType.Text, ErrorMessage = "Texto no válido")]
-        [StringLength(100, ErrorMessage = "Debe tener más de 2 y menos de 100 caracteres", MinimumLength = 2)]
+        
         public string PrimerApellido { get; set; }
-
-        [Required(AllowEmptyStrings = true, ErrorMessage = "Documento requerido")]
-        [StringLength(9)]
-        [NifValidator(ErrorMessage = "Documento no válido")]
+        
         public string Dni { get; set; }
 
-        [DataType(DataType.Date, ErrorMessage = "Fecha no válida")]
         public DateTime? FechaNacimiento { get; set; }
 
-        [DataType(DataType.EmailAddress, ErrorMessage = "Dirección de correo no válida")]
-        [EmailAddress(ErrorMessage = "Dirección de correo no válida")]
         public string CorreoElectronico { get; set; }
         public string CochePropio { get; set; }
         public string Imagen { get; set; }

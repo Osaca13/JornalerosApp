@@ -30,7 +30,7 @@
                                     <option value="" selected>Elige una opción...</option>
                                     @foreach (var item in disponibilidad)
                                     {
-                                        @if (Curriculum.IdCurriculum != null)
+                                        @if (Curriculum.IdPersona != null)
                                         {
                                             @if (cvdis == item)
                                             {
@@ -77,7 +77,7 @@
 
 @code {
 
-    Curriculum Curriculum { get; set; } = new Curriculum();
+    Curriculum Curriculum { get; set; }
     List<string> disponibilidad { get; set; } = new List<string> { "15 días", "inmediatamente","intervalo"};
     string cvdis { get; set; }
     bool isSelected { get; set; }
@@ -98,11 +98,10 @@
             UserName = user.Identity.Name;
         }
 
-        Curriculum = await SQLDBServices.GetCurriculumPorIdPersona(Id);
+        var temp = await SQLDBServices.GetPersonaById(Id);        
 
-        Curriculum = Curriculum ?? new Curriculum
-        {
-            IdCurriculum = Guid.NewGuid().ToString(),
+        Curriculum = temp.Curriculum ?? new Curriculum()
+        {            
             IdPersona = Id,
             Disponibilidad = null
         };
