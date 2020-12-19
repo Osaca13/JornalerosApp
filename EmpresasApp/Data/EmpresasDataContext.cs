@@ -1,7 +1,5 @@
-﻿using System;
-using EmpresasApp.Models;
+﻿using JornalerosApp.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EmpresasApp.Data
 {

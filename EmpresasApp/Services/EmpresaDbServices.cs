@@ -1,13 +1,6 @@
 ﻿using EmpresasApp.Data;
 using EmpresasApp.Services;
-using EmpresasApp.Models;
-using JornalerosApp.Shared.Services;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+using JornalerosApp.Shared.Models;
 
 namespace EmpresaApp.Services
 {

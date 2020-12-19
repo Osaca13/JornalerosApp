@@ -6,6 +6,9 @@ services:
   ports:
   - "1433" 
 
+ rabbitmq:
+  image: rabbitmq:3-management
+
  jornalerosapp:
   image: ${DOCKER_REGISTRY-}jornalerosapp
   build:
@@ -17,4 +20,11 @@ services:
   build:
    context: .
    dockerfile: EmpresasApp/Dockerfile
+
+
+ ofertasapp:
+  image: ${DOCKER_REGISTRY-}ofertasapp
+  build:
+    context: .
+    dockerfile: OfertasApp/Dockerfile
 

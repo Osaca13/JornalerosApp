@@ -1,7 +1,12 @@
-﻿using EmpresasApp.Models;
+﻿using AutoMapper;
+using EventBusRabbitMQ.Common;
+using EventBusRabbitMQ.Events;
+using EventBusRabbitMQ.Producer;
+using JornalerosApp.Shared.Models;
 using JornalerosApp.Shared.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +20,16 @@ namespace EmpresasApp.Controllers
     public class EmpresasController : ControllerBase
     {
         private readonly IDbServices<Empresa> _context;
+        private readonly EventBusRabbitMQProducer _eventBus;
+        private readonly ILogger<EmpresasController> _logger;
+        private readonly IMapper _mapper;
 
-        public EmpresasController(IDbServices<Empresa> context)
+        public EmpresasController(IDbServices<Empresa> context, EventBusRabbitMQProducer eventBus, ILogger<EmpresasController> logger, IMapper mapper)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
@@ -77,7 +88,6 @@ namespace EmpresasApp.Controllers
                     throw;
                 }
             }
-
             return CreatedAtAction("Get", new { id = empresa.IdEmpresa }, empresa);
         }
 
@@ -136,5 +146,33 @@ namespace EmpresasApp.Controllers
         {
             return _context.GetByIdAsync(idEmpresa).Result != null;
         }
+
+        [Route("[action]")]
+        [HttpPost]
+        [ProducesResponseType((int)HttpStatusCode.Accepted)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public ActionResult NuevaOferta([FromBody] Oferta oferta)
+        {
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("El modelo no es válido : {titulo}", oferta.Titulo);
+                return BadRequest();
+            }
+            var eventMessage = _mapper.Map<OfertaCheckoutEvent>(oferta);
+            eventMessage.IdRequest = Guid.NewGuid();
+
+            try
+            {
+                _eventBus.PublishOfertaCheckout(EventBusConstants.OfertaCheckoutQueue, eventMessage);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "ERROR Publishing integration event: {EventId} from {AppName}", eventMessage.IdRequest, "Oferta");
+                throw;
+            }
+
+            return Accepted();
+        }
+
     } 
 }

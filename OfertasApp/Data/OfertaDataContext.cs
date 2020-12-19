@@ -6,10 +6,6 @@ namespace OfertasApp.Data
 {
     public partial class OfertaDataContext : DbContext
     {
-        public OfertaDataContext()
-        {
-        }
-
         public OfertaDataContext(DbContextOptions<OfertaDataContext> options)
             : base(options)
         {

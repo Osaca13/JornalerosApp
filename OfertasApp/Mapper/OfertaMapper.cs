@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace JornalerosApp.Application.Mapper
+namespace OfertasApp.Mapper
 {
     public static class OfertaMapper
     {

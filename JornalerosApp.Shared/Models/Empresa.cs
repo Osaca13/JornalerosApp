@@ -5,11 +5,6 @@ namespace JornalerosApp.Shared.Models
 {
     public partial class Empresa
     {
-        public Empresa()
-        {
-            Oferta = new HashSet<Oferta>();
-        }
-
         public string IdEmpresa { get; set; }
         public string NombreEmpresa { get; set; }
         public string NombreContacto { get; set; }
@@ -21,7 +16,5 @@ namespace JornalerosApp.Shared.Models
         public string Dirección { get; set; }
         public decimal? Telefono { get; set; }
         public string Provincia { get; set; }
-
-        public virtual ICollection<Oferta> Oferta { get; set; }
     }
 }

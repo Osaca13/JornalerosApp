@@ -24,6 +24,8 @@ using JornalerosApp.Pages.Validators;
 using BlazorDateRangePicker;
 using MediatR;
 using JornalerosApp.Application.Handlers;
+using EventBusRabbitMQ;
+using RabbitMQ.Client;
 
 namespace JornalerosApp
 {
@@ -99,15 +101,32 @@ namespace JornalerosApp
             
             
             services.AddScoped<IGetDbServices<RelacionMunicipioProvincia>, MunicipiosDbServices>();
-            services.AddScoped(typeof(IDbServices<>), typeof(DbServices<>));
+            //services.AddTransient<IDbServices<Persona>, PersonaDbServices>();
             
             services.AddHttpClient();
             services.AddApiClient();
-            services.AddMediatR(typeof(CheckOutOfertaHandler).GetType().Assembly);
-            //services.AddSwaggerGen(c =>
-            //   {
-            //       c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Oferta API", Version = "v1" });
-            //   });
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Jornaleros API", Version = "v1" });
+            });
+
+            services.AddSingleton<IRabbitMQConnection>(sp => 
+            {
+                var factory = new ConnectionFactory()
+                {
+                    HostName = Configuration["EventBus:HostName"]
+                };
+                if (!string.IsNullOrEmpty(Configuration["EventBus:UserName"]))
+                {
+                    factory.UserName = Configuration["EventBus:UserName"];
+                }
+                if (!string.IsNullOrEmpty(Configuration["EventBus:Password"]))
+                {
+                    factory.Password = Configuration["EventBus:Password"];
+                }
+                return new RabbitMQConnection(factory);
+            });
+            
             //services.AddDateRangePicker(config =>
             //{
             //    config.Attributes = new Dictionary<string, object>
@@ -151,11 +170,12 @@ namespace JornalerosApp
                 endpoints.MapFallbackToPage("/_Host");
             });
 
-            //app.UseSwagger();
-            //app.UseSwaggerUI(c => {
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
 
-            //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Order Api v1");
-            //}); 
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Jornaleros Api v1");
+            });
         }
 
         

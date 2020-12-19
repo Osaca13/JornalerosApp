@@ -1,19 +1,20 @@
 using AutoMapper;
-using EmpresaApp.Services;
-using EmpresasApp.Data;
 using EventBusRabbitMQ;
 using EventBusRabbitMQ.Producer;
-using JornalerosApp.Shared.Models;
 using JornalerosApp.Shared.Services;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OfertasApp.Data;
+using OfertasApp.Handlers;
+using OfertasApp.Services;
 using RabbitMQ.Client;
 
-namespace EmpresasApp
+namespace OfertasApp
 {
     public class Startup
     {
@@ -27,21 +28,21 @@ namespace EmpresasApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<EmpresasDataContext>(options =>
+            services.AddDbContext<OfertaDataContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             }, ServiceLifetime.Singleton);
 
-            services.AddTransient<IDbServices<Empresa>, EmpresaDbServices>();
             services.AddControllers();
-            services.AddMvc();
-            services.AddHttpClient();
+            services.AddTransient<IDbServices<Oferta>, OfertaDbServices>();
             services.AddAutoMapper(typeof(Startup));
-
+            services.AddHttpClient();
+            
+            services.AddMediatR(typeof(CheckOutOfertaHandler).GetType().Assembly);
             services.AddSwaggerGen(c =>
-               {
-                   c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Empresa API", Version = "v1" });
-               });
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Oferta API", Version = "v1" });
+            });
             services.AddSingleton<IRabbitMQConnection>(sp =>
             {
                 var factory = new ConnectionFactory()
@@ -86,7 +87,7 @@ namespace EmpresasApp
             app.UseSwaggerUI(c =>
             {
 
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Empresa Api v1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Oferta Api v1");
             });
         }
     }

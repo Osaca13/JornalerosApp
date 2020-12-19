@@ -1,17 +1,13 @@
 ﻿using JornalerosApp.Shared.Models;
+using MediatR;
+using OfertasApp.Responses;
 using System;
 using System.Collections.Generic;
 
-namespace OfertasApp.Responses
+namespace OfertasApp.Commands
 {
-    public class OfertaResponse
+    public class CheckOutOfertaCommand: IRequest<OfertaResponse>
     {
-        public OfertaResponse()
-        {
-            RelacionOfertaPersona = new HashSet<RelacionOfertaPersona>();
-        }
-
-        public string IdOferta { get; set; }
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
         public string IdEmpresa { get; set; }
@@ -26,8 +22,5 @@ namespace OfertasApp.Responses
         public string Provincia { get; set; }
         public string ContinuidadIgualLabor { get; set; }
         public string ContinuidadOtraLabor { get; set; }
-
-        public virtual Empresa IdEmpresaNavigation { get; set; }
-        public virtual ICollection<RelacionOfertaPersona> RelacionOfertaPersona { get; set; }
     }
 }

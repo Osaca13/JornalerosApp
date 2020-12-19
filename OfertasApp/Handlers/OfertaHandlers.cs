@@ -1,16 +1,14 @@
-﻿using JornalerosApp.Application.Queries;
-using JornalerosApp.Application.Responses;
-using JornalerosApp.Infrastructure.Data;
-using JornalerosApp.Shared.Models;
-using JornalerosApp.Shared.Services;
+﻿using JornalerosApp.Shared.Services;
 using MediatR;
+using OfertasApp.Queries;
+using OfertasApp.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace JornalerosApp.Application.Handlers
+namespace OfertasApp.Handlers
 {
     public class OfertaHandlers : IRequestHandler<OfertaQueries, IEnumerable<OfertaResponse>>
     {

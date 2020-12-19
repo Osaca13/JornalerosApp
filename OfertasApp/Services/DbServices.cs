@@ -1,6 +1,6 @@
-﻿using JornalerosApp.Infrastructure.Data;
-using JornalerosApp.Shared.Services;
+﻿using JornalerosApp.Shared.Services;
 using Microsoft.EntityFrameworkCore;
+using OfertasApp.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace OfertasApp.Services
     public class DbServices<T> : GetDbServices<T>, IDbServices<T> where T : class
     {
 
-        public DbServices(ApplicationDbContext dbContext): base(dbContext)
+        public DbServices(OfertaDataContext dbContext): base(dbContext)
         {
         }
 

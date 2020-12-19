@@ -22,6 +22,6 @@ namespace EventBusRabbitMQ.Events
             public string Provincia { get; set; }
             public string ContinuidadIgualLabor { get; set; }
             public string ContinuidadOtraLabor { get; set; }
-            public virtual Empresa IdEmpresaNavigation { get; set; }
+            
     }
 }

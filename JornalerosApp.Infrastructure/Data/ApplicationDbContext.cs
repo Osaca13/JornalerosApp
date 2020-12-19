@@ -41,36 +41,7 @@ namespace JornalerosApp.Infrastructure.Data
                     .HasConstraintName("FK_Curriculum_Persona");
             });
 
-            modelBuilder.Entity<Empresa>(entity =>
-            {
-                entity.HasKey(e => e.IdEmpresa);
-
-                entity.Property(e => e.Cargo).HasMaxLength(50);
-
-                entity.Property(e => e.CodigoPostal).HasMaxLength(50);
-
-                entity.Property(e => e.CorreoElectronico)
-                    .IsRequired()
-                    .HasMaxLength(450);
-
-                entity.Property(e => e.Dirección).HasMaxLength(150);
-
-                entity.Property(e => e.Nifcif)
-                    .HasColumnName("NIFCIF")
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.NombreContacto)
-                    .IsRequired()
-                    .HasMaxLength(450);
-
-                entity.Property(e => e.NombreEmpresa)
-                    .IsRequired()
-                    .HasMaxLength(450);
-
-                entity.Property(e => e.Provincia).HasMaxLength(50);
-
-                entity.Property(e => e.Telefono).HasColumnType("numeric(18, 0)");
-            });
+            
 
             modelBuilder.Entity<EstudiosPorNiveles>(entity =>
             {
@@ -193,50 +164,7 @@ namespace JornalerosApp.Infrastructure.Data
                     .HasConstraintName("FK_Nacionalidad_Persona");
             });
 
-            modelBuilder.Entity<Oferta>(entity =>
-            {
-                entity.HasKey(e => e.IdOferta);
-
-                entity.Property(e => e.Alojamiento)
-                    .HasMaxLength(10)
-                    .IsFixedLength();
-
-                entity.Property(e => e.ContinuidadIgualLabor)
-                    .HasMaxLength(10)
-                    .IsFixedLength();
-
-                entity.Property(e => e.ContinuidadOtraLabor)
-                    .HasMaxLength(10)
-                    .IsFixedLength();
-
-                entity.Property(e => e.FechaCaducidad).HasColumnType("date");
-
-                entity.Property(e => e.FechaPublicacion).HasColumnType("date");
-
-                entity.Property(e => e.IdEmpresa)
-                    .IsRequired()
-                    .HasMaxLength(450);
-
-                entity.Property(e => e.JornadaReal).HasMaxLength(50);
-
-                entity.Property(e => e.LugarTrabajo).HasMaxLength(50);
-
-                entity.Property(e => e.Provincia).HasMaxLength(50);
-
-                entity.Property(e => e.Salario).HasMaxLength(50);
-
-                entity.Property(e => e.TipoContrato).HasMaxLength(50);
-
-                entity.Property(e => e.Titulo)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
-                entity.HasOne(d => d.IdEmpresaNavigation)
-                    .WithMany(p => p.Oferta)
-                    .HasForeignKey(d => d.IdEmpresa)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Oferta_Empresa");
-            });
+            
 
             modelBuilder.Entity<Permiso>(entity =>
             {
@@ -312,31 +240,7 @@ namespace JornalerosApp.Infrastructure.Data
                     .HasMaxLength(255);
             });
 
-            modelBuilder.Entity<RelacionOfertaPersona>(entity =>
-            {
-                entity.HasKey(e => e.IdRelOfePer);
-
-                entity.Property(e => e.IdOferta)
-                    .IsRequired()
-                    .HasMaxLength(450);
-
-                entity.Property(e => e.IdPersona)
-                    .IsRequired()
-                    .HasMaxLength(450);
-
-                entity.HasOne(d => d.IdOfertaNavigation)
-                    .WithMany(p => p.RelacionOfertaPersona)
-                    .HasForeignKey(d => d.IdOferta)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_RelacionOfertaPersona_Oferta");
-
-                entity.HasOne(d => d.IdPersonaNavigation)
-                    .WithMany(p => p.RelacionOfertaPersona)
-                    .HasForeignKey(d => d.IdPersona)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_RelacionOfertaPersona_Persona");
-            });
-
+            
             OnModelCreatingPartial(modelBuilder);
         }
 

@@ -5,10 +5,17 @@ services:
      container_name: jornalerosdb
      restart: always     
      ports:
-     - "1433:1433"
+      - "1433:1433"
      environment:
       SA_PASSWORD: "odynJRiC12"
       ACCEPT_EULA: "Y"
+    
+    rabbitmq:
+     container_name: rabbitmq
+     restart: always     
+     ports:
+      - "15672:15672"
+      - "5672:5672"
 
     jornalerosapp:
      container_name: jornalerosapp
@@ -16,6 +23,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - "ConnectionStrings:ContainerConnection=jornalerosdb:1433"
+      - "EventBus:HostName=rabbitmq"
      ports:
       - "8000:80"      
      volumes:
@@ -23,6 +31,7 @@ services:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
      depends_on:
      - jornalerosdb
+     - rabbitmq
 
     empresasapp:
      container_name: empresasapp
@@ -30,6 +39,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - "ConnectionStrings:ContainerConnection=jornalerosdb:1433"
+      - "EventBus:HostName=rabbitmq"
      ports:
       - "8001:80"     
      volumes:
@@ -37,3 +47,19 @@ services:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
      depends_on:
      - jornalerosdb
+     - rabbitmq
+
+    ofertasapp:
+      container_name: ofertasapp
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=http://+:80
+        - "ConnectionStrings:ContainerConnection=jornalerosdb:1433"
+        - "EventBus:HostName=rabbitmq"
+      ports:
+        - "8002:80"        
+      volumes:
+        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      depends_on:
+        - jornalerosdb
+        - rabbitmq

@@ -30,7 +30,7 @@
         var ofertaNueva = await client.PostAsJsonAsync<Oferta>("Oferta/", oferta);
         if(ofertaNueva.IsSuccessStatusCode)
         {
-            empresa.Oferta.Add(oferta);
+            //empresa.Oferta.Add(oferta);
             await client.PutAsJsonAsync<Empresa>("Empresas/" + Id, empresa);
             UriHelper.NavigateTo("/BuscarOferta/"+Id);
         }

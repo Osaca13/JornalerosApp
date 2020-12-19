@@ -1,16 +1,14 @@
-﻿using JornalerosApp.Application.Commands;
-using JornalerosApp.Application.Mapper;
-using JornalerosApp.Application.Responses;
-using JornalerosApp.Shared.Models;
+﻿using JornalerosApp.Shared.Models;
 using JornalerosApp.Shared.Services;
 using MediatR;
+using OfertasApp.Commands;
+using OfertasApp.Mapper;
+using OfertasApp.Responses;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace JornalerosApp.Application.Handlers
+namespace OfertasApp.Handlers
 {
     public class CheckOutOfertaHandler : IRequestHandler<CheckOutOfertaCommand, OfertaResponse>
     {

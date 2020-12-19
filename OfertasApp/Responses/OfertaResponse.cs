@@ -2,16 +2,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace JornalerosApp.Application.Responses
+namespace OfertasApp.Responses
 {
     public class OfertaResponse
     {
-        public OfertaResponse()
-        {
-            RelacionOfertaPersona = new HashSet<RelacionOfertaPersona>();
-        }
-
-        public string IdOferta { get; set; }
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
         public string IdEmpresa { get; set; }
@@ -26,8 +20,5 @@ namespace JornalerosApp.Application.Responses
         public string Provincia { get; set; }
         public string ContinuidadIgualLabor { get; set; }
         public string ContinuidadOtraLabor { get; set; }
-
-        public virtual Empresa IdEmpresaNavigation { get; set; }
-        public virtual ICollection<RelacionOfertaPersona> RelacionOfertaPersona { get; set; }
     }
 }
