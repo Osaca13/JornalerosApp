@@ -14,12 +14,15 @@ namespace OfertasApp.Services
 
         public DbServices(OfertaDataContext dbContext): base(dbContext)
         {
+            
+        }
+        public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate) 
+        {
+            var data = _dbContext.Set<T>();
+            return await data.Where(predicate).ToListAsync();
         }
 
-        public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate)
-        {
-            return await _dbContext.Set<T>().Where(predicate).ToListAsync();
-        }
+        
 
         public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeString = null, bool disableTracking = true)
         {

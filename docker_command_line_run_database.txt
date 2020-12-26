@@ -1,0 +1,19 @@
+Una vez que está corriendo la imagen en docker se puede abrir en SqlServerManagementStudio
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=odynJRiC12" -p 1433:1433 --name sqlLocalhost -d mcr.microsoft.com/mssql/server
+
+Para entrar dentro del contenedor creado:
+
+El valor sqlLocalhost es el contenedor 
+
+docker exec -it sqlLocalhost /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P "odynJRiC12"
+
+Backup path:
+C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\(Blazor.bak)
+
+Copiar backup to /var/opt/mssql/data/ (directorio de localhost docker)
+
+"docker cp 'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\Blazor.bak' sqlLocalhost:/var/opt/mssql/data"
+"docker cp 'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\OfertaData.bak' sqlLocalhost:/var/opt/mssql/data"
+Para mirar dentro 
+docker exec -it sqlLocalhost "bash"
+ls

@@ -29,13 +29,13 @@ namespace JornalerosApp.Pages.Validators
             this.messages = new ValidationMessageStore(CurrentEditContext);
 
             // Perform object-level validation on request
-            CurrentEditContext.OnValidationRequested += validateModel;
+            CurrentEditContext.OnValidationRequested += ValidateModel;
 
             // Perform per-field validation on each field edit
             CurrentEditContext.OnFieldChanged += ValidateField;
         }
 
-        private void validateModel(object sender, ValidationRequestedEventArgs e)
+        private void ValidateModel(object sender, ValidationRequestedEventArgs e)
         {
             messages.Clear();
             var editContext = (EditContext)sender;
@@ -100,7 +100,7 @@ namespace JornalerosApp.Pages.Validators
         public void Dispose()
         {
             if (CurrentEditContext == null) return;
-            CurrentEditContext.OnValidationRequested -= validateModel;
+            CurrentEditContext.OnValidationRequested -= ValidateModel;
             CurrentEditContext.OnFieldChanged -= ValidateField;
         }
 

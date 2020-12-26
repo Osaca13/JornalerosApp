@@ -68,7 +68,7 @@ namespace EventBusRabbitMQ
             }
             if (IsConnected)
             {
-                Console.WriteLine($"RabbitMQ persistent connection acquired a connection { _connection.Endpoint.HostName} and is subscribed to failure events");
+                Console.WriteLine($"RabbitMQ persistent connection acquired a connection { _connection.Endpoint.HostName } : { _connection.Endpoint.Port } and is subscribed to failure events");
                 return true;
             }
             else

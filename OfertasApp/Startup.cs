@@ -10,9 +10,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OfertasApp.Data;
+using OfertasApp.Extentions;
 using OfertasApp.Handlers;
+using OfertasApp.RabbitMQ;
 using OfertasApp.Services;
+using OfertasApp.Services.Interfaces;
 using RabbitMQ.Client;
+using System.Reflection;
 
 namespace OfertasApp
 {
@@ -34,11 +38,21 @@ namespace OfertasApp
             }, ServiceLifetime.Singleton);
 
             services.AddControllers();
-            services.AddTransient<IDbServices<Oferta>, OfertaDbServices>();
+
+            // Add AutoMapper
             services.AddAutoMapper(typeof(Startup));
+
+            // Add MediatR
+            services.AddMediatR(typeof(OfertaHandlers).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(CheckOutOfertaHandler).GetTypeInfo().Assembly);
+            services.AddScoped(typeof(IOfertaDbServices), typeof(OfertaDbServices));
+            services.AddTransient<IOfertaDbServices, OfertaDbServices>();
+            services.AddScoped(typeof(IGetDbServices<>), typeof(GetDbServices<>));
+            services.AddScoped(typeof(IDbServices<>), typeof(DbServices<>));
+            services.AddTransient<IDbServices<Oferta>, OfertaDbServices>();
+
             services.AddHttpClient();
             
-            services.AddMediatR(typeof(CheckOutOfertaHandler).GetType().Assembly);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Oferta API", Version = "v1" });
@@ -59,7 +73,7 @@ namespace OfertasApp
                 }
                 return new RabbitMQConnection(factory);
             });
-            services.AddSingleton<EventBusRabbitMQProducer>();
+            services.AddSingleton<EventBusRabbitMQConsumer>();
 
 
         }
@@ -82,6 +96,8 @@ namespace OfertasApp
             {
                 endpoints.MapControllers();
             });
+
+            app.UseRabbitListener();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

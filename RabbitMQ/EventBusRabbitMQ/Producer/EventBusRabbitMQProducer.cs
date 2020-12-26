@@ -18,10 +18,10 @@ namespace EventBusRabbitMQ.Producer
 
         public void PublishOfertaCheckout(string queueName, OfertaCheckoutEvent publishModel)
         {
-            using var channel = _rabbitMQConnection.CreateModel();
+            using IModel channel = _rabbitMQConnection.CreateModel();
             channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
             var message = JsonConvert.SerializeObject(publishModel);
-            var body = Encoding.UTF8.GetBytes(message);
+            byte[] body = Encoding.UTF8.GetBytes(message);
 
             IBasicProperties properties = channel.CreateBasicProperties();
             properties.Persistent = true;
@@ -33,7 +33,7 @@ namespace EventBusRabbitMQ.Producer
 
             channel.BasicAcks += (sender, eventArgs) =>
             {
-                Console.WriteLine("Sent RabbitMQ");
+                Console.WriteLine("Sent RabbitMQ: "+ eventArgs.DeliveryTag.ToString());
                     //implement ack handle
                 };
             channel.ConfirmSelect();

@@ -9,6 +9,9 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["JornalerosApp/JornalerosApp.csproj", "JornalerosApp/"]
 COPY ["JornalerosApp.Shared/JornalerosApp.Shared.csproj", "JornalerosApp.Shared/"]
+COPY ["JornalerosApp.Application/JornalerosApp.Application/JornalerosApp.Application.csproj", "JornalerosApp.Application/JornalerosApp.Application/"]
+COPY ["JornalerosApp.Infrastructure/JornalerosApp.Infrastructure.csproj", "JornalerosApp.Infrastructure/"]
+COPY ["RabbitMQ/EventBusRabbitMQ/EventBusRabbitMQ.csproj", "RabbitMQ/EventBusRabbitMQ/"]
 RUN dotnet restore "JornalerosApp/JornalerosApp.csproj"
 COPY . .
 WORKDIR "/src/JornalerosApp"

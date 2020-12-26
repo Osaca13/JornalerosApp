@@ -4,6 +4,7 @@ using MediatR;
 using OfertasApp.Commands;
 using OfertasApp.Mapper;
 using OfertasApp.Responses;
+using OfertasApp.Services.Interfaces;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,22 +13,22 @@ namespace OfertasApp.Handlers
 {
     public class CheckOutOfertaHandler : IRequestHandler<CheckOutOfertaCommand, OfertaResponse>
     {
-        public readonly IDbServices<Oferta> dbservices;
+        public readonly IOfertaDbServices dbServices;
 
-        public CheckOutOfertaHandler(IDbServices<Oferta> dbservices)
+        public CheckOutOfertaHandler(IOfertaDbServices dbServices)
         {
-            this.dbservices = dbservices ?? throw new ArgumentNullException(nameof(dbservices));
+            this.dbServices = dbServices ?? throw new ArgumentNullException(nameof(dbServices));
         }
 
         public async Task<OfertaResponse> Handle(CheckOutOfertaCommand request, CancellationToken cancellationToken)
         {
-            var ofertaEntity = OfertaMapper.Mapper.Map<Oferta>(request);
+            var ofertaEntity = OfertaMapper.Mapper.Map<Data.Oferta>(request);
             if (ofertaEntity == null)
                 throw new ApplicationException($"Entity could not be mapped.");
-
-            var newOrder = await this.dbservices.AddAsync(ofertaEntity);
-
-            return OfertaMapper.Mapper.Map<OfertaResponse>(newOrder);
+            
+            ofertaEntity.IdOferta = Guid.NewGuid().ToString();
+            var nuevaOferta = await dbServices.AddOfertaAsync(ofertaEntity);
+            return OfertaMapper.Mapper.Map<OfertaResponse>(nuevaOferta);
         }
     }
 }

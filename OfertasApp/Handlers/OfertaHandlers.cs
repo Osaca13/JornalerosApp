@@ -1,7 +1,10 @@
-﻿using JornalerosApp.Shared.Services;
+﻿using AutoMapper;
+using JornalerosApp.Shared.Models;
+using JornalerosApp.Shared.Services;
 using MediatR;
 using OfertasApp.Queries;
 using OfertasApp.Responses;
+using OfertasApp.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -12,29 +15,23 @@ namespace OfertasApp.Handlers
 {
     public class OfertaHandlers : IRequestHandler<OfertaQueries, IEnumerable<OfertaResponse>>
     {
-        private readonly IDbServices<OfertaResponse> dbServices;
+        private readonly IOfertaDbServices _dbServices;
+        private readonly IMapper _mapper;
 
-        public OfertaHandlers(IDbServices<OfertaResponse> dbServices)
+        public OfertaHandlers(IOfertaDbServices dbServices, IMapper mapper)
         {
-            this.dbServices = dbServices ?? throw new ArgumentNullException(nameof(dbServices));
+            _dbServices = dbServices ?? throw new ArgumentNullException(nameof(dbServices));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task<IEnumerable<OfertaResponse>> Handle(OfertaQueries request, CancellationToken cancellationToken)
         {
-            
-            Expression<Func<OfertaResponse, bool>> lambda0 = num => request.GetOfertaByTitulo == "Plantacion" || request.GetOfertaByTitulo == "Cultivo";
-            //ParameterExpression puestoParam1 = Expression.Parameter(typeof(string), "Puesto");
-            //ParameterExpression puestoParam2 = Expression.Parameter(typeof(string), "Puesto");
-            //ConstantExpression plantacion = Expression.Constant(request.GetPersonaByPuesto, typeof(Experiencia));
-            //ConstantExpression cultivo = Expression.Constant("Cultivo", typeof(string));
-            //BinaryExpression equalsA = Expression.Equal(puestoParam1, plantacion);
-            //BinaryExpression equalsB = Expression.Equal(puestoParam2, cultivo);
-            //Expression<Func<Experiencia, bool>> lambda1 =
-            //Expression.Lambda<Func<Experiencia, bool>>(equalsA, new ParameterExpression[] { puestoParam1 });
-            //Expression<Func<Experiencia, bool>> lambda2 =
-            //Expression.Lambda<Func<Experiencia, bool>>(equalsB, new ParameterExpression[] { puestoParam2 });
-          
-            return await dbServices.GetAsync(lambda0);
+            string titulo = request.GetOfertaByTitulo.ToString();
+            Expression<Func<Oferta, bool>> predicate = x => x.Titulo == titulo;
+
+            IReadOnlyList<Data.Oferta> listOfOfertasWithTitulo = await _dbServices.GetByTituloAsync(titulo);
+            return _mapper.Map<IReadOnlyList<OfertaResponse>>(listOfOfertasWithTitulo);
+
         }
     }
 }

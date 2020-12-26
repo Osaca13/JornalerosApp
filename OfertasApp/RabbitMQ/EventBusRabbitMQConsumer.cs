@@ -30,6 +30,7 @@ namespace OfertasApp.RabbitMQ
 
         public void Consume()
         {
+
             var channel = _connection.CreateModel();
             channel.QueueDeclare(queue: EventBusConstants.OfertaCheckoutQueue, durable: false, exclusive: false, autoDelete: false, arguments: null);
 
@@ -49,7 +50,7 @@ namespace OfertasApp.RabbitMQ
                 var ofertaCheckoutEvent = JsonConvert.DeserializeObject<OfertaCheckoutEvent>(message);
 
                 //// EXECUTION : Call Internal Checkout Operation
-                var command = _mapper.Map<CheckOutOfertaCommand>(ofertaCheckoutEvent);
+                CheckOutOfertaCommand command = _mapper.Map<CheckOutOfertaCommand>(ofertaCheckoutEvent);
                 await _mediator.Send(command);                
             }
         }

@@ -8,12 +8,9 @@ services:
 
  rabbitmq:
   image: rabbitmq:3-management
-
- jornalerosapp:
-  image: ${DOCKER_REGISTRY-}jornalerosapp
-  build:
-   context: .
-   dockerfile: JornalerosApp/Dockerfile
+  ports:
+  - "15672"
+  - "5672"
 
  empresasapp:
   image: ${DOCKER_REGISTRY-}empresasapp
@@ -21,10 +18,22 @@ services:
    context: .
    dockerfile: EmpresasApp/Dockerfile
 
-
  ofertasapp:
   image: ${DOCKER_REGISTRY-}ofertasapp
   build:
     context: .
     dockerfile: OfertasApp/Dockerfile
+
+ jornalerosapp:
+  image: ${DOCKER_REGISTRY-}jornalerosapp
+  build:
+    context: .
+    dockerfile: JornalerosApp/Dockerfile
+
+
+ ocelotapigateway:
+  image: ${DOCKER_REGISTRY-}ocelotapigateway
+  build:
+    context: .
+    dockerfile: ApiGateway/Dockerfile
 

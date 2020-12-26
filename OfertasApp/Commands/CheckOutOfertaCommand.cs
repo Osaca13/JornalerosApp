@@ -8,6 +8,7 @@ namespace OfertasApp.Commands
 {
     public class CheckOutOfertaCommand: IRequest<OfertaResponse>
     {
+        
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
         public string IdEmpresa { get; set; }

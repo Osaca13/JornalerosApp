@@ -1,0 +1,117 @@
+{
+  "ReRoutes": [
+    //Jornaleros API
+    {
+      "DownstreamPathTemplate": "/Personas",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "jornalerosapp",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/Personas",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/Personas/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "jornalerosapp",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/Personas/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
+    },
+
+    //Empresas API
+    {
+      "DownstreamPathTemplate": "/Empresas",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "empresasapp",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/Empresas",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/Empresas/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "empresasapp",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/Empresas/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/Empresas/NuevaOferta",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "empresasapp",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/Empresas/NuevaOferta",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+
+    //Ofertas API
+    {
+      "DownstreamPathTemplate": "/Ofertas",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ofertasapp",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/Ofertas",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/Ofertas/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ofertasapp",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/Ofertas/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/Ofertas/GetOfertaByTitulo/{titulo}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ofertasapp",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/Ofertas/GetOfertaByTitulo/{titulo}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/Ofertas/CheckOutOferta",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ofertasapp",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/Ofertas/CheckOutOferta",
+      "UpstreamHttpMethod": [ "POST" ]
+    }
+  ]
+}

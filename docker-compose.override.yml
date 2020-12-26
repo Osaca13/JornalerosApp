@@ -2,8 +2,7 @@ version: '3.4'
 
 services:
     jornalerosdb:
-     container_name: jornalerosdb
-     restart: always     
+     container_name: jornalerosdb        
      ports:
       - "1433:1433"
      environment:
@@ -15,30 +14,14 @@ services:
      restart: always     
      ports:
       - "15672:15672"
-      - "5672:5672"
-
-    jornalerosapp:
-     container_name: jornalerosapp
-     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:80
-      - "ConnectionStrings:ContainerConnection=jornalerosdb:1433"
-      - "EventBus:HostName=rabbitmq"
-     ports:
-      - "8000:80"      
-     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-     depends_on:
-     - jornalerosdb
-     - rabbitmq
+      - "5672:5672"        
 
     empresasapp:
      container_name: empresasapp
+     restart: on-failure
      environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:80
-      - "ConnectionStrings:ContainerConnection=jornalerosdb:1433"
+      - "ConnectionStrings:DefaultConnection=Server=jornalerosdb;Database=EmpresasData;User ID=sa;Password=odynJRiC12"
       - "EventBus:HostName=rabbitmq"
      ports:
       - "8001:80"     
@@ -51,10 +34,10 @@ services:
 
     ofertasapp:
       container_name: ofertasapp
+      restart: on-failure
       environment:
         - ASPNETCORE_ENVIRONMENT=Development
-        - ASPNETCORE_URLS=http://+:80
-        - "ConnectionStrings:ContainerConnection=jornalerosdb:1433"
+        - "ConnectionStrings:DefaultConnection=Server=jornalerosdb;Database=OfertaData;User ID=sa;Password=odynJRiC12"
         - "EventBus:HostName=rabbitmq"
       ports:
         - "8002:80"        
@@ -63,3 +46,33 @@ services:
       depends_on:
         - jornalerosdb
         - rabbitmq
+
+    jornalerosapp:
+     container_name: jornalerosapp
+     restart: on-failure
+     environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:DefaultConnection=Server=jornalerosdb;Database=Blazor;User ID=sa;Password=odynJRiC12"
+      - "EventBus:HostName=rabbitmq"
+     ports:
+      - "8003:80"
+     volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+     depends_on:
+        - jornalerosdb
+        - rabbitmq
+
+    ocelotapigateway:
+     container_name: ocelotapigateway
+     environment:
+         - ASPNETCORE_ENVIRONMENT=Development
+         - ASPNETCORE_URLS=https://+:443;http://+:80
+     ports:
+         - "7000:80"   
+     depends_on:
+      - jornalerosapp
+      - empresasapp
+      - ofertasapp
+     volumes:
+         - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

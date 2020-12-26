@@ -9,6 +9,7 @@ using OfertasApp.Responses;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -96,29 +97,29 @@ namespace JornalerosApp.Controllers
         //// POST: api/Empresas
         //// To protect from overposting attacks, enable the specific properties you want to bind to, for
         //// more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        //[HttpPost]
-        //[ProducesResponseType((int)HttpStatusCode.Conflict)]
-        //[ProducesResponseType(typeof(Oferta), (int)HttpStatusCode.Created)]
-        //public async Task<ActionResult<Oferta>> Post([FromBody] Oferta oferta)
-        //{
-        //    try
-        //    {
-        //        await _context.AddAsync(oferta);
-        //    }
-        //    catch (DbUpdateException)
-        //    {
-        //        if (OfertaExists(oferta.IdOferta))
-        //        {
-        //            return Conflict();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+        [HttpPost]
+        [ProducesResponseType((int)HttpStatusCode.Conflict)]
+        [ProducesResponseType(typeof(Oferta), (int)HttpStatusCode.Created)]
+        public async Task<ActionResult<Oferta>> Post([FromBody] Oferta oferta)
+        {
+            try
+            {
+                await _context.AddAsync(oferta);
+            }
+            catch (DbUpdateException)
+            {
+                if (OfertaExists(oferta.IdOferta))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-        //    return CreatedAtAction("GetOferta", new { id = oferta.IdOferta }, oferta);
-        //}
+            return CreatedAtAction("GetOferta", new { id = oferta.IdOferta }, oferta);
+        }
 
         // DELETE: api/Empresas/5
         [HttpDelete("{id}")]
@@ -142,76 +143,46 @@ namespace JornalerosApp.Controllers
             return (result != null);
         }
 
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType((int)HttpStatusCode.Accepted)]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        //public async Task<ActionResult> Checkout([FromBody] BasketCheckout basketCheckout)
-        //{
-        //    // get total price of the basket
-        //    // remove the basket 
-        //    // send checkout event to rabbitMq 
-
-        //    var basket = await _repository.GetBasket(basketCheckout.UserName);
-        //    if (basket == null)
-        //    {
-        //        _logger.LogError("Basket not exist with this user : {EventId}", basketCheckout.UserName);
-        //        return BadRequest();
-        //    }
-
-        //    var basketRemoved = await _repository.DeleteBasket(basketCheckout.UserName);
-        //    if (!basketRemoved)
-        //    {
-        //        _logger.LogError("Basket can not deleted");
-        //        return BadRequest();
-        //    }
-
-        //    // Once basket is checkout, sends an integration event to
-        //    // ordering.api to convert basket to order and proceeds with
-        //    // order creation process
-
-        //    var eventMessage = _mapper.Map<BasketCheckoutEvent>(basketCheckout);
-        //    eventMessage.RequestId = Guid.NewGuid();
-        //    eventMessage.TotalPrice = basket.TotalPrice;
-
-        //    try
-        //    {
-        //        _eventBus.PublishBasketCheckout(EventBusConstants.BasketCheckoutQueue, eventMessage);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "ERROR Publishing integration event: {EventId} from {AppName}", eventMessage.RequestId, "Basket");
-        //        throw;
-        //    }
-
-        //    return Accepted();
-        //}
-        //private readonly IMediator _mediatr;
-
-        //public OfertasController(IMediator mediatr)
-        //{
-        //    _mediatr = mediatr ?? throw new ArgumentNullException(nameof(mediatr));
-        //}
-
-        // GET: api/Personas
-        
+        // GET: api/Personas        
         [HttpGet("GetOfertaByTitulo/{titulo}")]
         [ProducesResponseType(typeof(IReadOnlyList<OfertaResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+
         public async Task<ActionResult<IReadOnlyList<OfertaResponse>>> GetOfertaByTitulo(string titulo)
         {
-            var query = new OfertaQueries(titulo);
-            var ofertas = await _mediatr.Send(query);
-            return Ok(ofertas);
+            try
+            {
+                var query = new OfertaQueries(titulo);
+                var ofertas = await _mediatr.Send(query);
+                if(ofertas.ToList().Count() > 0)
+                {
+                    return Ok(ofertas);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }            
         }
 
         // POST: api/Personas
+        [Route("[action]")]
         [HttpPost]
         [ProducesResponseType(typeof(OfertaResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+
         public async Task<ActionResult<OfertaResponse>> CheckOutOferta([FromBody] CheckOutOfertaCommand checkOutOfertaCommand)
         {
-            var oferta = await _mediatr.Send(checkOutOfertaCommand);
-            return Ok(oferta);
+            if (ModelState.IsValid)
+            {
+                var oferta = await _mediatr.Send(checkOutOfertaCommand);
+                return Ok(oferta);
+            }
+            return BadRequest();           
         }
-
     }
 }
