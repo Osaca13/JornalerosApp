@@ -1,0 +1,66 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Identity
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<IdentityUser> UserManager
+
+<AuthorizeView Roles="Candidato, Admin, Empresa">
+    <NotAuthorized>
+        <div class="jumbotron" style="background-color:transparent">
+            <h1>Jornaleros</h1>
+            
+            Bienvenidos a nuestro portal de búsqueda de trabajo en el campo...
+
+            ¡Para ver las ofertas disponibles como candidato o publicar ofertas como empresa, inscríbase en nuestro portal!
+        </div>
+    </NotAuthorized>
+    <Authorized>
+        @if (Tipo == "candidato" || Tipo == "admin")
+        {
+
+            <InicioPersona UserName="@Name" Id="@Id" @ref="InicioPersonaComponent" ></InicioPersona>
+        }
+        @if (Tipo == "empresa")
+        {
+            <InicioEmpresa UserName="@Name" Id="@Id"></InicioEmpresa>
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code{
+    [CascadingParameter]
+    private Task<AuthenticationState> state { get; set; }
+    private AuthenticationState userAuthenticated { get; set; }
+    private string Id;
+    private string Name;
+    private string Tipo;
+    InicioPersona InicioPersonaComponent { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var should = ShouldRender();
+        await InvokeAsync(() => StateHasChanged());
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var userAuthenticated = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        Id = UserManager.GetUserId(userAuthenticated.User);
+        Name = userAuthenticated.User.Identity.Name;
+
+        if (userAuthenticated.User.IsInRole("Candidato"))
+        {
+            Tipo = "candidato";
+        }
+        if (userAuthenticated.User.IsInRole("Empresa"))
+        {
+            Tipo = "empresa";
+        }
+        if (userAuthenticated.User.IsInRole("Admin"))
+        {
+            Tipo = "admin";
+        }
+        //StateHasChanged();
+    }
+}

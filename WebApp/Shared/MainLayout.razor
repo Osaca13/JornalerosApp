@@ -1,0 +1,27 @@
+﻿@inherits LayoutComponentBase
+@inject IBootstrapCss BootstrapCss
+
+@*<div class="sidebar">
+    <NavMenu />
+</div>*@
+
+<div class="main" id="principal">
+    <div class="top-row px-4 auth">
+    
+        <LoginDisplay />
+   
+    </div>
+
+    <div class="content px-4">
+        @Body
+    </div>
+</div>
+@code{      
+    private List<string> themes;
+
+    protected override async Task OnAfterRenderAsync(bool render)
+    {
+        themes = Enum.GetNames(typeof(Theme)).ToList();
+        await BootstrapCss.SetBootstrapCss(themes[6], "4.3.1");
+    }
+}

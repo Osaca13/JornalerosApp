@@ -1,5 +1,5 @@
 ﻿@page "/"
-@using BlazorDateRangePicker
+
 @using Microsoft.AspNetCore.Identity
 @using JornalerosApp.Pages.Candidatos
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -53,11 +53,5 @@
             Tipo = "empresa";
         }
         //StateHasChanged();
-    }
-
-    public void OnRangeSelect(DateRange range)
-    {
-       Console.WriteLine(range.Start.ToString() + " - "+ range.End.ToString());
-        //Use range.Start and range.End here
-    }
+    }    
 }

@@ -1,0 +1,369 @@
+﻿@*@page "/Candidato/DatosPersonales/"
+@using JornalerosApp.Pages.Validators
+@using JornalerosApp.Pages.Candidatos
+@using Microsoft.AspNetCore.Components.Forms
+@using Newtonsoft.Json;
+@inject UserManager<IdentityUser> UserManager
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider Provider
+@inject IHttpClientFactory Factory
+@inject JornalerosApp.Shared.Services.ISQLDatabaseServices SQLDBServices
+
+
+    <EditForm @ref="editForm" Model="Persona" OnValidSubmit="OnEditContextChanged">
+        <CustomValidator @ref="customValidator" />
+        <BSCard CardType="CardType.Card" >
+            <BSCard CardType="CardType.Header" HeadingSize="HeadingSize.H5">Rellene los datos:</BSCard>
+            <BSCard CardType="CardType.Body" Alignment="Alignment.Center" style="height:300px!important">
+               
+                    <div class="form-group row mb-1">
+                        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                            <BSLabel For="CVNombre" Class="mr-sm-6">Nombre</BSLabel>
+                            <BSBasicInput Class="form-control" InputType="InputType.Text" Name="Nombre" Id="CVNombre" PlaceHolder="Nombre" @bind-Value=@Persona.Nombre />
+                            <ValidationMessage For=@(() => Persona.Nombre) />
+                        </BSFormGroup>
+                        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                            <BSLabel For="CVApellido" Class="mr-sm-6">Apellidos</BSLabel>
+                            <BSBasicInput Class="form-control" InputType="InputType.Text" Name="Apellido" Id="CVApellido" PlaceHolder="Apellido" @bind-Value=@Persona.PrimerApellido />
+                            <ValidationMessage For=@(() => Persona.PrimerApellido) />
+                        </BSFormGroup>
+                    </div>
+
+                    <div class="form-group row mb-1">
+                        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                            <BSLabel For="CVDNI" Class="mr-sm-6">DNI/NIE</BSLabel>
+                            <BSBasicInput InputType="InputType.Text" Name="DNI" Id="CVDNI" PlaceHolder="DNI/NIE" @bind-Value=@Persona.Dni />
+                            <ValidationMessage For=@(() => Persona.Dni) />
+
+                        </BSFormGroup>
+                        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                            <BSLabel For="CVSexo" Class="mr-sm-6">Sexo</BSLabel>
+                            <BSBasicInput Id="CVSexo" InputType="InputType.Select" T="string" @bind-Value=@Persona.Sexo>
+                                @if (Persona.Sexo != null)
+                                {
+                                    @foreach (var item2 in Sexos)
+                                    {
+                                        @if (Persona.Sexo.ToString() == item2)
+                                        {
+                                            <option selected value="@item2">@item2</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item2">@item2</option>
+                                        }
+                                    }
+                                }
+                            </BSBasicInput>
+                            <ValidationMessage For=@(() => Persona.Sexo) />
+                        </BSFormGroup>
+                    </div>
+
+                    <div class="form-group row mb-1">
+                        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                            <BSLabel For="CVFechaNacimiento" Class="mr-sm-6">Fecha de nacimiento</BSLabel>
+                            <BSBasicInput InputType="InputType.Date" Name="FechaNacimiento" Id="CVFechaNacimiento" PlaceHolder="Fecha de Nacimiento" T="DateTime?" @bind-Value="Persona.FechaNacimiento" />
+                            <ValidationMessage For="(() => Persona.FechaNacimiento)" />
+                        </BSFormGroup>
+
+                        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                            <BSLabel For="CVCoche" Class="mr-sm-6">Coche propio</BSLabel>
+                            <BSBasicInput Id="CVCoche" InputType="InputType.Select" @bind-Value=@Persona.CochePropio>
+                                @if (Persona.CochePropio != null)
+                                {
+                                    @foreach (var item in CochePropismo)
+                                    {
+                                        @if (Persona.CochePropio.TrimEnd().ToString().Equals(item))
+                                        {
+                                            <option selected value="@item">@item</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item">@item</option>
+                                        }
+                                    }
+                                }
+                            </BSBasicInput>
+                            <ValidationMessage For=@(() => Persona.CochePropio) />
+                        </BSFormGroup>
+                    </div>
+                    <div class="form-group row mb-1">
+                        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                            <BSLabel For="CVLocalidad" Class="mr-sm-6">Municipio Residencia</BSLabel>
+                            <BSBasicInput InputType="InputType.Select" Name="Localidad" Id="CVLocalidad" PlaceHolder="Localidad" T="string" @bind-Value=@Persona.LugarResidencia>
+                                @if (Municipios != null && Municipios.Count() > 0)
+                                {
+                                    @foreach (var cnt in Municipios)
+                                    {
+                                        @if (Persona.LugarResidencia == cnt)
+                                        {
+                                            <option selected value="@cnt">@cnt</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@cnt">@cnt</option>
+                                        }
+                                    }
+                                }
+                            </BSBasicInput>
+
+                            <ValidationMessage For=@(() => Persona.LugarResidencia) />
+                        </BSFormGroup>
+                        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+                            <BSLabel For="CVProvincia" Class="mr-sm-6">Provincia</BSLabel>
+                            <BSBasicInput InputType="InputType.Select" Name="Provincia" Id="CVProvincia" PlaceHolder="Provincia" T="string" Value="Persona.ProvinciaResidencia" ValueChanged="MunicipioSegunProvincia">
+
+                                @if (Provincias != null)
+                                {
+                                    @if (Provincias.Count() > 0)
+                                    {
+                                        @foreach (var cnt in Provincias)
+                                        {
+                                            @if (Persona.ProvinciaResidencia == cnt)
+                                            {
+                                                <option selected value="@cnt">@cnt</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@cnt">@cnt</option>
+                                            }
+                                        }
+                                    }
+                                }
+                            </BSBasicInput>
+                            <ValidationMessage For="@(() => Persona.ProvinciaResidencia)" />
+                        </BSFormGroup>
+                    </div>
+                </BSCard>
+                <br />
+                <BSCard CardType="CardType.Footer">
+                    <BSRow Class="fixed-bottom, float-right, ml-4, mr-4" style="display:block; margin:0; padding:0">
+                        <ButonesFondo BackDisabled="true" Inicio="IrPaginaInicio" Atras=" IrTabAnterior" Listo="IrTabSiguiente"></ButonesFondo>
+                    </BSRow>
+                </BSCard>
+            </BSCard>
+    </EditForm>
+
+
+
+@code {
+    string Id { get; set; }
+
+    Persona Persona { get; set; } = new Persona();
+    string[] Sexos = { "", "Masculino", "Femenino" };
+    string[] CochePropismo = { "", "si", "no" };
+    string UserName { get; set; }
+
+    HttpClient client;
+    CustomValidator customValidator;
+    bool nuevo;
+    EditForm editForm { get; set; }
+    Dictionary<string, bool> messages { get; set; } = new Dictionary<string, bool>();
+    IEnumerable<string> Provincias { get; set; } = new List<string>();
+    IEnumerable<string> Municipios { get; set; } = new List<string>();
+
+
+    async Task PersonaChanged()
+    {
+        try
+        {
+            if (nuevo)
+            {
+                var respsta = await client.PostAsJsonAsync<Persona>("Personas", Persona);
+            }
+            else
+            {
+
+                var estado = await client.PutAsJsonAsync<Persona>("Personas/" + Id, Persona);
+                if (estado.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+
+                }
+            }
+            await InvokeAsync(() => StateHasChanged());
+        }
+        catch (Exception exc)
+        {
+            Console.WriteLine(exc.Message);
+            throw;
+        }
+    }
+
+    async void IrPaginaInicio(MouseEventArgs args)
+    {
+        var data = await OnEditContextChanged(customValidator.CurrentEditContext);
+        if (data)
+        {
+            Navigation.NavigateTo("/Candidato");
+        }
+        await InvokeAsync(() => StateHasChanged());
+    }
+
+
+    async void IrTabAnterior(MouseEventArgs args)
+    {
+        var data = await OnEditContextChanged(customValidator.CurrentEditContext);
+        if (data)
+        {
+            Navigation.NavigateTo("/Candidato");
+            await InvokeAsync(() => StateHasChanged());
+        }
+    }
+
+    async void IrTabSiguiente(MouseEventArgs args)
+    {
+        var data = await OnEditContextChanged(customValidator.CurrentEditContext);
+        if (data)
+        {
+            Navigation.NavigateTo("/Candidato/Experiencia/");
+        }
+        await InvokeAsync(() => StateHasChanged());
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await Provider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (Id == null)
+        {
+            Id = UserManager.GetUserId(user);
+            UserName = user.Identity.Name;
+        }
+
+        client = Factory.CreateClient("clientFirst");
+        try
+        {
+            Provincias = await client.GetFromJsonAsync<IEnumerable<string>>("Provincias");
+            Persona = await client.GetFromJsonAsync<Persona>("Personas/" + Id);
+            if (Persona.ProvinciaResidencia != null)
+            {
+                Municipios = await client.GetFromJsonAsync<IEnumerable<string>>("Provincias/" + Persona.ProvinciaResidencia);
+            }
+
+            if (Persona.CorreoElectronico == null)
+            {
+                nuevo = true;
+                Persona = new Persona
+                {
+                    IdPersona = Id,
+                    Nombre = string.Empty,
+                    PrimerApellido = string.Empty,
+                    Sexo = string.Empty,
+                    CorreoElectronico = authState.User.Identity.Name,
+                     
+                };
+
+            }
+            //curriculum = await SQLDBServices.GetCurriculumPorIdPersona(Id);
+            //NivelFormacion = await SQLDBServices.FormacionPorIdPersona(Id);
+            //ListaExperiencia = await SQLDBServices.ExperienciaPorIdPersona(Id);
+            //ListaNivelFormativo = await SQLDBServices.NivelesFormativo();
+            //PermisoData = await SQLDBServices.PermisosPorIdPersona(Id);
+            //NivelFormacion = NivelFormacion ?? new Formacion();
+            //ListaExperiencia = ListaExperiencia ?? new List<Experiencia>();
+            //ListaNivelFormativo = ListaNivelFormativo ?? new List<EstudiosPorNiveles>();
+            //PermisoData = PermisoData ?? new Permiso { IdPermisos = Guid.NewGuid().ToString(), IdPersona = Id, Tipo = string.Empty };
+
+            //EditContext = new EditContext(Persona);
+            //EditContext.OnFieldChanged += FieldChanged;
+            //EditContext.OnValidationRequested += ValidationRequested;
+            //EditContext.OnValidationStateChanged += ValidationStateChanged;
+
+            //ValidationMessageStore = new ValidationMessageStore(EditContext);
+            //if(validationNIF == null)
+            //{
+            //    validationNIF = new ValidacionNIFAttribute("Documento no válido");
+            //}
+
+            //messages = new Dictionary<string, bool>();
+
+
+            //await InvokeAsync(() => StateHasChanged());
+        }
+        catch (Exception exc)
+        {
+            System.Diagnostics.Debug.WriteLine(exc);
+            throw;
+        }
+    }
+
+    protected override bool ShouldRender()
+    {
+        return true;
+    }
+
+    private async Task<bool> OnEditContextChanged(EditContext e)
+    {
+        messages.Clear();
+        var validationResult = e.Validate();
+        foreach (var item in e.GetValidationMessages())
+        {
+            messages.Add(item, false);
+        };
+
+        if(e.GetValidationMessages().Count() == 0)
+        {
+            await PersonaChanged();
+        }
+        return validationResult;
+
+    }
+
+    private async void OnPersonaChanged(object e, string item)
+    {
+        try
+        {
+            //var personaProperty = Persona.GetType().GetProperty(item);
+            //var value = personaProperty.GetValue(Persona);
+            //personaProperty.SetValue(Persona, e);
+            //validationContext = new ValidationContext(EditContext.Model, new Dictionary<object, object>());
+            //validationContext.MemberName = item;
+            //EditContext = new EditContext(Persona);
+            //OnEditContextChanged(EditContext);
+
+
+            //var validacionPersona = Persona.Validate(validationContext);
+            //if (validacionPersona.Count() == 0)
+            //{
+            //if (EditContext.Validate())
+            //{
+
+
+            //}
+            //    }
+            //else
+            //    {
+            //        foreach (var result in validacionPersona)
+            //        {
+            //            AddValidationResult(EditContext.Model, result);
+            //        }
+
+            //    }
+            await InvokeAsync(() => StateHasChanged());
+            this.ShouldRender();
+        }
+        catch (Exception exc)
+        {
+            Console.WriteLine("Error actualizacion de Persona: " + exc.Message);
+            throw;
+        }
+    }
+
+    private async void MunicipioSegunProvincia(string provincia)
+    {
+        Persona.ProvinciaResidencia = provincia;
+        try
+        {
+            Municipios = await client.GetFromJsonAsync<IEnumerable<string>>("Provincias/" + Persona.ProvinciaResidencia);
+
+        }
+        catch(Exception exc)
+        {
+            Console.WriteLine(exc.Message);
+        }
+
+
+        await InvokeAsync(() => StateHasChanged());
+    }
+
+}*@

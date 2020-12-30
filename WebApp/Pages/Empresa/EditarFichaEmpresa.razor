@@ -1,0 +1,141 @@
+﻿@*@page "/Empresa/EditarFichaEmpresa/{Id}"*@
+
+@*@using Microsoft.AspNetCore.Identity
+@using Newtonsoft.Json;
+@inject AuthenticationStateProvider Provider
+@inject IHttpClientFactory Factory;
+@inject UserManager<IdentityUser> UserManager
+@inject NavigationManager Navigation*@
+
+<h3>Editar Ficha de Empresa</h3>
+
+@*<EditForm Model="@empresa" OnValidSubmit="@CrearDatosEmpresa">
+    <DataAnnotationsValidator />
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group row mb-1">
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVNombreEmpresa" Class="mr-sm-6">Nombre de Empresa</BSLabel>
+            <BSBasicInput InputType="InputType.Text" Id="CVNombreEmpresa" PlaceHolder="Nombre" @bind-Value="@empresa.NombreEmpresa" />
+            <ValidationMessage For="@(() => empresa.NombreEmpresa)" />
+
+        </BSFormGroup>
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVNIFCIF" Class="mr-sm-6">NIF/CIF</BSLabel>
+            <BSBasicInput InputType="InputType.Text" Id="CVNIFCIF" PlaceHolder="NIF/CIF" @bind-Value="@empresa.Nifcif" />
+            <ValidationMessage For="@(() => empresa.Nifcif)" />
+        </BSFormGroup>
+    </div>
+    <div class="form-group row mb-1">
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVNombreContacto" Class="mr-sm-6">Persona de Contacto</BSLabel>
+            <BSBasicInput InputType="InputType.Text" Id="CVNombreContacto" PlaceHolder="Persona de Contacto" @bind-Value="@empresa.NombreContacto" />
+            <ValidationMessage For="@(() => empresa.NombreContacto)" />
+
+        </BSFormGroup>
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVCargo" Class="mr-sm-6">Cargo</BSLabel>
+            <BSBasicInput InputType="InputType.Text" Id="CVCargo" PlaceHolder="" @bind-Value="@empresa.Cargo" />
+            <ValidationMessage For="@(() => empresa.Cargo)" />
+        </BSFormGroup>
+    </div>
+    <div class="form-group row mb-1">
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVActividad" Class="mr-sm-6">Actividad</BSLabel>
+            <BSBasicInput Id="CVActividad" InputType="InputType.Select" @bind-Value="@empresa.Actividad">
+                <option value="" selected></option>
+                <option value="Actividad1">Actividad1</option>
+                <option value="Actividad2">Actividad2</option>
+            </BSBasicInput>
+            <ValidationMessage For="@(() => empresa.Actividad)" />
+        </BSFormGroup>
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVTelefono" Class="mr-sm-6">Cargo</BSLabel>
+            <BSBasicInput InputType="InputType.Text" Id="CVTelefono" PlaceHolder="" @bind-Value="@empresa.Telefono" />
+            <ValidationMessage For="@(() => empresa.Telefono)" />
+        </BSFormGroup>
+    </div>
+   
+    <div class="form-group row mb-1">
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVCorreo" Class="mr-sm-6">Correo Electronico</BSLabel>
+            <BSBasicInput InputType="InputType.Text" Id="CVCorreo" PlaceHolder="" @bind-Value="@empresa.CorreoElectronico" />
+            <ValidationMessage For="@(() => empresa.CorreoElectronico)" />
+
+        </BSFormGroup>
+        <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0 col">
+            <BSLabel For="CVCargo" Class="mr-sm-6">Cargo</BSLabel>
+            <BSBasicInput InputType="InputType.Text" Id="CVDireccion" PlaceHolder="" @bind-Value="@empresa.Dirección" />
+            <ValidationMessage For="@(() => empresa.Cargo)" />
+        </BSFormGroup>
+    </div>
+    <div class="form-group row mb-1">
+        <label class="col-sm-3 col-form-label" for="Telefono">Telefono</label>
+
+        <div class="col-sm-9">
+            <InputDate Class="form-control" @bind-Value="@empresa.Telefono" />
+        
+        </div>
+    </div>
+    <div class="form-group text-center mb-0">
+        <button type="submit" ref="createButton" id="BtnRegister" class="btn btn-primary">Guardar</button>
+    </div>
+</EditForm>*@
+
+@code {
+            //[Parameter] public string Id { get; set; }
+            //private Empresa empresa { get; set; } = new Empresa();
+            //private HttpClient client;
+            //[Parameter] public System.Linq.Expressions.Expression<Func<string>> ValueExpression { get; set; }
+
+
+            //protected override async Task OnParametersSetAsync()
+            //{
+            //    var authState = await Provider.GetAuthenticationStateAsync();
+            //    var user = authState.User;
+            //    client = Factory.CreateClient("clientFirst");
+            //    try
+            //    {
+            //empresa = await client.GetFromJsonAsync<Empresa>("Empresas/" + Id);
+            //if (empresa == null)
+            //{
+            //    empresa = new Empresa
+            //    {
+            //        IdEmpresa = Id,
+            //        NombreEmpresa = string.Empty,
+            //        NombreContacto = string.Empty,
+            //        Cargo = string.Empty,
+            //        Nifcif = string.Empty,
+            //        Actividad = string.Empty,
+            //        Provincia = string.Empty,
+            //        Telefono = default
+            //    };
+
+            //    var respsta = await client.PostAsJsonAsync<Empresa>("Empresas/" + Id, empresa);
+            //}
+
+        @*}catch(Exception exc)
+        {
+            System.Diagnostics.Debug.WriteLine(exc);
+            Console.WriteLine("No existe esta empresa");
+        }
+
+    }
+
+    private async void CrearDatosEmpresa()
+    {
+        StateHasChanged();
+        try
+        {
+            var estado = await client.PutAsJsonAsync<Empresa>("Empresas/" + Id, empresa);
+
+        }catch(Exception exc)
+        {
+            System.Diagnostics.Debug.WriteLine(exc.Message);
+
+        }
+
+
+        Navigation.NavigateTo("/");
+    }*@
+}

@@ -1,0 +1,226 @@
+﻿@*@page "/Candidato/Formacion/"
+@inject JornalerosApp.Shared.Services.ISQLDatabaseServices SQLDBServices
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider Provider
+@inject UserManager<IdentityUser> UserManager
+
+    <EditForm Model="NivelFormacion" >
+        <BSCard CardType="CardType.Card">
+            <BSCard CardType="CardType.Header" HeadingSize="HeadingSize.H5">Seleccione la máxima formación alcanzada:</BSCard>
+            <BSCard CardType="CardType.Body" Alignment="Alignment.Center" style="height:300px!important">
+                <BSBasicForm>                    
+                    <BSFormGroup Class="mb-12 mr-sm-12 mb-sm-0" IsRow="true">
+                        <BSCol SM="5">
+                            <BSBasicInput InputType="InputType.Select" Class="w-100" Value="selectedValue" ValueChanged="((string valor)  => CategoriaSelected(valor) )">
+                                <option value="" selected></option>
+                                @foreach (var item in Nivel1)
+                                 {
+                                    @if (item == selectedValue)
+                                    {
+                                        <option value=@item selected>@item</option>
+                                    }
+                                    else
+                                    {
+                                        <option value=@item>@item</option>
+                                    }
+                                 }
+                            </BSBasicInput>
+                        </BSCol>
+                        @if (formacionData != null)
+                        {
+                            <BSCol SM="5">
+                                <BSBasicInput InputType="InputType.Select" Class="w-100" Value="@selectedFamilia" ValueChanged="@((string familia) => SelectNivel2(familia))">
+                                    <option value="" selected>Selecciona el nivel...</option>
+                                    @foreach (var item in formacionData.SubCategoria.Distinct())
+                                     {
+                                        @if (item == selectedFamilia)
+                                        {
+                                            <option value="@item" selected>@item</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item">@item</option>
+                                        }
+                                     }
+                                </BSBasicInput>
+                            </BSCol>
+                        }
+                    </BSFormGroup>
+                </BSBasicForm>
+            </BSCard>
+                <br />
+                <BSCard CardType="CardType.Footer">
+                    <BSRow Class="fixed-bottom, float-right, ml-4, mr-4" style="display:block; margin:0; padding:0">
+                        <ButonesFondo BackDisabled="false" Inicio="IrPaginaInicio" Atras=" IrTabAnterior" Listo="IrTabSiguiente"></ButonesFondo>
+                    </BSRow>
+                </BSCard>
+            </BSCard>
+    </EditForm>
+
+    @code {
+
+        List<string> Nivel1 { get; set; } = new List<string>();
+        string Id { get; set; }
+        string UserName { get; set; }
+        Formacion NivelFormacion { get; set; } = new Formacion();
+        Curriculum Curriculum { get; set; }
+
+        public string IdCurriculum { get; set; }
+
+        public List<EstudiosPorNiveles> ListaNivelFormativo { get; set; }
+
+        public string selectedValue { get; set; }
+        public string selectedFamilia { get; set; }
+        FormacionData formacionData { get; set; }
+
+
+
+        protected override async Task OnInitializedAsync()
+        {
+            var authState = await Provider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (Id == null)
+            {
+                Id = UserManager.GetUserId(user);
+                UserName = user.Identity.Name;
+            }
+            NivelFormacion = await SQLDBServices.GetFormacionPorIdPersona(Id);
+            Curriculum = await SQLDBServices.GetCurriculumPorIdPersona(Id);
+            Curriculum = Curriculum ?? new Curriculum() { IdPersona = Id, IdCurriculum = Guid.NewGuid().ToString() };
+            ListaNivelFormativo = await SQLDBServices.NivelesFormativo();
+            ListaNivelFormativo = ListaNivelFormativo ?? new List<EstudiosPorNiveles>();
+
+            NivelFormacion = NivelFormacion ?? new Formacion
+            {
+                IdPersona = Id,
+                IdPersonaNavigation = Curriculum
+            };
+
+            Nivel1 = new List<string> { "Básica", "ESO", "Bachillerato", "FP Grado Medio", "FP Grado Superior", "Grado Universitario" };
+            if (NivelFormacion != null)
+            {
+                selectedValue = NivelFormacion.Titulo;
+                selectedFamilia = NivelFormacion.Descripcion ?? null;
+                if (selectedValue == Nivel1[3] || selectedValue == Nivel1[4] || selectedValue == Nivel1[5])
+                {
+                    formacionData = new FormacionData { Categoria = selectedValue, SubCategoria = ListaNivelFormativo.Where(l => l.NivelFormativo == selectedValue).Select(l => l.Familia).Distinct().ToList() };
+                }
+                else
+                {
+                    formacionData = null;
+                }
+            }
+
+        }
+
+        async void CategoriaSelected(string item)
+        {
+            selectedValue = item;
+            NivelFormacion.Titulo = item;
+            if (item == Nivel1[3] || item == Nivel1[4] || item == Nivel1[5])
+            {
+
+                formacionData = new FormacionData { Categoria = selectedValue, SubCategoria = ListaNivelFormativo.Where(l => l.NivelFormativo == selectedValue).Select(l => l.Familia).Distinct().ToList() };
+            }
+            else
+            {
+                formacionData = null;
+                NivelFormacion.Descripcion = null;
+            }
+            await InvokeAsync(() => StateHasChanged());
+            await NivelFormacionChanged();
+        }
+
+        async Task SelectNivel2(string subcategoria)
+        {
+
+            //var nivel = (NivelFormacion.Titulo == selectedValue) ? NivelFormacion : null;
+            //if (nivel == null)
+            //{
+            //    NivelFormacion = new Formacion
+            //    {
+            //        IdFormacion = Guid.NewGuid().ToString(),
+            //        IdCurriculum = IdCurriculum,
+            //        IdCurriculumNavigation = null,
+            //        Titulo = selectedValue,
+            //        Descripcion = subcategoria
+            //    };
+            //}
+
+            selectedFamilia = subcategoria;
+            NivelFormacion.Descripcion = selectedFamilia;
+            await InvokeAsync(() => StateHasChanged());
+            await NivelFormacionChanged();
+        }
+
+        async Task<bool> NivelFormacionChanged()
+        {
+            try
+            {
+                bool result;
+                if (await SQLDBServices.FormacionPorId(NivelFormacion.IdPersona) != null)
+                {
+                    result = await SQLDBServices.UpdateFormacion(NivelFormacion);
+                }
+                else
+                {
+                    result = await SQLDBServices.AddFormacion(NivelFormacion);
+                }
+
+                return result;
+
+            }
+            catch (Exception exc)
+            {
+                System.Diagnostics.Debug.WriteLine(exc.Message);
+                throw;
+            }
+        }
+
+        async void IrPaginaInicio(MouseEventArgs args)
+        {
+            if (await NivelFormacionChanged())
+            {
+                Navigation.NavigateTo("/Candidato");
+            }
+
+        }
+
+        async void IrTabAnterior(MouseEventArgs args)
+        {
+            if (await NivelFormacionChanged())
+            {
+
+                Navigation.NavigateTo("/Candidato/Maquinaria/");
+            }
+
+        }
+
+        async void IrTabSiguiente(MouseEventArgs args)
+        {
+            try
+            {
+                if (await NivelFormacionChanged())
+                {
+                    Navigation.NavigateTo("/Candidato/DatosAdicionales/");
+                }
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine(exc.Message);
+                throw;
+            }
+        }
+
+        public class FormacionData
+        {
+            public FormacionData()
+            {
+                this.SubCategoria = new List<string>();
+
+            }
+            public string Categoria { get; set; }
+            public List<string> SubCategoria { get; set; }
+        }
+    }*@

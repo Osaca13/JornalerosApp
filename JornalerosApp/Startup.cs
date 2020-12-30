@@ -97,11 +97,12 @@ namespace JornalerosApp
             //services.AddScoped<IWeatherForecastService, WeatherForecastService>();
             services.AddScoped<ISqlDataAccess, SqlDataAccess>();
             services.AddScoped<ISQLDatabaseServices, SQLDatabaseServices>();
-            services.AddLogging();
-            
+            services.AddLogging();            
             
             services.AddScoped<IGetDbServices<RelacionMunicipioProvincia>, MunicipiosDbServices>();
-            //services.AddTransient<IDbServices<Persona>, PersonaDbServices>();
+            services.AddTransient<IGetDbServices<Persona>, GetDbServices<Persona>>();
+            services.AddTransient(typeof(IDbServices<>), typeof(DbServices<>));
+            services.AddTransient<IDbServices<Persona>, PersonaDbServices>();
             
             services.AddHttpClient();
             services.AddApiClient();

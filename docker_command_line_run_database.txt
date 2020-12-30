@@ -12,8 +12,11 @@ C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\(Blazor.ba
 
 Copiar backup to /var/opt/mssql/data/ (directorio de localhost docker)
 
-"docker cp 'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\Blazor.bak' sqlLocalhost:/var/opt/mssql/data"
-"docker cp 'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\OfertaData.bak' sqlLocalhost:/var/opt/mssql/data"
+docker cp "C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\Blazor.bak" jornalerosdb:/var/opt/mssql/data
 Para mirar dentro 
-docker exec -it sqlLocalhost "bash"
+docker exec -it jornalerosdb "bash"
 ls
+
+Para probar Ocelot gateway
+
+http://localhost:7000/Ofertas/GetOfertaByTitulo?titulo=Jornalero

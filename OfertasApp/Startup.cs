@@ -49,6 +49,7 @@ namespace OfertasApp
             services.AddTransient<IOfertaDbServices, OfertaDbServices>();
             services.AddScoped(typeof(IGetDbServices<>), typeof(GetDbServices<>));
             services.AddScoped(typeof(IDbServices<>), typeof(DbServices<>));
+            services.AddScoped(typeof(IDbServices<>), typeof(OfertaDbServices));
             services.AddTransient<IDbServices<Oferta>, OfertaDbServices>();
 
             services.AddHttpClient();

@@ -1,6 +1,7 @@
 {
-  "ReRoutes": [
-    //Jornaleros API
+  
+  "Routes": [
+
     {
       "DownstreamPathTemplate": "/Personas",
       "DownstreamScheme": "http",
@@ -10,8 +11,8 @@
           "Port": "80"
         }
       ],
-      "UpstreamPathTemplate": "/Personas",
-      "UpstreamHttpMethod": [ "GET", "POST" ]
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "UpstreamPathTemplate": "/Personas"
     },
     {
       "DownstreamPathTemplate": "/Personas/{id}",
@@ -22,11 +23,9 @@
           "Port": "80"
         }
       ],
-      "UpstreamPathTemplate": "/Personas/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
+      "UpstreamPathTemplate": "/Personas/{id}"
     },
-
-    //Empresas API
     {
       "DownstreamPathTemplate": "/Empresas",
       "DownstreamScheme": "http",
@@ -36,8 +35,8 @@
           "Port": "80"
         }
       ],
-      "UpstreamPathTemplate": "/Empresas",
-      "UpstreamHttpMethod": [ "GET", "POST" ]
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "UpstreamPathTemplate": "/Empresas"
     },
     {
       "DownstreamPathTemplate": "/Empresas/{id}",
@@ -48,8 +47,8 @@
           "Port": "80"
         }
       ],
-      "UpstreamPathTemplate": "/Empresas/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
+      "UpstreamPathTemplate": "/Empresas/{id}"
     },
     {
       "DownstreamPathTemplate": "/Empresas/NuevaOferta",
@@ -60,11 +59,9 @@
           "Port": "80"
         }
       ],
-      "UpstreamPathTemplate": "/Empresas/NuevaOferta",
-      "UpstreamHttpMethod": [ "POST" ]
+      "UpstreamHttpMethod": [ "POST" ],
+      "UpstreamPathTemplate": "/Empresas/NuevaOferta"
     },
-
-    //Ofertas API
     {
       "DownstreamPathTemplate": "/Ofertas",
       "DownstreamScheme": "http",
@@ -74,8 +71,8 @@
           "Port": "80"
         }
       ],
-      "UpstreamPathTemplate": "/Ofertas",
-      "UpstreamHttpMethod": [ "GET", "POST" ]
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "UpstreamPathTemplate": "/Ofertas"
     },
     {
       "DownstreamPathTemplate": "/Ofertas/{id}",
@@ -86,8 +83,8 @@
           "Port": "80"
         }
       ],
-      "UpstreamPathTemplate": "/Ofertas/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
+      "UpstreamPathTemplate": "/Ofertas/{id}"
     },
     {
       "DownstreamPathTemplate": "/Ofertas/GetOfertaByTitulo/{titulo}",
@@ -98,8 +95,8 @@
           "Port": "80"
         }
       ],
-      "UpstreamPathTemplate": "/Ofertas/GetOfertaByTitulo/{titulo}",
-      "UpstreamHttpMethod": [ "GET" ]
+      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamPathTemplate": "/Ofertas/GetOfertaByTitulo/{titulo}"
     },
     {
       "DownstreamPathTemplate": "/Ofertas/CheckOutOferta",
@@ -110,8 +107,8 @@
           "Port": "80"
         }
       ],
-      "UpstreamPathTemplate": "/Ofertas/CheckOutOferta",
-      "UpstreamHttpMethod": [ "POST" ]
+      "UpstreamHttpMethod": [ "POST" ],
+      "UpstreamPathTemplate": "/Ofertas/CheckOutOferta"
     }
   ]
 }

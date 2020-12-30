@@ -4,13 +4,17 @@ namespace JornalerosApp.Shared.Services
 {
     public class NifValidatorAttribute : ValidationAttribute
     {
-        private string _message;
-        public NifValidatorAttribute():base("Documento no válido")
+        public NifValidatorAttribute() : base("Documento no válido")
         {
             
         }
 
-        private string dni { get; set; }
+        private string dni = string.Empty;
+
+        private void SetDni(string value)
+        {
+            dni = value;
+        }
 
         public override bool IsValid(object value)
         {
@@ -40,11 +44,11 @@ namespace JornalerosApp.Shared.Services
             if (char.IsNumber(array[0]))
             {
                 resulDNI = string.Concat(array[0]);
-                dni = "NIF";
+                SetDni("NIF");
             }
             else
             {
-                dni = "NIE";
+                SetDni("NIE");
                 if (array[0].Equals("X"))
                 {
                     resulDNI = string.Concat("0");

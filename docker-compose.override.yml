@@ -66,8 +66,7 @@ services:
     ocelotapigateway:
      container_name: ocelotapigateway
      environment:
-         - ASPNETCORE_ENVIRONMENT=Development
-         - ASPNETCORE_URLS=https://+:443;http://+:80
+         - ASPNETCORE_ENVIRONMENT=Development         
      ports:
          - "7000:80"   
      depends_on:

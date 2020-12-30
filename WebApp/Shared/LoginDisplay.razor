@@ -1,0 +1,80 @@
+﻿@using Microsoft.AspNetCore.Components.Routing;
+@using Microsoft.AspNetCore.Mvc.TagHelpers;
+@inject NavigationManager Navigation;
+@*@inject SignInManager<IdentityUser> SignInManager*@
+        <BSCol XS="8" SM="8">
+            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All" @onclick="PantallaInicio">
+                <span class="oi oi-home" aria-hidden="true"></span> Inicio
+            </NavLink>
+        </BSCol>
+
+        <AuthorizeView>
+            <Authorized>
+                <BSCol XS="4" SM="4">
+                    <BSRow Class="m-0">
+                        <BSCol SM="10">
+                            <NavLink class="nav-link" href="Identity/Account/Manage">
+                                <span Id="Perfil" class="oi oi-person" aria-hidden="true"></span>
+
+                                @context.User.Identity.Name
+                            </NavLink>
+                            <BSTooltip Target="Perfil" Placement="Placement.Left">Perfil</BSTooltip>
+
+                        </BSCol>
+                        <BSCol SM="2">                          
+                            <BSBasicForm method="post" action="Identity/Account/LogOut">
+                                    <BSButton type="submit" Id="tooltip2" class="btn btn-link m-0"><span class="oi oi-account-logout" aria-hidden="true"></span></BSButton>
+                                    <BSTooltip Target="tooltip2" Placement="Placement.Auto" Title="Salir">Salir</BSTooltip>
+                            </BSBasicForm>
+                        </BSCol>
+                    </BSRow>
+                </BSCol>
+            </Authorized>
+            <NotAuthorized>
+                <BSCol XS="6" SM="4">
+                    <BSRow Class="m-0">
+                        <BSCol>
+                            <NavLink class="nav-link" href="Identity/Account/Candidato/Register">
+                                <span class="oi oi-person" aria-hidden="true"></span>
+                                Candidato
+                            </NavLink>
+                        </BSCol>
+                        <BSCol>
+                            <NavLink class="nav-link" href="Identity/Account/Empresa/Register">
+                                <span class="oi oi-briefcase" aria-hidden="true"></span>
+                                Empresa
+                            </NavLink>
+                        </BSCol>
+
+
+
+                    </BSRow>
+                </BSCol>
+            </NotAuthorized>
+        </AuthorizeView>
+   
+
+
+@code{
+
+
+
+    protected override Task OnParametersSetAsync()
+    {
+        return base.OnParametersSetAsync();
+    }
+
+    private void OnSubmit()
+    {
+        var data = Navigation.Uri;
+        //Navigation.NavigateTo("/Identity/Account/Logout");
+        Navigation.NavigateTo($"/Identity/Account/Logout?returnUrl={Uri.EscapeDataString(Navigation.Uri)}");
+
+    }
+
+    private async void PantallaInicio(MouseEventArgs e)
+    {
+        await InvokeAsync(() => StateHasChanged());
+    }
+
+}
